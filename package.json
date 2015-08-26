@@ -1,0 +1,65 @@
+{
+  "name": "tg-resources",
+  "version": "0.1.0",
+  "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
+  "main": "index.js",
+  "files": [
+    "bin/",
+    "dist/"
+  ],
+  "scripts": {
+    "clean": "rimraf dist",
+    "lint": "eslint src test",
+    "check": "npm run lint -s && dependency-check package.json --entry src",
+    "watch": "watch 'npm run build' src test",
+    "test": "mocha -u exports -R nyan --require ./test/babel test",
+    "prebuild": "npm run check -s && npm run clean -s",
+    "build": "babel --optional runtime src -d dist",
+    "postbuild": "npm run test -s",
+    "coverage": "babel-node node_modules/.bin/isparta cover test/*.js",
+    "coveralls": "npm run coverage -s && coveralls < coverage/lcov.info",
+    "postcoveralls": "rimraf ./coverage",
+    "prepublish": "npm run build -s",
+    "deploy": "git pull --rebase origin master && git push origin master",
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish",
+    "postpublish": "git push origin master --follow-tags",
+    "toc": "doctoc --github --title \"# Changelog\" CHANGELOG.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorgate/tg-resources.git"
+  },
+  "keywords": [
+    "api",
+    "request",
+    "http",
+    "ajax"
+  ],
+  "author": "Thorgate <info@thorgate.eu>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thorgate/tg-resources/issues"
+  },
+  "homepage": "https://github.com/thorgate/tg-resources#readme",
+  "devDependencies": {
+    "babel": "*",
+    "babel-core": "*",
+    "babel-eslint": "*",
+    "chai": "^3.2.0",
+    "coveralls": "*",
+    "dependency-check": "*",
+    "doctoc": "*",
+    "eslint": "*",
+    "is": "*",
+    "isparta": "*",
+    "lodash": "*",
+    "rimraf": "*",
+    "superagent": "*",
+    "watch": "*"
+  },
+  "dependencies": {
+    "babel-runtime": "*"
+  }
+}
