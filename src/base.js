@@ -25,7 +25,7 @@ class GenericResource {
         }
 
         else {
-            this.mutateResponse = null;
+            this.mutateResponse = response => response;
         }
     }
 
@@ -56,7 +56,7 @@ class GenericResource {
         return prom.then((res) => {
             // Check expected status
             if (res && this.expectedStatus.indexOf(res.status) !== -1) {
-                return res.body;
+                return this.mutateResponse(res.body);
             }
 
             else {

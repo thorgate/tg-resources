@@ -3,11 +3,15 @@ export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
         static STATUS_CODE = [200, 201];
 
-        constructor(apiEndpoint, mutateResponse) {
-            super(apiEndpoint, SingleObjectResource.STATUS_CODE, mutateResponse);
+        constructor(apiEndpoint, expectedStatus, mutateResponse) {
+            if (!expectedStatus) {
+                expectedStatus = SingleObjectResource.STATUS_CODE;
+            }
+
+            super(apiEndpoint, expectedStatus, mutateResponse);
         }
 
-        // TODO: Add delete, head, put requests
+        // TODO: Add delete, head
 
         fetch(kwargs, query) {
             const thePath = this.buildThePath(kwargs);
@@ -37,6 +41,10 @@ export default function makeSingle(baseClass) {
 
         patch(kwargs, data, query) {
             return this.post(kwargs, data, query, 'patch');
+        }
+
+        put(kwargs, data, query) {
+            return this.post(kwargs, data, query, 'put');
         }
 
         sourcePost(kwargs, data, query, uuid, errCb) {
