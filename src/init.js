@@ -3,7 +3,8 @@ const configuration = {
     API_BASE: '',
     getCsrfToken: null,
     getExtraHeaders: null,
-    onSourceError: null
+    onSourceError: null,
+    parseErrors: null
 };
 
 export function setConfig(key, value) {

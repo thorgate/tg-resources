@@ -1,11 +1,13 @@
 {
   "name": "tg-resources",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
   "main": "index.js",
   "files": [
     "bin/",
-    "dist/"
+    "dist/",
+    "lib.js",
+    "index.js"
   ],
   "scripts": {
     "clean": "rimraf dist",
@@ -13,9 +15,9 @@
     "check": "npm run lint -s && dependency-check package.json --entry src",
     "watch": "watch 'npm run build' src test",
     "test": "mocha -u exports -R nyan --require ./test/babel test",
-    "prebuild": "npm run check -s && npm run clean -s",
+    "prebuild": "npm run clean -s",
     "build": "babel --optional runtime src -d dist",
-    "postbuild": "npm run test -s",
+    "postbuild": "npm run check -s && npm run test -s",
     "coverage": "babel-node node_modules/.bin/isparta cover test/*.js",
     "coveralls": "npm run coverage -s && coveralls < coverage/lcov.info",
     "postcoveralls": "rimraf ./coverage",

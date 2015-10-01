@@ -1,5 +1,6 @@
 import is from 'is';
 
+import {getConfig} from './init';
 
 
 export class InvalidResponseCode extends Error {
@@ -32,19 +33,34 @@ export class ValidatonError extends InvalidResponseCode {
     }
 
     __parseErrors(errorText) {
+        const handler = getConfig('parseErrors') || ValidatonError.defaultParseErrors;
+
+        const result = handler(errorText);
+
+        this.nonFieldErrors = result[0];
+        this.errors = result[1];
+    }
+
+    static defaultParseErrors(errorText) {
         if (is.string(errorText)) {
             errorText = JSON.parse(errorText);
         }
 
-        Object.keys(errorText.errors).forEach((key) => {
+        let resNonField = null;
+        const resErrors = {};
+
+        const errors = typeof errorText.errors === "undefined" ? errorText : errorText.errors;
+        Object.keys(errors).forEach((key) => {
             if (key === 'non_field_errors') {
-                this.nonFieldErrors = ValidatonError.prepareError(errorText.errors[key]);
+                resNonField = ValidatonError.prepareError(errors[key]);
             }
 
             else {
-                this.errors[key] = ValidatonError.prepareError(errorText.errors[key]);
+                resErrors[key] = ValidatonError.prepareError(errors[key]);
             }
         });
+
+        return [resNonField, resErrors];
     }
 
     static prepareError(err) {
