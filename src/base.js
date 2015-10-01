@@ -1,8 +1,10 @@
 import is from 'is';
 import _ from 'lodash';
+import cookie from 'cookie';
 
-import {getConfig, getCsrfToken, getExtraHeaders, getOnSourceError} from './init';
+import {getConfig, getExtraHeaders, getOnSourceError, getCookies} from './init';
 import Response from './response';
+import {InvalidResponseCode} from './errors';
 
 
 class GenericResource {
@@ -29,16 +31,36 @@ class GenericResource {
         }
     }
 
-    wrapResponse(res) {
-        return new Response(res);
+    getCookies() {
+        let cookieVal = getCookies();
+
+        if (cookieVal) {
+            const pairs = [];
+
+            Object.keys(cookieVal).forEach(key => {
+                pairs.push(cookie.serialize(key, cookieVal[key]));
+            });
+
+            cookieVal = pairs.join('; ');
+        }
+
+        return cookieVal;
+    }
+
+    wrapResponse(res, error) {
+        return new Response(res, error);
     }
 
     handleRequest(req) {
         return this.ensureStatusAndJson(new Promise((resolve) => {
             const headers = _.extend({
-                Accept: 'application/json',
-                'X-CSRFToken': getCsrfToken()
+                Accept: 'application/json'
             }, getExtraHeaders());
+
+            const cookieVal = this.getCookies();
+            if (cookieVal) {
+                headers.Cookie = cookieVal;
+            }
 
             if (headers && is.object(headers)) {
                 Object.keys(headers).forEach(key => {
@@ -48,14 +70,14 @@ class GenericResource {
                 });
             }
 
-            this.doRequest(req, response => resolve(this.wrapResponse(response)));
+            this.doRequest(req, (response, error) => resolve(this.wrapResponse(response, error)));
         }));
     }
 
     ensureStatusAndJson(prom) {
         return prom.then((res) => {
-            // Check expected status
-            if (res && this.expectedStatus.indexOf(res.status) !== -1) {
+            // Check expected status & error
+            if (res && !res.hasError && this.expectedStatus.indexOf(res.status) !== -1) {
                 return this.mutateResponse(res.body);
             }
 
@@ -67,7 +89,7 @@ class GenericResource {
 
                 else {
                     // Throw a Generic error since the request failed
-                    throw new Error('Something went awfully wrong with the request, check network log.');
+                    throw res.error || new Error('Something went awfully wrong with the request, check network log.');
                 }
             }
         }).catch((error) => {

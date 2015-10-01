@@ -13,7 +13,7 @@
 ## Install
 
 ```sh
-npm i -D tg-resources
+npm i tg-resources
 ```
 
 ## Basic Usage
@@ -35,6 +35,9 @@ new Resource('/path/to/api').patch(null, {asd: 'sdf'}, {foo: 'bar'}).then(onLoad
 
 // Do a put request to /path/to/api?foo=bar with data: {'asd':'sdf'}
 new Resource('/path/to/api').put(null, {asd: 'sdf'}, {foo: 'bar'}).then(onLoad).catch(onError);
+
+// Do a delete request to /path/to/api?foo=bar with data: {'asd':'sdf'}
+new Resource('/path/to/api').del(null, {asd: 'sdf'}, {foo: 'bar'}).then(onLoad).catch(onError);
 ```
 
 ## API
@@ -95,6 +98,10 @@ Alias for `Resource.post(kwargs, data, query, 'patch')`
 ### ``Resource.put(kwargs={}, data={}, query={})``
 
 Alias for `Resource.post(kwargs, data, query, 'put')`
+
+### ``Resource.del(kwargs={}, data={}, query={})``
+
+Alias for `Resource.post(kwargs, data, query, 'del')`
 
 ## License
 

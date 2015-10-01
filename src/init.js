@@ -1,8 +1,7 @@
-
 const configuration = {
     API_BASE: '',
-    getCsrfToken: null,
     getExtraHeaders: null,
+    getCookies: null,
     onSourceError: null,
     parseErrors: null
 };
@@ -19,16 +18,16 @@ export function getConfig(key) {
     return configuration;
 }
 
-export function getCsrfToken() {
-    const {getCsrfToken} = configuration;
-
-    return getCsrfToken ? getCsrfToken() : '';
-}
-
 export function getExtraHeaders() {
     const {getExtraHeaders} = configuration;
 
-    return getExtraHeaders ? getExtraHeaders() : [];
+    return getExtraHeaders ? getExtraHeaders() : {};
+}
+
+export function getCookies() {
+    const {getCookies} = configuration;
+
+    return getCookies ? getCookies() : null;
 }
 
 export function getOnSourceError() {

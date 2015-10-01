@@ -1,3 +1,5 @@
+import {ValidationError, InvalidResponseCode} from './errors';
+
 
 export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
@@ -31,7 +33,7 @@ export default function makeSingle(baseClass) {
                 .catch((err) => {
                     if (err instanceof InvalidResponseCode) {
                         if (err.statusCode === 400) {
-                            throw new ValidatonError(err);
+                            throw new ValidationError(err);
                         }
                     }
 
@@ -45,6 +47,10 @@ export default function makeSingle(baseClass) {
 
         put(kwargs, data, query) {
             return this.post(kwargs, data, query, 'put');
+        }
+
+        del(kwargs, data, query) {
+            return this.post(kwargs, data, query, 'del');
         }
 
         sourcePost(kwargs, data, query, uuid, errCb) {

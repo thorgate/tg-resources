@@ -1,6 +1,6 @@
 {
   "name": "tg-resources",
-  "version": "0.2.4",
+  "version": "0.3.0-beta",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
   "main": "index.js",
   "files": [
@@ -49,6 +49,7 @@
     "babel": "*",
     "babel-core": "*",
     "babel-eslint": "*",
+    "babel-runtime": "*",
     "chai": "^3.2.0",
     "coveralls": "*",
     "dependency-check": "*",
@@ -58,10 +59,10 @@
     "isparta": "*",
     "lodash": "*",
     "rimraf": "*",
-    "superagent": "*",
     "watch": "*"
   },
   "dependencies": {
-    "babel-runtime": "*"
+    "superagent": "*",
+    "cookie": "0.2.2"
   }
 }

@@ -14,7 +14,7 @@ export class InvalidResponseCode extends Error {
 }
 
 
-export class ValidatonError extends InvalidResponseCode {
+export class ValidationError extends InvalidResponseCode {
     constructor(err) {
         super(err.statusCode, err.statusText, err.responseText);
 
@@ -33,7 +33,7 @@ export class ValidatonError extends InvalidResponseCode {
     }
 
     __parseErrors(errorText) {
-        const handler = getConfig('parseErrors') || ValidatonError.defaultParseErrors;
+        const handler = getConfig('parseErrors') || ValidationError.defaultParseErrors;
 
         const result = handler(errorText);
 
@@ -52,11 +52,11 @@ export class ValidatonError extends InvalidResponseCode {
         const errors = typeof errorText.errors === "undefined" ? errorText : errorText.errors;
         Object.keys(errors).forEach((key) => {
             if (key === 'non_field_errors') {
-                resNonField = ValidatonError.prepareError(errors[key]);
+                resNonField = ValidationError.prepareError(errors[key]);
             }
 
             else {
-                resErrors[key] = ValidatonError.prepareError(errors[key]);
+                resErrors[key] = ValidationError.prepareError(errors[key]);
             }
         });
 

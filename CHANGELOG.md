@@ -7,6 +7,12 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+### v0.3.0
+
+ * Now should be fully usable
+ * Added `.del` method
+
+
 ### v0.2.4
 
  * Bugfixes & some docs

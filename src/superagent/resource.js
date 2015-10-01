@@ -44,7 +44,7 @@ export class SuperAgentResource extends GenericResource {
 
     doRequest(req, resolve) {
         req.end((err, res) => {
-            resolve(res);
+            resolve(res, err);
         });
     }
 

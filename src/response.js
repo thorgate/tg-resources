@@ -1,7 +1,16 @@
 
 export class ResponseWrapper {
-    constructor(response) {
-        this.response = response;
+    constructor(response, error) {
+        this.response = response || {};
+        this._error = error;
+    }
+
+    get hasError() {
+        return !!this._error;
+    }
+
+    get error() {
+        return this._error;
     }
 
     get status() {

@@ -16,7 +16,7 @@ export default {
             assert.isFunction(tgResources.setConfig);
             assert.isFunction(tgResources.GenericResource);
             assert.isFunction(tgResources.InvalidResponseCode);
-            assert.isFunction(tgResources.ValidatonError);
+            assert.isFunction(tgResources.ValidationError);
         },
         'SingleObjectResource is subclass of GenericResource'() {
             assert(isSubClass(tgResources.default, tgResources.GenericResource), 'its not');
