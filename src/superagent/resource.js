@@ -27,7 +27,7 @@ export class SuperAgentResource extends GenericResource {
     }
 
     createRequest(method, url, query, data) {
-        method = method.lower();
+        method = method.toLowerCase();
 
         let reg = request[method](url);
 
