@@ -3,7 +3,8 @@ const configuration = {
     getExtraHeaders: null,
     getCookies: null,
     onSourceError: null,
-    parseErrors: null
+    parseErrors: null,
+    ValidationErrorExtras: {}
 };
 
 export function setConfig(key, value) {

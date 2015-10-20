@@ -14,7 +14,7 @@ export class InvalidResponseCode extends Error {
 }
 
 
-export class ValidationError extends InvalidResponseCode {
+class BaseValidationError extends InvalidResponseCode {
     constructor(err) {
         super(err.statusCode, err.statusText, err.responseText);
 
@@ -82,3 +82,12 @@ export class ValidationError extends InvalidResponseCode {
         }
     }
 }
+
+const extras = getConfig('ValidationErrorExtras');
+Object.keys(extras).forEach(key => {
+    BaseValidationError.prototype[key] = function() {
+        return extras[key].apply(this, arguments);
+    };
+});
+
+export const ValidationError = BaseValidationError;
