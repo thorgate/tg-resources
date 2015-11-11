@@ -3,7 +3,7 @@ import {ValidationError, InvalidResponseCode} from './errors';
 
 export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
-        static STATUS_CODE = [200, 201];
+        static STATUS_CODE = [200, 201, 204];
 
         constructor(apiEndpoint, expectedStatus, mutateResponse) {
             if (!expectedStatus) {
