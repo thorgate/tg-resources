@@ -13,6 +13,15 @@ export class InvalidResponseCode extends Error {
     }
 }
 
+function addExtraFields(instance) {
+    const extras = getConfig('ValidationErrorExtras');
+    Object.keys(extras).forEach(key => {
+        instance[key] = function() {
+            return extras[key].apply(this, arguments);
+        };
+    });
+}
+
 
 class BaseValidationError extends InvalidResponseCode {
     constructor(err) {
@@ -20,6 +29,8 @@ class BaseValidationError extends InvalidResponseCode {
 
         this.errors = {};
         this.nonFieldErrors = null;
+
+        addExtraFields(this);
 
         this.__parseErrors(err.responseText);
     }
@@ -82,12 +93,5 @@ class BaseValidationError extends InvalidResponseCode {
         }
     }
 }
-
-const extras = getConfig('ValidationErrorExtras');
-Object.keys(extras).forEach(key => {
-    BaseValidationError.prototype[key] = function() {
-        return extras[key].apply(this, arguments);
-    };
-});
 
 export const ValidationError = BaseValidationError;
