@@ -4,25 +4,32 @@ import {ValidationError, InvalidResponseCode} from './errors';
 export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
         static STATUS_CODE = [200, 201, 204];
+        static ERROR_CODE = [400];
 
-        constructor(apiEndpoint, expectedStatus, mutateResponse) {
+        constructor(apiEndpoint, expectedStatus, mutateResponse, errorStatus) {
             if (!expectedStatus) {
                 expectedStatus = SingleObjectResource.STATUS_CODE;
             }
 
-            super(apiEndpoint, expectedStatus, mutateResponse);
+            if (!errorStatus) {
+                errorStatus = SingleObjectResource.ERROR_CODE;
+            }
+
+            super(apiEndpoint, expectedStatus, mutateResponse, errorStatus);
         }
 
-        // TODO: Add delete, head
-
-        fetch(kwargs, query) {
+        fetch(kwargs, query, method='get') {
             const thePath = this.buildThePath(kwargs);
 
-            return this.handleRequest(this.createRequest('get', thePath, query))
+            return this.handleRequest(this.createRequest(method, thePath, query))
                 .then(response => response)
                 .catch((err) => {
                     throw err;
                 });
+        }
+
+        head(kwargs, query) {
+            return this.get(kwargs, query, 'head');
         }
 
         post(kwargs, data, query, method='post') {

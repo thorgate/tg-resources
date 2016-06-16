@@ -1,28 +1,33 @@
-import is from 'is';
-import _ from 'lodash';
+import renderTemplate from 'lodash.template';
 import cookie from 'cookie';
 
 import {getConfig, getExtraHeaders, getOnSourceError, getCookies} from './init';
 import Response from './response';
-import {InvalidResponseCode} from './errors';
+import {InvalidResponseCode, NetworkError} from './errors';
+import {isArray, isFunction, isObject, isString, hasValue} from './typeChecks';
 
 
 class GenericResource {
     /**
-     *
-     * @param apiEndpoint String value which supports syntax of _.template
-     * @param expectedStatus
-     * @param [mutateResponse] Function to modify the response before resolving it
+     * @param apiEndpoint Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
+     * @param expectedStatus Array (or a single value) of valid status codes. Default: 200
+     * @param [mutateResponse] Function to mutate the response before resolving it. Signature: `response => response`
+     * @param [errorStatus] Array (or a single value) of status codes to treat as ValidationError. Default: 400
      */
-    constructor(apiEndpoint, expectedStatus, mutateResponse) {
+    constructor(apiEndpoint, expectedStatus, mutateResponse, errorStatus) {
         this.apiEndpoint = getConfig('API_BASE') + apiEndpoint;
         this.expectedStatus = expectedStatus || 200;
+        this.errorStatus = errorStatus || 400;
 
-        if (!is.array(this.expectedStatus)) {
+        if (!isArray(this.expectedStatus)) {
             this.expectedStatus = [this.expectedStatus, ];
         }
 
-        if (is.fn(mutateResponse)) {
+        if (!isArray(this.errorStatus)) {
+            this.errorStatus = [this.errorStatus, ];
+        }
+
+        if (isFunction(mutateResponse)) {
             this.mutateResponse = mutateResponse;
         }
 
@@ -53,7 +58,7 @@ class GenericResource {
 
     handleRequest(req) {
         return this.ensureStatusAndJson(new Promise((resolve) => {
-            const headers = _.extend({
+            const headers = Object.assign({
                 Accept: 'application/json'
             }, getExtraHeaders());
 
@@ -62,9 +67,9 @@ class GenericResource {
                 headers.Cookie = cookieVal;
             }
 
-            if (headers && is.object(headers)) {
+            if (headers && isObject(headers)) {
                 Object.keys(headers).forEach(key => {
-                    if (is.defined(headers[key]) && !is.nil(headers[key])) {
+                    if (hasValue(headers[key])) {
                         req = this.setHeader(req, key, headers[key]);
                     }
                 });
@@ -83,13 +88,17 @@ class GenericResource {
 
             else {
                 if (res) {
-                    // Throw a InvalidResponseCode error
-                    throw new InvalidResponseCode(res.status, res.statusType, res.text);
+                    if (res.hasError) {
+                        throw new NetworkError(res.error);
+                    } else {
+                        // Throw a InvalidResponseCode error
+                        throw new InvalidResponseCode(res.status, res.statusType, res.text);
+                    }
                 }
 
                 else {
                     // Throw a Generic error since the request failed
-                    throw res.error || new Error('Something went awfully wrong with the request, check network log.');
+                    throw new NetworkError('Something went awfully wrong with the request, check network log.');
                 }
             }
         }).catch((error) => {
@@ -101,8 +110,8 @@ class GenericResource {
     buildThePath(urlParams) {
         let thePath = this.apiEndpoint;
 
-        if (urlParams && !(is.object(urlParams) && Object.keys(urlParams).length === 0)) {
-            thePath = _.template(this.apiEndpoint)(urlParams);
+        if (urlParams && !(isObject(urlParams) && Object.keys(urlParams).length === 0)) {
+            thePath = renderTemplate(this.apiEndpoint)(urlParams);
         }
 
         return thePath;

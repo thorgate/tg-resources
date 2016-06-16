@@ -1,15 +1,52 @@
-import is from 'is';
-
 import {getConfig} from './init';
+import {isArray, isObject, isString} from './typeChecks';
 
 
-export class InvalidResponseCode extends Error {
-    constructor(statusCode, statusText, responseText) {
-        super(`InvalidResponseCode ${statusCode}: ${statusText}`);
+export class BaseResourceError {
+    constructor(message) {
+        this._message = message;
+    }
+
+    toString() {
+        return this._message;
+    }
+
+    get isNetworkError() {
+        return false;
+    }
+
+    get isInvalidResponseCode() {
+        return false;
+    }
+
+    get isValidationError() {
+        return false;
+    }
+}
+
+export class NetworkError extends BaseResourceError {
+    constructor(error) {
+        super(`NetworkError`);
+
+        this.error = error;
+    }
+
+    get isNetworkError() {
+        return true;
+    }
+}
+
+export class InvalidResponseCode extends BaseResourceError {
+    constructor(statusCode, statusText, responseText, type='InvalidResponseCode') {
+        super(`${type} ${statusCode}: ${statusText}`);
 
         this.statusCode = statusCode;
         this.statusText = statusText;
         this.responseText = responseText;
+    }
+
+    get isInvalidResponseCode() {
+        return true;
     }
 }
 
@@ -25,7 +62,14 @@ function addExtraFields(instance) {
 
 class BaseValidationError extends InvalidResponseCode {
     constructor(err) {
-        super(err.statusCode, err.statusText, err.responseText);
+        err = {
+            statusCode: 0,
+            statusText: 'Unknown',
+            responseText: '',
+            ...err
+        };
+
+        super(err.statusCode, err.statusText, err.responseText, 'ValidationError');
 
         this.errors = {};
         this.nonFieldErrors = null;
@@ -35,9 +79,38 @@ class BaseValidationError extends InvalidResponseCode {
         this.__parseErrors(err.responseText);
     }
 
-    getFieldError(fieldName, allowNonFields) {
+    get isValidationError() {
+        return true;
+    }
+
+    get isInvalidResponseCode() {
+        return false;
+    }
+
+    getError(fieldName, allowNonFields) {
         if (this.errors[fieldName] || (allowNonFields && this.nonFieldErrors)) {
-            return this.errors[fieldName] || this.nonFieldErrors;
+            return this.errors[fieldName] || this.nonFieldErrors || null;
+        }
+
+        return null;
+    }
+
+    /**
+     * @deprecated Will be removed in the future
+     */
+    getFieldError(fieldName, allowNonField) {
+        return this.getError(fieldName, allowNonField);
+    }
+
+    firstError(allowNonField) {
+        if (allowNonField && this.nonFieldErrors) {
+            return this.nonFieldErrors;
+        }
+
+        const errs = Object.keys(this.errors);
+
+        if (errs.length > 0) {
+            return this.errors[errs[0]];
         }
 
         return null;
@@ -53,8 +126,12 @@ class BaseValidationError extends InvalidResponseCode {
     }
 
     static defaultParseErrors(errorText) {
-        if (is.string(errorText)) {
-            errorText = JSON.parse(errorText);
+        if (isString(errorText)) {
+            if (errorText) {
+                errorText = JSON.parse(errorText);
+            } else {
+                errorText = {};
+            }
         }
 
         let resNonField = null;
@@ -75,15 +152,15 @@ class BaseValidationError extends InvalidResponseCode {
     }
 
     static prepareError(err) {
-        if (is.string(err)) {
+        if (isString(err)) {
             return err;
         }
 
-        else if (is.array(err)) {
+        else if (isArray(err)) {
             return err.join(', ');
         }
 
-        else if (is.object(err)) {
+        else if (isObject(err)) {
             // Note: This is a bad way to return perField errors
             return JSON.stringify(err);
         }

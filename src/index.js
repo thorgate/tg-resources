@@ -7,5 +7,5 @@ import makeSingle from './single';
 // Export everything
 export const GenericResource = Resource;
 export {getConfig, setConfig} from './init';
-export {InvalidResponseCode, ValidationError} from './errors';
+export {BaseResourceError, InvalidResponseCode, ValidationError, NetworkError} from './errors';
 export default makeSingle(Resource);
