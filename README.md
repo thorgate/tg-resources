@@ -2,7 +2,6 @@
 
 [![NPM version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
-[![Coveralls Status][coveralls-image]][coveralls-url]
 [![Dependency Status][depstat-image]][depstat-url]
 [![Downloads][download-badge]][npm-url]
 
@@ -27,26 +26,40 @@ see the [Changelog](CHANGELOG.md#migratingto100)
 ## Basic Usage
 
 ```js
-import Resource from "tg-resources"
+import Router, {Resource} from "tg-resources"
 
 const onLoad = result => console.log(result);
 const onError = result => console.error(result);
 
-// Do a get request to /path/to/api?foo=bar
-new Resource('/path/to/api').fetch(null, {foo: 'bar'}).then(onLoad, onError);
 
-// Do a post request to /path/to/api?foo=bar with data: {'asd':'sdf'}
-new Resource('/path/to/api').post(null, {asd: 'sdf'}, {foo: 'bar'}).then(onLoad, onError);
+const api = new Router({
+    cats: new Resource('/cats'),
+    cat: new Resource('/cats/${pk}')
+}, {
+    apiRoot: '/api/v1' // Set api root
+});
 
-// Do a patch request to /path/to/api?foo=bar with data: {'asd':'sdf'}
-new Resource('/path/to/api').patch(null, {asd: 'sdf'}, {foo: 'bar'}).then(onLoad, onError);
+// Do a get request to /api/v1/cats?gender=M
+api.routes.cats.fetch(null, {gender: 'M'}).then(onLoad, onError);
 
-// Do a put request to /path/to/api?foo=bar with data: {'asd':'sdf'}
-new Resource('/path/to/api').put(null, {asd: 'sdf'}, {foo: 'bar'}).then(onLoad, onError);
+// Do a head request to /api/v1/cats?gender=M
+api.routes.cats.head(null, {gender: 'M'}).then(onLoad, onError);
 
-// Do a delete request to /path/to/api?foo=bar with data: {'asd':'sdf'}
-new Resource('/path/to/api').del(null, {asd: 'sdf'}, {foo: 'bar'}).then(onLoad, onError);
+// Do a post request to /api/v1/cats with data: {name: 'Twinky', gender: 'M'}
+api.routes.cats.post(null, null, {name: 'Twinky', gender: 'M'}).then(onLoad, onError);
+
+// Do a patch request to /api/v1/cats/1 with data: {name: 'Tinkelberg'}
+api.routes.cat.patch({pk: 1}, null, {name: 'Tinkelberg'}).then(onLoad, onError);
+
+// Do a put request to /api/v1/cats with data: {pk: 1, name: 'Twinky'}
+api.routes.cats.put(null, null, {pk: 1, name: 'Twinky', gender: 'M'}).then(onLoad, onError);
+
+// Do a delete request to /api/v1/cats/1 with data: {'free':'yes'}
+api.routes.cat.del({pk: 1}, null, {free: 'yes'}).then(onLoad, onError);
 ```
+
+Please note that router is useful for providing default configuration and grouping
+endpoints. Resources can still be used without a router(see [Resource api](#resource-api))
 
 ## Configuration
 
@@ -56,7 +69,7 @@ TODO: Document different configuration keys...
 
 With tg-resources, all errors are Rejected. The logic is best described with an example:
 
-```
+```js
 const resource = new Resource('user/login');
 
 const payload = {
@@ -106,7 +119,7 @@ resource.post(null, payload).then(user => {
 
 ## API
 
-### ``new Resource(apiEndpoint, expectedStatus=[200, 201], mutateResponse=null, errorStatus=[400, ])``
+### <a name="resource-api"></a>``Resource``
 
 Construct a new resource for loading data from a single (or dynamic) endpoint
 
@@ -134,7 +147,7 @@ Would result in a GET request to `/foo/bar/1`
 
 *(Resource)*:  Returns instance of `Resource`.
 
-### ``Resource.fetch(kwargs={}, query={})``
+### ``Resource.fetch``
 
 Do a get request to the resource endpoint with optional kwargs and query parameters.
 
@@ -147,7 +160,7 @@ Do a get request to the resource endpoint with optional kwargs and query paramet
 
 *(Promise)*:  Returns a `Promise` that resolves to the remote result or throws if errors occur.
 
-### ``Resource.post(kwargs={}, data={}, query={}, method='post')``
+### ``Resource.post``
 
 Do a `method` request to the resource endpoint with optional kwargs and query parameters.
 
@@ -161,19 +174,19 @@ Do a `method` request to the resource endpoint with optional kwargs and query pa
 #### Returns
 *(Promise)*:  Returns a `Promise` that resolves to the remote result or throws if errors occur.
 
-### ``Resource.patch(kwargs={}, data={}, query={})``
+### ``Resource.patch``
 
 Alias for `Resource.post(kwargs, data, query, 'patch')`
 
-### ``Resource.put(kwargs={}, data={}, query={})``
+### ``Resource.put``
 
 Alias for `Resource.post(kwargs, data, query, 'put')`
 
-### ``Resource.del(kwargs={}, data={}, query={})``
+### ``Resource.del``
 
 Alias for `Resource.post(kwargs, data, query, 'del')`
 
-### ``BaseResourceError(message)``
+### ``BaseResourceError``
 
 Generic base class for all errors that can happen during requests
 
@@ -183,7 +196,7 @@ Generic base class for all errors that can happen during requests
 - ``isInvalidResponseCode`` *(bool)*: Always ``false``
 - ``isValidationError`` *(bool)*: Always ``false``
 
-### ``NetworkError(error)``
+### ``NetworkError``
 
 Error class used for all network related errors
 
@@ -195,7 +208,7 @@ Error class used for all network related errors
 
 - ``error`` *(Error)*: Original Error object that occured during network transport
 
-### ``InvalidResponseCode(statusCode, statusText, responseText, type='InvalidResponseCode')``
+### ``InvalidResponseCode``
 
 Error class used when unexpected response code occurs
 
@@ -209,7 +222,7 @@ Error class used when unexpected response code occurs
 - ``statusText`` *(string)*: Response status message
 - ``responseText`` *(int)*: Response body text
 
-### ``ValidationError(statusCode, statusText, responseText, type='InvalidResponseCode')``
+### ``ValidationError``
 
 Error class used when backend respons with a ``errorStatus``. This object can also be extended via
 ``Config.ValidationErrorExtras``.
@@ -221,7 +234,7 @@ Error class used when backend respons with a ``errorStatus``. This object can al
 
 #### Methods
 
-##### ``getError(fieldName, allowNonField=false)``
+##### ``getError``
 
 Get field specific error
 
@@ -234,11 +247,11 @@ Get field specific error
 
 *(any)*:  Returns a normalized error for ``fieldName`` or ``null``
 
-##### ``getFieldError(fieldName, allowNonField=false)``
+##### ``getFieldError``
 
 **Deprecated** alias of ``getError``
 
-##### ``firstError(allowNonField=false)``
+##### ``firstError``
 
 Get first error normalized to a string for this ValidationError
 

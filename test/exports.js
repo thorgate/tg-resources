@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai';
 
-import * as tgResources from '../';
+import * as tgResources from '../src/';
 
 function isSubClass(B, A) {
     return B.prototype instanceof A || B === A;
@@ -10,19 +10,19 @@ function isSubClass(B, A) {
 export default {
     'Exports correct variables': {
         'exports contain expected keys'() {
-            assert.isFunction(tgResources.default, 'default is exported');
-            assert.isFunction(tgResources.getConfig, 'getConfig is exported');
-            assert.isFunction(tgResources.setConfig, 'setConfig is exported');
-            assert.isFunction(tgResources.GenericResource, 'GenericResource is exported');
-            assert.isFunction(tgResources.BaseResourceError, 'BaseResourceError is exported');
-            assert.isFunction(tgResources.InvalidResponseCode, 'InvalidResponseCode is exported');
-            assert.isFunction(tgResources.ValidationError, 'ValidationError is exported');
-            assert.isFunction(tgResources.NetworkError, 'NetworkError is exported');
+            expect(tgResources.GenericResource).to.be.a('function', 'GenericResource is exported');
+            expect(tgResources.BaseResourceError).to.be.a('function', 'BaseResourceError is exported');
+            expect(tgResources.InvalidResponseCode).to.be.a('function', 'InvalidResponseCode is exported');
+            expect(tgResources.ValidationError).to.be.a('function', 'ValidationError is exported');
+            expect(tgResources.NetworkError).to.be.a('function', 'NetworkError is exported');
+
+            expect(tgResources.getConfig).to.be.a('undefined', 'getConfig is not exported');
+            expect(tgResources.setConfig).to.be.a('undefined', 'setConfig is not exported');
         },
     },
     'correct subclassing': {
         'SingleObjectResource is subclass of GenericResource'() {
-            assert(isSubClass(tgResources.default, tgResources.GenericResource), 'its not');
+            assert(isSubClass(tgResources.Resource, tgResources.GenericResource), 'its not');
         },
         'InvalidResponseCode is subclass of BaseResourceError'() {
             assert(isSubClass(tgResources.InvalidResponseCode, tgResources.BaseResourceError), 'its not');

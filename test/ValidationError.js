@@ -77,19 +77,20 @@ export default {
             expect(instance.errors.password).to.be.equal('too short, missing numbers');
             expect(instance.errors.remember).to.be.equal('false');
 
-            // TODO: Nest ValidationErrors in this case?
-            expect(instance.errors.email).to.be.equal(JSON.stringify({
-                'something': 'be wrong yo',
-            }));
+            // Nested ValidationError objects
+            expect(instance.errors.email).to.be.a.instanceof(ValidationError);
+            expect(instance.errors.email.errors.something).to.be.equal('be wrong yo');
         },
         'getFieldError works'() {
             expect(instance.getFieldError).to.be.a('function');
 
             expect(instance.getFieldError('password')).to.be.equal('too short, missing numbers');
             expect(instance.getFieldError('remember')).to.be.equal('false');
-            expect(instance.getFieldError('email')).to.be.equal(JSON.stringify({
-                'something': 'be wrong yo',
-            }));
+
+            // Nested ValidationError objects
+            expect(instance.getFieldError('email')).to.be.a.instanceof(ValidationError);
+            expect(instance.getFieldError('email').getFieldError).to.be.a('function');
+            expect(instance.getFieldError('email').getFieldError('something')).to.be.equal('be wrong yo');
 
             expect(instance.getFieldError('random-field')).to.be.a('null');
             expect(instance.getFieldError('random-field', true)).to.be.equal('Something is generally broken');

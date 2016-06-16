@@ -15,11 +15,11 @@
 
 **v1.0.0 introduces breaking changes**
 
- * No global configuration anymore
- * Error handling changes
+ * Support react native (see #2)
+ * Error handling changes (see #3)
+ * No global configuration anymore **TODO**
  * Misc
   * Use babel 6 for building
-  * Provide separate `tg-resources-react-native` package which does not depend on babel runtime
   * Reduce dependency count
    * Use `lodash.template` instead of depending on full lodash
 

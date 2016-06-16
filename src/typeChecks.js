@@ -18,3 +18,7 @@ export const isObject = function (value) {
 export const isString = function (value) {
     return Object.prototype.toString.call(value) === '[object String]';
 };
+
+export const isSubClass = function (B, A) {
+    return B.prototype instanceof A || B === A;
+};

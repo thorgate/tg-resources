@@ -40,7 +40,7 @@ export default function makeSingle(baseClass) {
                 .catch((err) => {
                     if (err instanceof InvalidResponseCode) {
                         if (err.statusCode === 400) {
-                            throw new ValidationError(err);
+                            throw new ValidationError(err, this.options);
                         }
                     }
 
@@ -60,6 +60,9 @@ export default function makeSingle(baseClass) {
             return this.post(kwargs, data, query, 'del');
         }
 
+        /**
+         * Note: For internal use
+         */
         sourcePost(kwargs, data, query, uuid, errCb) {
             return new Promise((resolve, reject) => {
                 this.post(kwargs, data, query).then(response => {

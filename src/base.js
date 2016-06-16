@@ -1,8 +1,8 @@
 import renderTemplate from 'lodash.template';
 import cookie from 'cookie';
 
-import {getConfig, getExtraHeaders, getOnSourceError, getCookies} from './init';
 import Response from './response';
+
 import {InvalidResponseCode, NetworkError} from './errors';
 import {isArray, isFunction, isObject, isString, hasValue} from './typeChecks';
 
@@ -10,36 +10,54 @@ import {isArray, isFunction, isObject, isString, hasValue} from './typeChecks';
 class GenericResource {
     /**
      * @param apiEndpoint Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
-     * @param expectedStatus Array (or a single value) of valid status codes. Default: 200
-     * @param [mutateResponse] Function to mutate the response before resolving it. Signature: `response => response`
-     * @param [errorStatus] Array (or a single value) of status codes to treat as ValidationError. Default: 400
+     * @param options Customize options for this resource (see `Router.options`)
      */
-    constructor(apiEndpoint, expectedStatus, mutateResponse, errorStatus) {
+    constructor(apiEndpoint, options) {
         this.apiEndpoint = getConfig('API_BASE') + apiEndpoint;
-        this.expectedStatus = expectedStatus || 200;
-        this.errorStatus = errorStatus || 400;
 
-        if (!isArray(this.expectedStatus)) {
-            this.expectedStatus = [this.expectedStatus, ];
+        // Set options
+        this._customOptions = options;
+
+        // set parent to null
+        this._parent = null;
+    }
+
+    setParent(parent) {
+        this._parent = parent;
+    }
+
+    get isBound() {
+        return !!this._parent || !!this._options;
+    }
+
+    get options() {
+        if (!this._options) {
+            return Router.mergeOptions(
+                Router.DEFAULT_OPTIONS,
+                this._parent ? this._parent.options : null,
+                this._customOptions
+            );
         }
 
-        if (!isArray(this.errorStatus)) {
-            this.errorStatus = [this.errorStatus, ];
+        return this._options;
+    }
+
+    mutateResponse(response) {
+        if (isFunction(this.options.mutateResponse)) {
+            return this.options.mutateResponse(response);
         }
 
-        if (isFunction(mutateResponse)) {
-            this.mutateResponse = mutateResponse;
-        }
-
-        else {
-            this.mutateResponse = response => response;
-        }
+        return response;
     }
 
     getCookies() {
-        let cookieVal = getCookies();
+        let cookieVal = null;
 
-        if (cookieVal) {
+        if (isFunction(this.options.cookies)) {
+            cookieVal = this.options.cookies();
+        }
+
+        if (isObject(cookieVal)) {
             const pairs = [];
 
             Object.keys(cookieVal).forEach(key => {
@@ -49,7 +67,7 @@ class GenericResource {
             cookieVal = pairs.join('; ');
         }
 
-        return cookieVal;
+        return cookieVal || null;
     }
 
     wrapResponse(res, error) {
@@ -58,9 +76,10 @@ class GenericResource {
 
     handleRequest(req) {
         return this.ensureStatusAndJson(new Promise((resolve) => {
-            const headers = Object.assign({
-                Accept: 'application/json'
-            }, getExtraHeaders());
+            const headers = Object.assign({},
+                this.options.defaultHeader || {},
+                (isFunction(this.options.headers) ? this.options.headers() : this.options.headers) || {}
+            );
 
             const cookieVal = this.getCookies();
             if (cookieVal) {
@@ -118,7 +137,7 @@ class GenericResource {
     }
 
     onSourceError(error) {
-        return getOnSourceError(error);
+        return this.options.onSourceError(error);
     }
 
     createRequest(method, url, query, data) {

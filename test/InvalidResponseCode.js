@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai';
 
-import {InvalidResponseCode} from '../';
+import {InvalidResponseCode} from '../lib';
 
 
 let instance = null;

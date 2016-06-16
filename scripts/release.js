@@ -9,6 +9,11 @@ var rl = readline.createInterface(process.stdin, process.stdout);
 // Enable debug for our namespace
 debug.enable('log,log:*');
 
+if (process.env.NODE_ENV === 'production') {
+    debug('NODE_ENV is set to production which breaks npm install in temporary dir. Exiting');
+    process.exit(0);
+}
+
 var rimraf = require('rimraf');
 
 
