@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Changelog
 
-- [v0.4.0](#v040)
+- [v1.0.0](#v100)
 - [v0.3.3](#v033)
 - [v0.3.1](#v031)
 - [v0.3.0](#v030)
@@ -11,15 +11,21 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-### v0.4.0
+### v1.0.0
 
-**v0.4.0 introduces breaking changes in error handling**
+**v1.0.0 introduces breaking changes**
 
- * Error handling changes (see API in [README](README.md))
- * Use babel 6 for building
- * Provide separate `tg-resources-react-native` package which does not depend on babel runtime
- * Reduce dependency count
- * Use `lodash.template` instead of depending on full lodash
+ * No global configuration anymore
+ * Error handling changes
+ * Misc
+  * Use babel 6 for building
+  * Provide separate `tg-resources-react-native` package which does not depend on babel runtime
+  * Reduce dependency count
+   * Use `lodash.template` instead of depending on full lodash
+
+#### Migrating to 1.0.0
+
+TODO: Describe the migration path
 
 ### v0.3.3
 

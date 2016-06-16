@@ -20,6 +20,10 @@ npm i tg-resources
 
 For react-native please use `tg-resources-react-native` which does not depend on babel-runtime.
 
+#### Migrating to 1.0.0
+
+see the [Changelog](CHANGELOG.md#migratingto100)
+
 ## Basic Usage
 
 ```js
