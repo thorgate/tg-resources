@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai';
 
-import * as tgResources from '../src/';
+import * as tgResources from '../lib';
 
 function isSubClass(B, A) {
     return B.prototype instanceof A || B === A;

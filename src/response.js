@@ -25,7 +25,15 @@ export class ResponseWrapper {
         throw new Error('Not implemented');
     }
 
-    get body() {
+    get data() {
+        throw new Error('Not implemented');
+    }
+
+    get headers() {
+        throw new Error('Not implemented');
+    }
+
+    getCookie() {
         throw new Error('Not implemented');
     }
 }

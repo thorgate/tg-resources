@@ -16,20 +16,32 @@ export class SuperagentResponse extends ResponseWrapper {
         return this.response.text;
     }
 
-    get body() {
+    get data() {
         return this.response.body;
+    }
+
+    get headers() {
+        // TODO: This...
+    }
+
+    getCookie() {
+        // Note: This might not work in the browser...
+        // TODO: This...
     }
 }
 
 export class SuperAgentResource extends GenericResource {
-    wrapResponse(res, err) {
+    wrapResponse(response, error) {
         // For superagent, all 4XX/5XX response codes also return an error object. Since
         // tg-resources handles these errors in the GenericResource we need to only send
         // error object here if it is not due to a response code.
         //
         // Network errors in superagent don't have `err.status`
 
-        return new SuperagentResponse(res, err && err.status === undefined ? err : null);
+        return new SuperagentResponse(
+            response,
+            error && error.status === undefined ? error : null
+        );
     }
 
     createRequest(method, url, query, data) {

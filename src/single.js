@@ -3,20 +3,6 @@ import {ValidationError, InvalidResponseCode} from './errors';
 
 export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
-        static STATUS_CODE = [200, 201, 204];
-        static ERROR_CODE = [400];
-
-        constructor(apiEndpoint, expectedStatus, mutateResponse, errorStatus) {
-            if (!expectedStatus) {
-                expectedStatus = SingleObjectResource.STATUS_CODE;
-            }
-
-            if (!errorStatus) {
-                errorStatus = SingleObjectResource.ERROR_CODE;
-            }
-
-            super(apiEndpoint, expectedStatus, mutateResponse, errorStatus);
-        }
 
         fetch(kwargs, query, method='get') {
             const thePath = this.buildThePath(kwargs);

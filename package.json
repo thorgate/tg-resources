@@ -2,7 +2,7 @@
   "name": "tg-resources",
   "version": "1.0.0-alpha-1",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
-  "main": "index.js",
+  "main": "lib.js",
   "files": [
     "dist/",
     "src/",

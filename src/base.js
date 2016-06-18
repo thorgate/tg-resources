@@ -3,8 +3,10 @@ import cookie from 'cookie';
 
 import Response from './response';
 
+import {DEFAULT_OPTIONS} from './constants';
 import {InvalidResponseCode, NetworkError} from './errors';
 import {isArray, isFunction, isObject, isString, hasValue} from './typeChecks';
+import {mergeOptions} from './util';
 
 
 class GenericResource {
@@ -13,7 +15,7 @@ class GenericResource {
      * @param options Customize options for this resource (see `Router.options`)
      */
     constructor(apiEndpoint, options) {
-        this.apiEndpoint = getConfig('API_BASE') + apiEndpoint;
+        this.apiEndpoint = apiEndpoint;
 
         // Set options
         this._customOptions = options;
@@ -22,7 +24,11 @@ class GenericResource {
         this._parent = null;
     }
 
-    setParent(parent) {
+    get parent() {
+        return this._parent;
+    }
+
+    _setParent(parent) {
         this._parent = parent;
     }
 
@@ -32,8 +38,8 @@ class GenericResource {
 
     get options() {
         if (!this._options) {
-            return Router.mergeOptions(
-                Router.DEFAULT_OPTIONS,
+            return mergeOptions(
+                DEFAULT_OPTIONS,
                 this._parent ? this._parent.options : null,
                 this._customOptions
             );
@@ -42,12 +48,12 @@ class GenericResource {
         return this._options;
     }
 
-    mutateResponse(response) {
+    mutateResponse(responseData, response) {
         if (isFunction(this.options.mutateResponse)) {
-            return this.options.mutateResponse(response);
+            return this.options.mutateResponse(responseData, response, this);
         }
 
-        return response;
+        return responseData;
     }
 
     getCookies() {
@@ -100,25 +106,27 @@ class GenericResource {
 
     ensureStatusAndJson(prom) {
         return prom.then((res) => {
-            // Check expected status & error
-            if (res && !res.hasError && this.expectedStatus.indexOf(res.status) !== -1) {
-                return this.mutateResponse(res.body);
-            }
-
-            else {
-                if (res) {
-                    if (res.hasError) {
-                        throw new NetworkError(res.error);
+            // If no error occured
+            if (res && !res.hasError) {
+                if (this.options.statusSuccess.indexOf(res.status) !== -1) {
+                    // Got statusSuccess response code, lets resolve this promise
+                    return this.mutateResponse(res.data, res);
+                } else {
+                    if (this.options.statusValidationError.indexOf(res.status) !== -1) {
+                        // Got statusValidationError response code, lets throw ValidationError
+                        throw new ValidationError(res, this.options);
                     } else {
                         // Throw a InvalidResponseCode error
                         throw new InvalidResponseCode(res.status, res.statusType, res.text);
                     }
                 }
-
-                else {
-                    // Throw a Generic error since the request failed
-                    throw new NetworkError('Something went awfully wrong with the request, check network log.');
-                }
+            } else {
+                // res.hasError should only be true if network level errors occur (not statuscode errors)
+                throw new NetworkError(
+                    res && res.hasError ?
+                        res.error :
+                        'Something went awfully wrong with the request, check network log.'
+                );
             }
         }).catch((error) => {
             // Rethrow any errors
@@ -127,7 +135,7 @@ class GenericResource {
     }
 
     buildThePath(urlParams) {
-        let thePath = this.apiEndpoint;
+        let thePath = `${this.options.apiRoot}${this.apiEndpoint}`;
 
         if (urlParams && !(isObject(urlParams) && Object.keys(urlParams).length === 0)) {
             thePath = renderTemplate(this.apiEndpoint)(urlParams);
