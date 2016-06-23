@@ -4,7 +4,7 @@ import cookie from 'cookie';
 import Response from './response';
 
 import {DEFAULT_OPTIONS} from './constants';
-import {InvalidResponseCode, NetworkError} from './errors';
+import {InvalidResponseCode, NetworkError, ValidationError} from './errors';
 import {isArray, isFunction, isObject, isString, hasValue} from './typeChecks';
 import {mergeOptions} from './util';
 

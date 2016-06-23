@@ -86,7 +86,7 @@ resource.post(null, payload).then(user => {
     });
 }, error => {
     // Network error occured
-    if (error.isNetworkError()) {
+    if (error.isNetworkError) {
         console.error({
             type: 'NETWORK_FAILED',
             data: {
@@ -95,7 +95,7 @@ resource.post(null, payload).then(user => {
         });
     } else {
         // Validation error occured (wrong credentials for example)
-        if (error.isValidationError()) {
+        if (error.isValidationError) {
             console.error({
                 type: 'LOGIN_FAILED',
                 data: {
