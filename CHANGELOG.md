@@ -17,7 +17,7 @@
 
  * Support react native (see #2)
  * Error handling changes (see #3)
- * No global configuration anymore **TODO**
+ * No global configuration anymore
  * Misc
   * Use babel 6 for building
   * Reduce dependency count

@@ -14,10 +14,22 @@ class Router {
         // set parent to null
         this._parent = null;
 
+        const defaultRoutes = this.defaultRoutes || this.constructor.defaultRoutes;
+
+        if (defaultRoutes) {
+            bindResources(defaultRoutes, this);
+        }
+
         // Set routes
         if (routes) {
             bindResources(routes, this);
         }
+    }
+
+    getCookies() {
+        return {
+            ...(this._parent ? this._parent.getCookies() : {}),
+        };
     }
 
     get parent() {

@@ -21,12 +21,7 @@ export class SuperagentResponse extends ResponseWrapper {
     }
 
     get headers() {
-        // TODO: This...
-    }
-
-    getCookie() {
-        // Note: This might not work in the browser...
-        // TODO: This...
+        return this.response.header;
     }
 }
 

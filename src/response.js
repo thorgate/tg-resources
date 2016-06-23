@@ -32,10 +32,6 @@ export class ResponseWrapper {
     get headers() {
         throw new Error('Not implemented');
     }
-
-    getCookie() {
-        throw new Error('Not implemented');
-    }
 }
 
 

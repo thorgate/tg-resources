@@ -57,11 +57,10 @@ class GenericResource {
     }
 
     getCookies() {
-        let cookieVal = null;
-
-        if (isFunction(this.options.cookies)) {
-            cookieVal = this.options.cookies();
-        }
+        let cookieVal = {
+            ...(this._parent ? this._parent.getCookies() : {}),
+            ...(isFunction(this.options.cookies) ? this.options.cookies() : {})
+        };
 
         if (isObject(cookieVal)) {
             const pairs = [];
