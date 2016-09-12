@@ -113,7 +113,11 @@ class GenericResource {
                 } else {
                     if (this.options.statusValidationError.indexOf(res.status) !== -1) {
                         // Got statusValidationError response code, lets throw ValidationError
-                        throw new ValidationError(res, this.options);
+                        throw new ValidationError({
+                            statusCode: res.status,
+                            statusText: res.statusType,
+                            responseText: res.text
+                        }, this.options);
                     } else {
                         // Throw a InvalidResponseCode error
                         throw new InvalidResponseCode(res.status, res.statusType, res.text);
