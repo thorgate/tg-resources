@@ -82,7 +82,7 @@ class GenericResource {
     handleRequest(req) {
         return this.ensureStatusAndJson(new Promise((resolve) => {
             const headers = Object.assign({},
-                this.options.defaultHeader || {},
+                this.options.defaultHeaders || {},
                 (isFunction(this.options.headers) ? this.options.headers() : this.options.headers) || {}
             );
 
@@ -138,13 +138,13 @@ class GenericResource {
     }
 
     buildThePath(urlParams) {
-        let thePath = `${this.options.apiRoot}${this.apiEndpoint}`;
+        let thePath = this.apiEndpoint;
 
         if (urlParams && !(isObject(urlParams) && Object.keys(urlParams).length === 0)) {
             thePath = renderTemplate(this.apiEndpoint)(urlParams);
         }
 
-        return thePath;
+        return `${this.options.apiRoot}${thePath}`;
     }
 
     onSourceError(error) {
