@@ -131,9 +131,6 @@ class GenericResource {
                         'Something went awfully wrong with the request, check network log.'
                 );
             }
-        }).catch((error) => {
-            // Rethrow any errors
-            throw error;
         });
     }
 
