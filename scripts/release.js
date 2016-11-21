@@ -10,7 +10,7 @@ var rl = readline.createInterface(process.stdin, process.stdout);
 debug.enable('log,log:*');
 
 if (process.env.NODE_ENV === 'production') {
-    debug('NODE_ENV is set to production which breaks npm install in temporary dir. Exiting');
+    debug('log')('log:NODE_ENV is set to production which breaks npm install in temporary dir. Exiting');
     process.exit(0);
 }
 

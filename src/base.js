@@ -62,7 +62,7 @@ class GenericResource {
             ...((isFunction(this.options.headers) ? this.options.headers() : this.options.headers) || {})
         };
 
-        const cookieVal = this.getCookies();
+        const cookieVal = this.serializeCookies(this.getCookies());
         if (cookieVal) {
             headers.Cookie = cookieVal;
         }
@@ -71,11 +71,13 @@ class GenericResource {
     }
 
     getCookies() {
-        let cookieVal = {
+        return {
             ...(this._parent ? this._parent.getCookies() : {}),
             ...(isFunction(this.options.cookies) ? this.options.cookies() : {})
         };
+    }
 
+    serializeCookies(cookieVal) {
         if (isObject(cookieVal)) {
             const pairs = [];
 
@@ -83,10 +85,10 @@ class GenericResource {
                 pairs.push(cookie.serialize(key, cookieVal[key]));
             });
 
-            cookieVal = pairs.join('; ');
+            return pairs.join('; ');
         }
 
-        return cookieVal || null;
+        return null;
     }
 
     wrapResponse(res, error) {
