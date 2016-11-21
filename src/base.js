@@ -56,6 +56,20 @@ class GenericResource {
         return responseData;
     }
 
+    getHeaders() {
+        const headers = {
+            ...(this.options.defaultHeaders || {}),
+            ...((isFunction(this.options.headers) ? this.options.headers() : this.options.headers) || {})
+        };
+
+        const cookieVal = this.getCookies();
+        if (cookieVal) {
+            headers.Cookie = cookieVal;
+        }
+
+        return headers;
+    }
+
     getCookies() {
         let cookieVal = {
             ...(this._parent ? this._parent.getCookies() : {}),
@@ -81,15 +95,7 @@ class GenericResource {
 
     handleRequest(req) {
         return this.ensureStatusAndJson(new Promise((resolve) => {
-            const headers = Object.assign({},
-                this.options.defaultHeaders || {},
-                (isFunction(this.options.headers) ? this.options.headers() : this.options.headers) || {}
-            );
-
-            const cookieVal = this.getCookies();
-            if (cookieVal) {
-                headers.Cookie = cookieVal;
-            }
+            const headers = this.getHeaders();
 
             if (headers && isObject(headers)) {
                 Object.keys(headers).forEach(key => {
