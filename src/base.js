@@ -152,10 +152,6 @@ class GenericResource {
         return `${this.options.apiRoot}${thePath}`;
     }
 
-    onSourceError(error) {
-        return this.options.onSourceError(error);
-    }
-
     createRequest(method, url, query, data) {
         throw new Error('Not implemented');
     }

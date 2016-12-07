@@ -18,6 +18,7 @@
  * Support react native (see #2)
  * Error handling changes (see #3)
  * No global configuration anymore
+ * Routers (see documentation)
  * Misc
   * Use babel 6 for building
   * Reduce dependency count
@@ -25,7 +26,42 @@
 
 #### Migrating to 1.0.0
 
-TODO: Describe the migration path
+1. Default export changed:
+
+old: `import Resource from 'tg-resources';`
+new: `import { Resource } from 'tg-resources';`
+
+2. Global configuration was removed
+
+Instead of using `setConfig` and `getConfig` one must set options per Resource^1
+
+ [1] To keep things DRY use `Router` for defining your configuration. Note: It's also possible to extend `Resource` and can be a better
+ alternative in some cases.
+
+3. Configuration options have changed:
+
+ - `API_BASE` is now `apiRoot`
+ - `getExtraHeaders` is now `headers`
+ - `getCookies` is now `cookies`
+
+ - added:
+   - `mutateResponse`
+   - `prepareError`
+   - `parseErrors`
+   - `statusSuccess`
+   - `statusValidationError`
+   - `defaultHeaders`
+
+ - removed:
+   - `onSourceError`
+   - `ValidationErrorExtras`
+
+see the [Configuration](README.md#configuration) for more info
+
+4. Resource constructor changed:
+
+old: `new Resource(apiEndpoint, expectedStatus, mutateResponse, errorStatus)`
+new: `new Resource(apiEndpoint, options)`
 
 ### v0.3.3
 

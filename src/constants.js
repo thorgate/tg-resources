@@ -15,7 +15,5 @@ export const DEFAULT_OPTIONS = {
 
     defaultHeaders: {
         Accept: 'application/json'
-    },
-
-    onSourceError: typeof console !== 'undefined' ? err => console.error(err) : null,
+    }
 };

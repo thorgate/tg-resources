@@ -26,7 +26,7 @@ see the [Changelog](CHANGELOG.md#migratingto100)
 ## Basic Usage
 
 ```js
-import Router, {Resource} from "tg-resources"
+import Router, { Resource } from "tg-resources"
 
 const onLoad = result => console.log(result);
 const onError = result => console.error(result);
@@ -40,30 +40,41 @@ const api = new Router({
 });
 
 // Do a get request to /api/v1/cats?gender=M
-api.routes.cats.fetch(null, {gender: 'M'}).then(onLoad, onError);
+api.cats.fetch(null, {gender: 'M'}).then(onLoad, onError);
 
 // Do a head request to /api/v1/cats?gender=M
-api.routes.cats.head(null, {gender: 'M'}).then(onLoad, onError);
+api.cats.head(null, {gender: 'M'}).then(onLoad, onError);
 
 // Do a post request to /api/v1/cats with data: {name: 'Twinky', gender: 'M'}
-api.routes.cats.post(null, null, {name: 'Twinky', gender: 'M'}).then(onLoad, onError);
+api.cats.post(null, null, {name: 'Twinky', gender: 'M'}).then(onLoad, onError);
 
 // Do a patch request to /api/v1/cats/1 with data: {name: 'Tinkelberg'}
-api.routes.cat.patch({pk: 1}, null, {name: 'Tinkelberg'}).then(onLoad, onError);
+api.cat.patch({pk: 1}, null, {name: 'Tinkelberg'}).then(onLoad, onError);
 
 // Do a put request to /api/v1/cats with data: {pk: 1, name: 'Twinky'}
-api.routes.cats.put(null, null, {pk: 1, name: 'Twinky', gender: 'M'}).then(onLoad, onError);
+api.cats.put(null, null, {pk: 1, name: 'Twinky', gender: 'M'}).then(onLoad, onError);
 
 // Do a delete request to /api/v1/cats/1 with data: {'free':'yes'}
-api.routes.cat.del({pk: 1}, null, {free: 'yes'}).then(onLoad, onError);
+api.cat.del({pk: 1}, null, {free: 'yes'}).then(onLoad, onError);
 ```
 
-Please note that router is useful for providing default configuration and grouping
-endpoints. Resources can still be used without a router(see [Resource api](#resource-api))
+Please note that the router is useful for providing default configuration and grouping
+endpoints. It's still possible to use Resources used without a router(see [Resource api](#resource-api))
 
-## Configuration
+## <a name="configuration"></a>Configuration
 
-TODO: Document different configuration keys...
+- ``apiRoot`` *(String)*: Base for all resource paths
+- ``headers`` *(Object|Function: Object)*: Optional Function or Object which can be used to add any additional headers to requests.
+- ``cookies`` *(Object|Function)*: Optional Function or Object which can be used to add any additional cookies to requests. Please note
+                                   that in modern browsers this is disabled due to security concerns.
+- ``mutateResponse`` *(Function)*: Optional function with signature `response => response` which can be used to mutate response before
+                                   resolving it.
+- ``statusSuccess`` *(Array[int])*: Array (or a single value) of status codes to treat as a success. Default: [200, 201, 204]
+- ``statusValidationError`` *(Array[int])*: Array (or a single value) of status codes to treat as ValidationError. Default: [400]
+- ``defaultHeaders`` *(Object)*: Object of headers which should be added to all requests: Default: `{ Accept: 'application/json' }`
+- ``parseErrors`` *(int)*: Function used to parse response errors into a ValidationError object. The default handler is built for Django/DRF
+                           errors.
+- ``prepareError`` *(int)*: Function used to normalize a single error. The default handler is built for Django/DRF errors.
 
 ## Error handling
 
@@ -85,7 +96,7 @@ resource.post(null, payload).then(user => {
         }
     });
 }, error => {
-    // Network error occured
+    // Network error occurred
     if (error.isNetworkError) {
         console.error({
             type: 'NETWORK_FAILED',
@@ -94,7 +105,7 @@ resource.post(null, payload).then(user => {
             }
         });
     } else {
-        // Validation error occured (wrong credentials for example)
+        // Validation error occurred (e.g.: wrong credentials)
         if (error.isValidationError) {
             console.error({
                 type: 'LOGIN_FAILED',
@@ -126,9 +137,7 @@ Construct a new resource for loading data from a single (or dynamic) endpoint
 #### Arguments
 
 1. `apiEndpoint` *(string)*: Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
-2. `[expectedStatus=[200, 201, 204]]` *(Array)*: Array (or a single value) of valid status codes. Default: [200, 201, 204]
-3. `[mutateResponse=null]` *(Function)*: Function to mutate the response before resolving it. Signature: `response => response`
-4. `[errorStatus=[400]]` *(Array)*: Array (or a single value) of status codes to treat as ValidationError. Default: [400]
+2. `options` *(Object)*: Object containing options for this resource. see [Configuration](#configuration)
 
 #### Tokenized endpoints
 
