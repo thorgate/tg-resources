@@ -1,12 +1,16 @@
-import {isArray} from './typeChecks';
+import cookie from 'cookie';
+
+import Router, { Resource } from '.';
+
+import { isArray, isString, isObject, hasValue } from './typeChecks';
 
 
 export function bindResources(routes, $this) {
     const res = {};
 
-    Object.keys(routes).forEach(routeName => {
-        if (!(routes[routeName] || routes[routeName] instanceof Router || routes[routeName] instanceof Resource)) {
-            throw new Error('all routes must be instancces of Router or Resource');
+    Object.keys(routes).forEach((routeName) => {
+        if (!routes[routeName] || !(routes[routeName] instanceof Router || routes[routeName] instanceof Resource)) {
+            throw new Error(`All routes must be instances of Router or Resource (see '${routeName}')`);
         }
 
         if (routeName[0] === '_') {
@@ -14,7 +18,7 @@ export function bindResources(routes, $this) {
         }
 
         if (routes[routeName].isBound) {
-            throw new Error(`${routes[routeName]} is bound already`);
+            throw new Error(`Route '${routeName}' is bound already`);
         }
 
         // add to res
@@ -26,36 +30,59 @@ export function bindResources(routes, $this) {
 
     try {
         Object.assign($this, res);
-    } catch(e) {
+    } catch (e) {
         if (e instanceof TypeError) {
-            let fieldName = /property ([^\s]+) of/gi.exec((e + ''));
+            let fieldName = /property ([^\s]+) of/gi.exec(`${e}`);
             if (fieldName) {
-                fieldName = `${fieldName[1]} collides`;
+                fieldName = `Route ${fieldName[1]} collides`;
             } else {
-                fieldName = 'some route collides';
+                /* istanbul ignore next: only happens w/ weird JS implementation */
+                fieldName = 'Some route collides';
             }
 
             throw new Error(`${fieldName} with Router built-in method names`);
         } else {
+            /* istanbul ignore next: only happens Object.assign is not available */
             throw e;
         }
     }
-};
+}
 
 export function mergeOptions(...options) {
     const res = {};
 
-    options.filter(x => !!x).forEach(opts => {
-        Object.assign(res, opts);
-    });
+    options.filter(x => !!x).forEach(opts => Object.assign(res, opts));
 
-    if (!isArray(res.statusSuccess)) {
-        res.statusSuccess = [res.statusSuccess, ];
+    if (!isArray(res.statusSuccess) && hasValue(res.statusSuccess)) {
+        res.statusSuccess = [res.statusSuccess];
     }
 
-    if (!isArray(res.statusValidationError)) {
-        res.statusValidationError = [res.statusValidationError, ];
+    if (!isArray(res.statusValidationError) && hasValue(res.statusValidationError)) {
+        res.statusValidationError = [res.statusValidationError];
     }
 
     return res;
+}
+
+export function truncate(value, limit) {
+    if (!value || value.length < limit) {
+        return value;
+    }
+
+    if (!isString(value)) {
+        value = `${value}`;
+    }
+
+    return `${value.substring(0, limit - 3)}...`;
+}
+
+export function serializeCookies(cookieVal) {
+    if (isObject(cookieVal)) {
+        return Object.keys(cookieVal)
+            .map(key => cookie.serialize(key, cookieVal[key]))
+            .join('; ');
+    }
+
+    /* istanbul ignore next: safeguard */
+    return null;
 }

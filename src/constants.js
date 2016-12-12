@@ -1,7 +1,7 @@
-import {ValidationError} from './errors';
+import { ValidationError } from './errors';
 
 
-export const DEFAULT_OPTIONS = {
+const DEFAULTS = {
     apiRoot: '',
     mutateResponse: null,
     headers: null,
@@ -14,6 +14,8 @@ export const DEFAULT_OPTIONS = {
     statusValidationError: [400],
 
     defaultHeaders: {
-        Accept: 'application/json'
-    }
+        Accept: 'application/json',
+    },
 };
+
+export default DEFAULTS;

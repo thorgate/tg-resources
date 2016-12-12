@@ -1,9 +1,5 @@
-import Resource from './generic';
-
-import {ValidationError, ReservedRouteName} from './errors';
-import {DEFAULT_OPTIONS} from './constants';
-
-import {bindResources, mergeOptions} from './util';
+import DEFAULTS from './constants';
+import { bindResources, mergeOptions } from './util';
 
 
 class Router {
@@ -47,10 +43,10 @@ class Router {
     get options() {
         if (!this._options) {
             this._options = mergeOptions(
-                DEFAULT_OPTIONS,
+                DEFAULTS,
                 this._parent ? this._parent.options : null,
                 this.defaultOptions || this.constructor.defaultOptions || null,
-                this._customOptions
+                this._customOptions,
             );
         }
 

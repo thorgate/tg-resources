@@ -3,6 +3,7 @@
 [![NPM version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Dependency Status][depstat-image]][depstat-url]
+[![Coverage Status][coveralls-image]][coveralls-url]
 [![Downloads][download-badge]][npm-url]
 
 > Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.
@@ -228,7 +229,6 @@ Error class used when unexpected response code occurs
 #### Attributes
 
 - ``statusCode`` *(string)*: Response status code
-- ``statusText`` *(string)*: Response status message
 - ``responseText`` *(int)*: Response body text
 
 ### ``ValidationError``
@@ -282,10 +282,10 @@ MIT © [Thorgate](http://github.com/thorgate)
 [travis-url]: https://travis-ci.org/thorgate/tg-resources
 [travis-image]: https://img.shields.io/travis/thorgate/tg-resources.svg?style=flat-square
 
-[coveralls-url]: https://coveralls.io/r/thorgate/tg-resources
-[coveralls-image]: https://img.shields.io/coveralls/thorgate/tg-resources.svg?style=flat-square
-
 [depstat-url]: https://david-dm.org/thorgate/tg-resources
 [depstat-image]: https://david-dm.org/thorgate/tg-resources.svg?style=flat-square
+
+[coveralls-url]: https://coveralls.io/github/thorgate/tg-resources?branch=master
+[coveralls-image]: https://coveralls.io/repos/github/thorgate/tg-resources/badge.svg?branch=master
 
 [download-badge]: http://img.shields.io/npm/dm/tg-resources.svg?style=flat-square

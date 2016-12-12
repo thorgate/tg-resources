@@ -1,10 +1,7 @@
-import {ValidationError, InvalidResponseCode} from './errors';
-
-
 export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
 
-        fetch(kwargs, query, method='get') {
+        fetch(kwargs, query, method = 'get') {
             const thePath = this.buildThePath(kwargs);
             return this.handleRequest(this.createRequest(method, thePath, query));
         }
@@ -13,7 +10,7 @@ export default function makeSingle(baseClass) {
             return this.fetch(kwargs, query, 'head');
         }
 
-        post(kwargs, data, query, method='post') {
+        post(kwargs, data, query, method = 'post') {
             const thePath = this.buildThePath(kwargs);
 
             return this.handleRequest(this.createRequest(method, thePath, query, data || {}));

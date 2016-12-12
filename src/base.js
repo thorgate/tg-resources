@@ -1,12 +1,9 @@
 import renderTemplate from 'lodash.template';
-import cookie from 'cookie';
 
-import Response from './response';
-
-import {DEFAULT_OPTIONS} from './constants';
-import {InvalidResponseCode, NetworkError, ValidationError} from './errors';
-import {isArray, isFunction, isObject, isString, hasValue} from './typeChecks';
-import {mergeOptions} from './util';
+import DEFAULTS from './constants';
+import { InvalidResponseCode, NetworkError, ValidationError } from './errors';
+import { isFunction, isObject, hasValue } from './typeChecks';
+import { mergeOptions, serializeCookies } from './util';
 
 
 class GenericResource {
@@ -39,9 +36,9 @@ class GenericResource {
     get options() {
         if (!this._options) {
             return mergeOptions(
-                DEFAULT_OPTIONS,
+                DEFAULTS,
                 this._parent ? this._parent.options : null,
-                this._customOptions
+                this._customOptions,
             );
         }
 
@@ -59,10 +56,10 @@ class GenericResource {
     getHeaders() {
         const headers = {
             ...(this.options.defaultHeaders || {}),
-            ...((isFunction(this.options.headers) ? this.options.headers() : this.options.headers) || {})
+            ...((isFunction(this.options.headers) ? this.options.headers() : this.options.headers) || {}),
         };
 
-        const cookieVal = this.serializeCookies(this.getCookies());
+        const cookieVal = serializeCookies(this.getCookies());
         if (cookieVal) {
             headers.Cookie = cookieVal;
         }
@@ -73,26 +70,8 @@ class GenericResource {
     getCookies() {
         return {
             ...(this._parent ? this._parent.getCookies() : {}),
-            ...(isFunction(this.options.cookies) ? this.options.cookies() : {})
+            ...((isFunction(this.options.cookies) ? this.options.cookies() : this.options.cookies) || {}),
         };
-    }
-
-    serializeCookies(cookieVal) {
-        if (isObject(cookieVal)) {
-            const pairs = [];
-
-            Object.keys(cookieVal).forEach(key => {
-                pairs.push(cookie.serialize(key, cookieVal[key]));
-            });
-
-            return pairs.join('; ');
-        }
-
-        return null;
-    }
-
-    wrapResponse(res, error) {
-        return new Response(res, error);
     }
 
     handleRequest(req) {
@@ -100,14 +79,14 @@ class GenericResource {
             const headers = this.getHeaders();
 
             if (headers && isObject(headers)) {
-                Object.keys(headers).forEach(key => {
+                Object.keys(headers).forEach((key) => {
                     if (hasValue(headers[key])) {
                         req = this.setHeader(req, key, headers[key]);
                     }
                 });
             }
 
-            this.doRequest(req, (response, error) => resolve(this.wrapResponse(response, error)));
+            this.doRequest(req, (response, error) => resolve(this.wrapResponse(response, error, req)));
         }));
     }
 
@@ -118,26 +97,20 @@ class GenericResource {
                 if (this.options.statusSuccess.indexOf(res.status) !== -1) {
                     // Got statusSuccess response code, lets resolve this promise
                     return this.mutateResponse(res.data, res);
+                } else if (this.options.statusValidationError.indexOf(res.status) !== -1) {
+                    // Got statusValidationError response code, lets throw ValidationError
+                    throw new ValidationError({
+                        statusCode: res.status,
+                        responseText: res.text,
+                    }, this.options);
                 } else {
-                    if (this.options.statusValidationError.indexOf(res.status) !== -1) {
-                        // Got statusValidationError response code, lets throw ValidationError
-                        throw new ValidationError({
-                            statusCode: res.status,
-                            statusText: res.statusType,
-                            responseText: res.text
-                        }, this.options);
-                    } else {
-                        // Throw a InvalidResponseCode error
-                        throw new InvalidResponseCode(res.status, res.statusType, res.text);
-                    }
+                    // Throw a InvalidResponseCode error
+                    throw new InvalidResponseCode(res.status, res.text);
                 }
             } else {
                 // res.hasError should only be true if network level errors occur (not statuscode errors)
-                throw new NetworkError(
-                    res && res.hasError ?
-                        res.error :
-                        'Something went awfully wrong with the request, check network log.'
-                );
+                const message = res && res.hasError ? res.error : '';
+                throw new NetworkError(message || 'Something went awfully wrong with the request, check network log.');
             }
         });
     }
@@ -152,15 +125,23 @@ class GenericResource {
         return `${this.options.apiRoot}${thePath}`;
     }
 
-    createRequest(method, url, query, data) {
+    /* istanbul ignore next */
+    wrapResponse(res, error, req) { // eslint-disable-line class-methods-use-this, no-unused-vars
         throw new Error('Not implemented');
     }
 
-    doRequest(req, resolve) {
+    /* istanbul ignore next */
+    createRequest(method, url, query, data) { // eslint-disable-line class-methods-use-this, no-unused-vars
         throw new Error('Not implemented');
     }
 
-    setHeader(req, key, value) {
+    /* istanbul ignore next */
+    doRequest(req, resolve) { // eslint-disable-line class-methods-use-this, no-unused-vars
+        throw new Error('Not implemented');
+    }
+
+    /* istanbul ignore next */
+    setHeader(req, key, value) { // eslint-disable-line class-methods-use-this, no-unused-vars
         throw new Error('Not implemented');
     }
 }
