@@ -1,5 +1,5 @@
 
-export class ResponseWrapper {
+class ResponseWrapper {
     constructor(response, error, disableDeserialize) {
         this.response = response || {};
         this._error = error;
@@ -15,27 +15,27 @@ export class ResponseWrapper {
     }
 
     /* istanbul ignore next */
-    get status() {
+    get status() { // eslint-disable-line class-methods-use-this
         throw new Error('Not implemented');
     }
 
     /* istanbul ignore next */
-    get statusType() {
+    get statusType() { // eslint-disable-line class-methods-use-this
         throw new Error('Not implemented');
     }
 
     /* istanbul ignore next */
-    get text() {
+    get text() { // eslint-disable-line class-methods-use-this
         throw new Error('Not implemented');
     }
 
     /* istanbul ignore next */
-    get data() {
+    get data() { // eslint-disable-line class-methods-use-this
         throw new Error('Not implemented');
     }
 
     /* istanbul ignore next */
-    get headers() {
+    get headers() { // eslint-disable-line class-methods-use-this
         throw new Error('Not implemented');
     }
 }

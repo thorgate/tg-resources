@@ -1,2 +1,3 @@
+import { SuperAgentResource } from './resource';
 
-export {SuperAgentResource as resource} from './resource';
+export default SuperAgentResource;

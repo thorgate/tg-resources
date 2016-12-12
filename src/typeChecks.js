@@ -1,13 +1,14 @@
 
 export const isArray = Array.isArray || /* istanbul ignore next: fallback */ function (value) {
     return Object.prototype.toString.call(value) === '[object Array]';
-}
+};
 
 export const hasValue = function (value) {
     return typeof value !== 'undefined' && value !== null;
 };
 
-export const isFunction = function(value) {
+export const isFunction = function (value) {
+    /* global window */
     return (typeof window !== 'undefined' && value === window.alert) || Object.prototype.toString.call(value) === '[object Function]';
 };
 

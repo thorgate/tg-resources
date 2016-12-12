@@ -32,7 +32,7 @@ export class SuperagentResponse extends ResponseWrapper {
 }
 
 export class SuperAgentResource extends GenericResource {
-    wrapResponse(response, error, req) {
+    wrapResponse(response, error, req) { // eslint-disable-line class-methods-use-this
         const disableDeserialize = !hasValue(req.get('Accept'));
 
         // For superagent, all 4XX/5XX response codes also return an error object. Since
@@ -44,11 +44,11 @@ export class SuperAgentResource extends GenericResource {
         return new SuperagentResponse(
             response,
             error && error.status === undefined ? error : null,
-            disableDeserialize
+            disableDeserialize,
         );
     }
 
-    createRequest(method, url, query, data) {
+    createRequest(method, url, query, data) { // eslint-disable-line class-methods-use-this
         method = method.toLowerCase();
 
         let req = request[method](url);
@@ -64,13 +64,13 @@ export class SuperAgentResource extends GenericResource {
         return req;
     }
 
-    doRequest(req, resolve) {
+    doRequest(req, resolve) { // eslint-disable-line class-methods-use-this
         req.end((err, res) => {
             resolve(res, err);
         });
     }
 
-    setHeader(req, key, value) {
+    setHeader(req, key, value) { // eslint-disable-line class-methods-use-this
         return req.set(key, value);
     }
 }

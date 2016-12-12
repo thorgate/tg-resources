@@ -1,12 +1,14 @@
+import cookie from 'cookie';
+
 import Router, { Resource } from '.';
 
-import { isArray, isString, hasValue } from './typeChecks';
+import { isArray, isString, isObject, hasValue } from './typeChecks';
 
 
 export function bindResources(routes, $this) {
     const res = {};
 
-    Object.keys(routes).forEach(routeName => {
+    Object.keys(routes).forEach((routeName) => {
         if (!routes[routeName] || !(routes[routeName] instanceof Router || routes[routeName] instanceof Resource)) {
             throw new Error(`All routes must be instances of Router or Resource (see '${routeName}')`);
         }
@@ -28,9 +30,9 @@ export function bindResources(routes, $this) {
 
     try {
         Object.assign($this, res);
-    } catch(e) {
+    } catch (e) {
         if (e instanceof TypeError) {
-            let fieldName = /property ([^\s]+) of/gi.exec((e + ''));
+            let fieldName = /property ([^\s]+) of/gi.exec(`${e}`);
             if (fieldName) {
                 fieldName = `Route ${fieldName[1]} collides`;
             } else {
@@ -44,21 +46,19 @@ export function bindResources(routes, $this) {
             throw e;
         }
     }
-};
+}
 
 export function mergeOptions(...options) {
     const res = {};
 
-    options.filter(x => !!x).forEach(opts => {
-        Object.assign(res, opts);
-    });
+    options.filter(x => !!x).forEach(opts => Object.assign(res, opts));
 
     if (!isArray(res.statusSuccess) && hasValue(res.statusSuccess)) {
-        res.statusSuccess = [res.statusSuccess, ];
+        res.statusSuccess = [res.statusSuccess];
     }
 
     if (!isArray(res.statusValidationError) && hasValue(res.statusValidationError)) {
-        res.statusValidationError = [res.statusValidationError, ];
+        res.statusValidationError = [res.statusValidationError];
     }
 
     return res;
@@ -74,4 +74,15 @@ export function truncate(value, limit) {
     }
 
     return `${value.substring(0, limit - 3)}...`;
+}
+
+export function serializeCookies(cookieVal) {
+    if (isObject(cookieVal)) {
+        return Object.keys(cookieVal)
+            .map(key => cookie.serialize(key, cookieVal[key]))
+            .join('; ');
+    }
+
+    /* istanbul ignore next: safeguard */
+    return null;
 }

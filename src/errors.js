@@ -11,57 +11,57 @@ export class BaseResourceError {
         return this._message;
     }
 
-    get isNetworkError() {
+    get isNetworkError() { // eslint-disable-line class-methods-use-this
         return false;
     }
 
-    get isInvalidResponseCode() {
+    get isInvalidResponseCode() { // eslint-disable-line class-methods-use-this
         return false;
     }
 
-    get isValidationError() {
+    get isValidationError() { // eslint-disable-line class-methods-use-this
         return false;
     }
 }
 
 export class NetworkError extends BaseResourceError {
     constructor(error) {
-        super(`NetworkError`);
+        super('NetworkError');
 
         this.error = error;
     }
 
-    get isNetworkError() {
+    get isNetworkError() { // eslint-disable-line class-methods-use-this
         return true;
     }
 }
 
 export class InvalidResponseCode extends BaseResourceError {
-    constructor(statusCode, responseText, type='InvalidResponseCode') {
+    constructor(statusCode, responseText, type = 'InvalidResponseCode') {
         super(`${type} ${statusCode}: ${truncate(responseText, 256)}`);
 
         this.statusCode = statusCode;
         this.responseText = responseText;
     }
 
-    get isInvalidResponseCode() {
+    get isInvalidResponseCode() { // eslint-disable-line class-methods-use-this
         return true;
     }
 }
 
 
 export class ValidationError extends InvalidResponseCode {
-    constructor(err, options=null, isPrepared=false) {
+    constructor(err, options = null, isPrepared = false) {
         if (isPrepared) {
             err = {
-                responseText: err
+                responseText: err,
             };
         }
 
         err = {
             statusCode: 0,
             responseText: '',
-            ...err
+            ...err,
         };
 
         super(err.statusCode, err.responseText, 'ValidationError');
@@ -73,11 +73,11 @@ export class ValidationError extends InvalidResponseCode {
         this.__parseErrors(err.responseText);
     }
 
-    get isValidationError() {
+    get isValidationError() { // eslint-disable-line class-methods-use-this
         return true;
     }
 
-    get isInvalidResponseCode() {
+    get isInvalidResponseCode() { // eslint-disable-line class-methods-use-this
         return false;
     }
 
@@ -134,7 +134,7 @@ export class ValidationError extends InvalidResponseCode {
         let resNonField = null;
         const resErrors = {};
 
-        const errors = typeof errorText.errors === "undefined" ? errorText : errorText.errors;
+        const errors = typeof errorText.errors === 'undefined' ? errorText : errorText.errors;
         Object.keys(errors).forEach((key) => {
             if (key === 'non_field_errors') {
                 resNonField = instance.__prepareError(errors[key]);
@@ -163,7 +163,7 @@ export class ValidationError extends InvalidResponseCode {
         }
 
         else {
-            return err + '';
+            return `${err}`;
         }
     }
 }

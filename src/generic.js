@@ -1,5 +1,5 @@
 // We use superagent as a default worker
-import {resource as SuperAgentResource} from './superagent';
+import SuperAgentResource from './superagent';
 
 
 // import SingleObjectResource factory

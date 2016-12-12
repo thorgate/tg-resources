@@ -6,7 +6,7 @@ import { isSubClass } from '../src/typeChecks';
 
 export default {
     'Exports correct variables': {
-        'exports contain expected keys'() {
+        'exports contain expected keys': () => {
             expect(tgResources.GenericResource).to.be.a('function', 'GenericResource is exported');
             expect(tgResources.BaseResourceError).to.be.a('function', 'BaseResourceError is exported');
             expect(tgResources.InvalidResponseCode).to.be.a('function', 'InvalidResponseCode is exported');
@@ -18,19 +18,19 @@ export default {
         },
     },
     'correct subclassing': {
-        'SingleObjectResource is subclass of GenericResource'() {
+        'SingleObjectResource is subclass of GenericResource': () => {
             assert(isSubClass(tgResources.Resource, tgResources.GenericResource), 'its not');
         },
-        'InvalidResponseCode is subclass of BaseResourceError'() {
+        'InvalidResponseCode is subclass of BaseResourceError': () => {
             assert(isSubClass(tgResources.InvalidResponseCode, tgResources.BaseResourceError), 'its not');
         },
-        'ValidationError is subclass of InvalidResponseCode'() {
+        'ValidationError is subclass of InvalidResponseCode': () => {
             assert(isSubClass(tgResources.ValidationError, tgResources.BaseResourceError), 'its not');
         },
-        'ValidationError is subclass of BaseResourceError'() {
+        'ValidationError is subclass of BaseResourceError': () => {
             assert(isSubClass(tgResources.ValidationError, tgResources.BaseResourceError), 'its not');
         },
-        'NetworkError is subclass of BaseResourceError'() {
+        'NetworkError is subclass of BaseResourceError': () => {
             assert(isSubClass(tgResources.ValidationError, tgResources.BaseResourceError), 'its not');
         },
     },

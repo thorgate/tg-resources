@@ -58,6 +58,8 @@
     "debug": "^2.2.0",
     "doctoc": "*",
     "eslint": "*",
+    "eslint-config-airbnb-base": "^11.0.0",
+    "eslint-plugin-import": "^2.2.0",
     "express": "^4.14.0",
     "fs-extra": "*",
     "isparta": "*",
