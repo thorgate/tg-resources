@@ -1,11 +1,8 @@
-// We use superagent as a default worker
-import {resource as Resource} from './superagent';
-
-// import SingleObjectResource factory
-import makeSingle from './single';
-
 // Export everything
-export const GenericResource = Resource;
-export {getConfig, setConfig} from './init';
-export {InvalidResponseCode, ValidationError} from './errors';
-export default makeSingle(Resource);
+import Router from './router';
+
+export {Resource, GenericResource} from './generic';
+export {BaseResourceError, InvalidResponseCode, ValidationError, NetworkError} from './errors';
+
+
+export default Router;

@@ -1,50 +1,94 @@
-import is from 'is';
-import _ from 'lodash';
+import renderTemplate from 'lodash.template';
 import cookie from 'cookie';
 
-import {getConfig, getExtraHeaders, getOnSourceError, getCookies} from './init';
 import Response from './response';
-import {InvalidResponseCode} from './errors';
+
+import {DEFAULT_OPTIONS} from './constants';
+import {InvalidResponseCode, NetworkError, ValidationError} from './errors';
+import {isArray, isFunction, isObject, isString, hasValue} from './typeChecks';
+import {mergeOptions} from './util';
 
 
 class GenericResource {
     /**
-     *
-     * @param apiEndpoint String value which supports syntax of _.template
-     * @param expectedStatus
-     * @param [mutateResponse] Function to modify the response before resolving it
+     * @param apiEndpoint Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
+     * @param options Customize options for this resource (see `Router.options`)
      */
-    constructor(apiEndpoint, expectedStatus, mutateResponse) {
-        this.apiEndpoint = getConfig('API_BASE') + apiEndpoint;
-        this.expectedStatus = expectedStatus || 200;
+    constructor(apiEndpoint, options) {
+        this.apiEndpoint = apiEndpoint;
 
-        if (!is.array(this.expectedStatus)) {
-            this.expectedStatus = [this.expectedStatus, ];
+        // Set options
+        this._customOptions = options;
+
+        // set parent to null
+        this._parent = null;
+    }
+
+    get parent() {
+        return this._parent;
+    }
+
+    _setParent(parent) {
+        this._parent = parent;
+    }
+
+    get isBound() {
+        return !!this._parent || !!this._options;
+    }
+
+    get options() {
+        if (!this._options) {
+            return mergeOptions(
+                DEFAULT_OPTIONS,
+                this._parent ? this._parent.options : null,
+                this._customOptions
+            );
         }
 
-        if (is.fn(mutateResponse)) {
-            this.mutateResponse = mutateResponse;
+        return this._options;
+    }
+
+    mutateResponse(responseData, response) {
+        if (isFunction(this.options.mutateResponse)) {
+            return this.options.mutateResponse(responseData, response, this);
         }
 
-        else {
-            this.mutateResponse = response => response;
+        return responseData;
+    }
+
+    getHeaders() {
+        const headers = {
+            ...(this.options.defaultHeaders || {}),
+            ...((isFunction(this.options.headers) ? this.options.headers() : this.options.headers) || {})
+        };
+
+        const cookieVal = this.serializeCookies(this.getCookies());
+        if (cookieVal) {
+            headers.Cookie = cookieVal;
         }
+
+        return headers;
     }
 
     getCookies() {
-        let cookieVal = getCookies();
+        return {
+            ...(this._parent ? this._parent.getCookies() : {}),
+            ...(isFunction(this.options.cookies) ? this.options.cookies() : {})
+        };
+    }
 
-        if (cookieVal) {
+    serializeCookies(cookieVal) {
+        if (isObject(cookieVal)) {
             const pairs = [];
 
             Object.keys(cookieVal).forEach(key => {
                 pairs.push(cookie.serialize(key, cookieVal[key]));
             });
 
-            cookieVal = pairs.join('; ');
+            return pairs.join('; ');
         }
 
-        return cookieVal;
+        return null;
     }
 
     wrapResponse(res, error) {
@@ -53,18 +97,11 @@ class GenericResource {
 
     handleRequest(req) {
         return this.ensureStatusAndJson(new Promise((resolve) => {
-            const headers = _.extend({
-                Accept: 'application/json'
-            }, getExtraHeaders());
+            const headers = this.getHeaders();
 
-            const cookieVal = this.getCookies();
-            if (cookieVal) {
-                headers.Cookie = cookieVal;
-            }
-
-            if (headers && is.object(headers)) {
+            if (headers && isObject(headers)) {
                 Object.keys(headers).forEach(key => {
-                    if (is.defined(headers[key]) && !is.nil(headers[key])) {
+                    if (hasValue(headers[key])) {
                         req = this.setHeader(req, key, headers[key]);
                     }
                 });
@@ -76,40 +113,43 @@ class GenericResource {
 
     ensureStatusAndJson(prom) {
         return prom.then((res) => {
-            // Check expected status & error
-            if (res && !res.hasError && this.expectedStatus.indexOf(res.status) !== -1) {
-                return this.mutateResponse(res.body);
-            }
-
-            else {
-                if (res) {
-                    // Throw a InvalidResponseCode error
-                    throw new InvalidResponseCode(res.status, res.statusType, res.text);
+            // If no error occured
+            if (res && !res.hasError) {
+                if (this.options.statusSuccess.indexOf(res.status) !== -1) {
+                    // Got statusSuccess response code, lets resolve this promise
+                    return this.mutateResponse(res.data, res);
+                } else {
+                    if (this.options.statusValidationError.indexOf(res.status) !== -1) {
+                        // Got statusValidationError response code, lets throw ValidationError
+                        throw new ValidationError({
+                            statusCode: res.status,
+                            statusText: res.statusType,
+                            responseText: res.text
+                        }, this.options);
+                    } else {
+                        // Throw a InvalidResponseCode error
+                        throw new InvalidResponseCode(res.status, res.statusType, res.text);
+                    }
                 }
-
-                else {
-                    // Throw a Generic error since the request failed
-                    throw res.error || new Error('Something went awfully wrong with the request, check network log.');
-                }
+            } else {
+                // res.hasError should only be true if network level errors occur (not statuscode errors)
+                throw new NetworkError(
+                    res && res.hasError ?
+                        res.error :
+                        'Something went awfully wrong with the request, check network log.'
+                );
             }
-        }).catch((error) => {
-            // Rethrow any errors
-            throw error;
         });
     }
 
     buildThePath(urlParams) {
         let thePath = this.apiEndpoint;
 
-        if (urlParams && !(is.object(urlParams) && Object.keys(urlParams).length === 0)) {
-            thePath = _.template(this.apiEndpoint)(urlParams);
+        if (urlParams && !(isObject(urlParams) && Object.keys(urlParams).length === 0)) {
+            thePath = renderTemplate(this.apiEndpoint)(urlParams);
         }
 
-        return thePath;
-    }
-
-    onSourceError(error) {
-        return getOnSourceError(error);
+        return `${this.options.apiRoot}${thePath}`;
     }
 
     createRequest(method, url, query, data) {

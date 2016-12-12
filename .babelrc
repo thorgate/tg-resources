@@ -1,6 +1,4 @@
 {
-  "stage": 0,
-  "optional": [
-      "es7.classProperties"
-  ]
+  "presets": ["es2015"],
+  "plugins": ["transform-class-properties", "transform-object-rest-spread"]
 }
