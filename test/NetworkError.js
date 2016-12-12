@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import {NetworkError} from '../';
+import { NetworkError } from '../index';
 
 
 let instance = null;

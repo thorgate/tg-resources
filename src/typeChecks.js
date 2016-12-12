@@ -1,5 +1,5 @@
 
-export const isArray = Array.isArray || function (value) {
+export const isArray = Array.isArray || /* istanbul ignore next: fallback */ function (value) {
     return Object.prototype.toString.call(value) === '[object Array]';
 }
 

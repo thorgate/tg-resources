@@ -73,7 +73,7 @@ class GenericResource {
     getCookies() {
         return {
             ...(this._parent ? this._parent.getCookies() : {}),
-            ...(isFunction(this.options.cookies) ? this.options.cookies() : {})
+            ...((isFunction(this.options.cookies) ? this.options.cookies() : this.options.cookies) || {})
         };
     }
 
@@ -88,11 +88,8 @@ class GenericResource {
             return pairs.join('; ');
         }
 
+        /* istanbul ignore next: safeguard */
         return null;
-    }
-
-    wrapResponse(res, error) {
-        return new Response(res, error);
     }
 
     handleRequest(req) {
@@ -107,7 +104,7 @@ class GenericResource {
                 });
             }
 
-            this.doRequest(req, (response, error) => resolve(this.wrapResponse(response, error)));
+            this.doRequest(req, (response, error) => resolve(this.wrapResponse(response, error, req)));
         }));
     }
 
@@ -123,12 +120,11 @@ class GenericResource {
                         // Got statusValidationError response code, lets throw ValidationError
                         throw new ValidationError({
                             statusCode: res.status,
-                            statusText: res.statusType,
                             responseText: res.text
                         }, this.options);
                     } else {
                         // Throw a InvalidResponseCode error
-                        throw new InvalidResponseCode(res.status, res.statusType, res.text);
+                        throw new InvalidResponseCode(res.status, res.text);
                     }
                 }
             } else {
@@ -152,14 +148,22 @@ class GenericResource {
         return `${this.options.apiRoot}${thePath}`;
     }
 
+    /* istanbul ignore next */
+    wrapResponse(res, error, req) {
+        throw new Error('Not implemented');
+    }
+
+    /* istanbul ignore next */
     createRequest(method, url, query, data) {
         throw new Error('Not implemented');
     }
 
+    /* istanbul ignore next */
     doRequest(req, resolve) {
         throw new Error('Not implemented');
     }
 
+    /* istanbul ignore next */
     setHeader(req, key, value) {
         throw new Error('Not implemented');
     }

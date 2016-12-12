@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import {InvalidResponseCode} from '../lib';
+import { InvalidResponseCode } from '../index';
 
 
 let instance = null;
@@ -12,16 +12,13 @@ const errObject = {
 export default {
     'InvalidResponseCode api': {
         beforeEach() {
-            instance = new InvalidResponseCode(500, 'Internal Server Error', 'It broke yo!');
+            instance = new InvalidResponseCode(500, 'Internal Server Error');
         },
         'instance.statusCode is correct'() {
             expect(instance.statusCode).to.equal(500);
         },
-        'instance.statusText is correct'() {
-            expect(instance.statusText).to.equal('Internal Server Error');
-        },
         'instance.responseText is correct'() {
-            expect(instance.responseText).to.equal('It broke yo!');
+            expect(instance.responseText).to.equal('Internal Server Error');
         },
         'toString works'() {
             expect(instance.toString()).to.equal('InvalidResponseCode 500: Internal Server Error');

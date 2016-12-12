@@ -1,8 +1,9 @@
 
 export class ResponseWrapper {
-    constructor(response, error) {
+    constructor(response, error, disableDeserialize) {
         this.response = response || {};
         this._error = error;
+        this.disableDeserialize = disableDeserialize;
     }
 
     get hasError() {
@@ -13,22 +14,27 @@ export class ResponseWrapper {
         return this._error;
     }
 
+    /* istanbul ignore next */
     get status() {
         throw new Error('Not implemented');
     }
 
+    /* istanbul ignore next */
     get statusType() {
         throw new Error('Not implemented');
     }
 
+    /* istanbul ignore next */
     get text() {
         throw new Error('Not implemented');
     }
 
+    /* istanbul ignore next */
     get data() {
         throw new Error('Not implemented');
     }
 
+    /* istanbul ignore next */
     get headers() {
         throw new Error('Not implemented');
     }

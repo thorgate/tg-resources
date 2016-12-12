@@ -1,12 +1,11 @@
 import { expect } from 'chai';
 
-import {ValidationError} from '../';
+import { ValidationError } from '../index';
 
 let instance = null;
 
 const responseBody = {
     statusCode: 400,
-    statusText: 'Bad Request',
     responseText: JSON.stringify({
         errors: {
             // Converted to single string
@@ -40,7 +39,7 @@ export default {
 
         'constructor works'() {
             // ResponseText can be empty
-            new ValidationError({responseText: ""});
+            new ValidationError({ responseText: "" });
 
             // ResponseText can be mising
             new ValidationError({});
@@ -51,14 +50,11 @@ export default {
         'instance.statusCode is correct'() {
             expect(instance.statusCode).to.equal(400);
         },
-        'instance.statusText is correct'() {
-            expect(instance.statusText).to.equal('Bad Request');
-        },
         'instance.responseText is correct'() {
             expect(instance.responseText).to.equal(responseBody.responseText);
         },
         'toString works'() {
-            expect(instance.toString()).to.equal(`ValidationError 400: Bad Request`);
+            expect(instance.toString()).to.equal(`ValidationError 400: ${responseBody.responseText}`);
             expect(instance.toString()).to.equal(instance._message);
         },
         'isNetworkError is false'() {

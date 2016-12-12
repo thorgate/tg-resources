@@ -1,4 +1,5 @@
-import {isArray, isObject, isString} from './typeChecks';
+import { isArray, isObject, isString } from './typeChecks';
+import { truncate } from './util';
 
 
 export class BaseResourceError {
@@ -36,11 +37,10 @@ export class NetworkError extends BaseResourceError {
 }
 
 export class InvalidResponseCode extends BaseResourceError {
-    constructor(statusCode, statusText, responseText, type='InvalidResponseCode') {
-        super(`${type} ${statusCode}: ${statusText}`);
+    constructor(statusCode, responseText, type='InvalidResponseCode') {
+        super(`${type} ${statusCode}: ${truncate(responseText, 256)}`);
 
         this.statusCode = statusCode;
-        this.statusText = statusText;
         this.responseText = responseText;
     }
 
@@ -60,12 +60,11 @@ export class ValidationError extends InvalidResponseCode {
 
         err = {
             statusCode: 0,
-            statusText: 'Unknown',
             responseText: '',
             ...err
         };
 
-        super(err.statusCode, err.statusText, err.responseText, 'ValidationError');
+        super(err.statusCode, err.responseText, 'ValidationError');
 
         this._customOptions = options || {};
         this.errors = {};

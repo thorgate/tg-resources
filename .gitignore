@@ -6,4 +6,5 @@ dist
 .release
 tmp
 coverage
+.nyc_output
 npm-debug.log

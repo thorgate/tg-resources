@@ -1,9 +1,43 @@
 import { expect } from 'chai';
 
-import Router, { Resource } from '../';
+import Router, { Resource } from '../index';
 
 
 export default {
+    'routers work': {
+        'routes are type-checked'() {
+            expect(() => {
+                new Router({
+                    top: null
+                });
+            }).to.throw(Error, /All routes must be instances of Router or Resource/);
+
+            expect(() => {
+                new Router({
+                    top: function () {}
+                });
+            }).to.throw(Error, /All routes must be instances of Router or Resource/);
+
+            expect(() => {
+                new Router({
+                    top: () => {}
+                });
+            }).to.throw(Error, /All routes must be instances of Router or Resource/);
+        },
+        'rebind fails'() {
+            const res = new Resource('kek');
+
+            new Router({
+                top: res
+            });
+
+            expect(() => {
+                new Router({
+                    top: res
+                });
+            }).to.throw(Error, /Route 'top' is bound already/);
+        }
+    },
     'cant create router with route names which collide with router built-in methods': {
         'options overwrite throws'() {
             expect(() => {
