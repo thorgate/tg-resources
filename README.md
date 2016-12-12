@@ -60,7 +60,7 @@ api.cat.del({pk: 1}, null, {free: 'yes'}).then(onLoad, onError);
 ```
 
 Please note that the router is useful for providing default configuration and grouping
-endpoints. It's still possible to use Resources used without a router(see [Resource api](#resource-api))
+endpoints. It's still possible to use Resources without a router(see [Resource api](#resource-api))
 
 ## <a name="configuration"></a>Configuration
 
