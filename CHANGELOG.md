@@ -36,7 +36,7 @@
 
    Instead of using `setConfig` and `getConfig` one must set options per Resource<sup>1</sup>
 
-   [1] To keep things DRY use `Router` for defining your configuration. Note: It's also possible to extend `Resource` and can be a better alternative in some cases.
+   [1] To keep things DRY use `Router` for defining your configuration. Note: It's also possible to extend `Resource` which can be a better alternative in some cases.
 
 3. Configuration options have changed:
 
