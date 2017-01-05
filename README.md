@@ -233,8 +233,7 @@ Error class used when unexpected response code occurs
 
 ### ``ValidationError``
 
-Error class used when backend respons with a ``errorStatus``. This object can also be extended via
-``Config.ValidationErrorExtras``.
+Error class used when backend response code is in ``options.statusValidationError``.
 
 #### Extends ``InvalidResponseCode`` and overwrites:
 
