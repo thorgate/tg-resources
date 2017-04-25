@@ -47,16 +47,16 @@ api.cats.fetch(null, {gender: 'M'}).then(onLoad, onError);
 api.cats.head(null, {gender: 'M'}).then(onLoad, onError);
 
 // Do a post request to /api/v1/cats with data: {name: 'Twinky', gender: 'M'}
-api.cats.post(null, null, {name: 'Twinky', gender: 'M'}).then(onLoad, onError);
+api.cats.post(null, {name: 'Twinky', gender: 'M'}).then(onLoad, onError);
 
 // Do a patch request to /api/v1/cats/1 with data: {name: 'Tinkelberg'}
-api.cat.patch({pk: 1}, null, {name: 'Tinkelberg'}).then(onLoad, onError);
+api.cat.patch({pk: 1}, {name: 'Tinkelberg'}).then(onLoad, onError);
 
 // Do a put request to /api/v1/cats with data: {pk: 1, name: 'Twinky'}
-api.cats.put(null, null, {pk: 1, name: 'Twinky', gender: 'M'}).then(onLoad, onError);
+api.cats.put(null, {pk: 1, name: 'Twinky', gender: 'M'}).then(onLoad, onError);
 
 // Do a delete request to /api/v1/cats/1 with data: {'free':'yes'}
-api.cat.del({pk: 1}, null, {free: 'yes'}).then(onLoad, onError);
+api.cat.del({pk: 1}, {free: 'yes'}).then(onLoad, onError);
 ```
 
 Please note that the router is useful for providing default configuration and grouping
