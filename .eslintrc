@@ -22,5 +22,5 @@
 
         "padded-blocks": [0, "never"],
         "indent": [2, 4]
-    },
+    }
 }
