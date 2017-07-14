@@ -86,5 +86,6 @@
     ],
     "sourceMap": false,
     "instrument": false
-  }
+  },
+  "react-native": "./es/index.js"
 }
