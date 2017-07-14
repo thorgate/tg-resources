@@ -2,7 +2,7 @@ import { assert, expect } from 'chai';
 
 import listen from '../test-server';
 
-import { Resource } from '../index';
+import { Resource } from '../src';
 import { isSubClass } from '../src/typeChecks';
 
 

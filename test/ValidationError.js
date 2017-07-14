@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { ValidationError } from '../index';
+import { ValidationError } from '../src';
 
 let instance = null;
 

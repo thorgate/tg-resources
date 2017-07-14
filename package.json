@@ -2,7 +2,9 @@
   "name": "tg-resources",
   "version": "1.0.0",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
-  "main": "lib.js",
+  "main": "./dist/index.js",
+  "jsnext:main": "./es/index.js",
+  "module": "es/index.js",
   "files": [
     "dist/",
     "src/",
@@ -10,18 +12,17 @@
     "index.js"
   ],
   "scripts": {
-    "clean": "rimraf dist",
-    "lint": "eslint src test",
-    "watch": "watch 'npm run build' src test",
+    "clean": "$(npm bin)/rimraf dist",
+    "lint": "$(npm bin)/eslint src test",
     "pretest": "npm run lint",
-    "test": "NODE_ENV=test nyc --require babel-register mocha -u exports test/*.js",
-    "coverage": "nyc report && nyc report --reporter=html",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "test": "cross-env BABEL_ENV=test $(npm bin)/nyc mocha -u exports test/*.js",
+    "coverage": "$(npm bin)/nyc report && $(npm bin)/nyc report --reporter=html",
+    "coveralls": "$(npm bin)/nyc report --reporter=text-lcov | $(npm bin)/coveralls",
     "prebuild": "npm run clean -s",
-    "build": "babel --optional runtime src -d dist",
-    "toc": "doctoc --github --title \"# Changelog\" CHANGELOG.md",
-    "prerelease": "npm run build -s",
-    "release": "node ./scripts/release.js"
+    "build": "npm run build:umd && npm run build:es",
+    "build:umd": "cross-env BABEL_ENV=commonjs $(npm bin)/babel src -d dist",
+    "build:es": "cross-env BABEL_ENV=es $(npm bin)/babel src -d es",
+    "toc": "$(npm bin)/doctoc --github --title \"# Changelog\" CHANGELOG.md"
   },
   "repository": {
     "type": "git",
@@ -46,6 +47,7 @@
     "babel-plugin-istanbul": "^4.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.24.0",
     "babel-runtime": "*",
@@ -53,6 +55,7 @@
     "chai": "^4.1.0",
     "cookie-parser": "^1.4.3",
     "coveralls": "*",
+    "cross-env": "^5.0.1",
     "debug": "*",
     "doctoc": "*",
     "eslint": "^3.19.0",
@@ -78,6 +81,9 @@
     "cookie": ">=0.2.2"
   },
   "nyc": {
+    "require": [
+      "babel-register"
+    ],
     "sourceMap": false,
     "instrument": false
   }

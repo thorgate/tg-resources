@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import Router, { Resource } from '../index';
+import Router, { Resource } from '../src';
 
 
 export default {

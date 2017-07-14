@@ -1,6 +1,6 @@
 import { assert, expect } from 'chai';
 
-import * as tgResources from '../index';
+import * as tgResources from '../src';
 import { isSubClass } from '../src/typeChecks';
 
 

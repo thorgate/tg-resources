@@ -1,16 +1,42 @@
 {
-  "presets": ["es2015"],
-  "plugins": ["transform-class-properties", "transform-object-rest-spread"],
-  "env": {
-    "test": {
-      "plugins": [
-        ["istanbul", {
-          "exclude": [
-            "**/test/*.js",
-            "test-server.js"
-          ]
-        }]
-      ]
+    "env": {
+        "commonjs": {
+            "presets": [
+                "es2015"
+            ],
+            "plugins": [
+                "transform-runtime",
+                "transform-class-properties",
+                "transform-object-rest-spread"
+            ]
+        },
+        "es": {
+            "presets": [
+                ["es2015", {
+                    "loose": false,
+                    "modules": false
+                }]
+            ],
+            "plugins": [
+                "transform-runtime",
+                "transform-class-properties",
+                "transform-object-rest-spread"
+            ]
+        },
+        "test": {
+            "presets": [
+                "es2015"
+            ],
+            "plugins": [
+                "transform-class-properties",
+                "transform-object-rest-spread",
+                ["istanbul", {
+                    "exclude": [
+                        "**/test/*.js",
+                        "test-server.js"
+                    ]
+                }]
+            ]
+        }
     }
-  }
 }
