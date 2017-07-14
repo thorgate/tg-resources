@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { InvalidResponseCode } from '../index';
+import { InvalidResponseCode } from '../src';
 
 
 let instance = null;
