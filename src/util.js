@@ -48,10 +48,10 @@ export function bindResources(routes, $this) {
     }
 }
 
-export function mergeOptions(...options) {
+export function mergeConfig(...config) {
     const res = {};
 
-    options.filter(x => !!x).forEach(opts => Object.assign(res, opts));
+    config.filter(x => !!x).forEach(opts => Object.assign(res, opts));
 
     if (!isArray(res.statusSuccess) && hasValue(res.statusSuccess)) {
         res.statusSuccess = [res.statusSuccess];

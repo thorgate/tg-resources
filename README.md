@@ -138,7 +138,7 @@ Construct a new resource for loading data from a single (or dynamic) endpoint
 #### Arguments
 
 1. `apiEndpoint` *(string)*: Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
-2. `options` *(Object)*: Object containing options for this resource. see [Configuration](#configuration)
+2. `config` *(Object)*: Object containing config for this resource. see [Configuration](#configuration)
 
 #### Tokenized endpoints
 
@@ -165,6 +165,7 @@ Do a get request to the resource endpoint with optional kwargs and query paramet
 
 1. `kwargs={}` *(Object)*: Object containing the replacement values if the resource uses tokenized urls
 2. `query={}` *(Object|string)*: Query parameters to use when doing the request.
+3. `method='get'` *(string)*: Lowercase name of the HTTP method that will be used for this request.
 
 #### Returns
 
@@ -233,7 +234,7 @@ Error class used when unexpected response code occurs
 
 ### ``ValidationError``
 
-Error class used when backend response code is in ``options.statusValidationError``.
+Error class used when backend response code is in ``config.statusValidationError``.
 
 #### Extends ``InvalidResponseCode`` and overwrites:
 

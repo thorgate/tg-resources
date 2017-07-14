@@ -1,11 +1,11 @@
 import DEFAULTS from './constants';
-import { bindResources, mergeOptions } from './util';
+import { bindResources, mergeConfig } from './util';
 
 
 class Router {
-    constructor(routes, options) {
-        // Set options
-        this._customOptions = options;
+    constructor(routes, config) {
+        // Set config
+        this._customConfig = config;
 
         // set parent to null
         this._parent = null;
@@ -37,20 +37,20 @@ class Router {
     }
 
     get isBound() {
-        return !!this._parent || !!this._options;
+        return !!this._parent || !!this._config;
     }
 
-    get options() {
-        if (!this._options) {
-            this._options = mergeOptions(
+    get config() {
+        if (!this._config) {
+            this._config = mergeConfig(
                 DEFAULTS,
-                this._parent ? this._parent.options : null,
-                this.defaultOptions || this.constructor.defaultOptions || null,
-                this._customOptions,
+                this._parent ? this._parent.config : null,
+                this.defaultConfig || this.constructor.defaultConfig || null,
+                this._customConfig,
             );
         }
 
-        return this._options;
+        return this._config;
     }
 }
 

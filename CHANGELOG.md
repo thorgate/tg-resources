@@ -12,6 +12,13 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+### v1.1.0 [Not Released]
+
+ **Warning:** Breaking change (technically)
+
+ * Renamed internal .options (per resource/router) to .config (see #10)
+ * Added built-in for `OPTIONS` request: `Resource.options` (see #10)
+
 ### v1.0.0
 
 **v1.0.0 introduces breaking changes**
@@ -35,11 +42,11 @@
 
 2. Global configuration was removed
 
-   Instead of using `setConfig` and `getConfig` one must set options per Resource<sup>1</sup>
+   Instead of using `setConfig` and `getConfig` one must set config per Resource<sup>1</sup>
 
    [1] To keep things DRY use `Router` for defining your configuration. Note: It's also possible to extend `Resource` which can be a better alternative in some cases.
 
-3. Configuration options have changed:
+3. Configuration parameters have changed:
 
    - `API_BASE` is now `apiRoot`
    - `getExtraHeaders` is now `headers`
@@ -63,7 +70,7 @@
 
    old: `new Resource(apiEndpoint, expectedStatus, mutateResponse, errorStatus)`
 
-   new: `new Resource(apiEndpoint, options)`
+   new: `new Resource(apiEndpoint, config)`
 
 ### v0.3.3
 
