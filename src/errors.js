@@ -51,7 +51,7 @@ export class InvalidResponseCode extends BaseResourceError {
 
 
 export class ValidationError extends InvalidResponseCode {
-    constructor(err, options = null, isPrepared = false) {
+    constructor(err, config = null, isPrepared = false) {
         if (isPrepared) {
             err = {
                 responseText: err,
@@ -66,7 +66,7 @@ export class ValidationError extends InvalidResponseCode {
 
         super(err.statusCode, err.responseText, 'ValidationError');
 
-        this._customOptions = options || {};
+        this._customConfig = config || {};
         this.errors = {};
         this.nonFieldErrors = null;
 
@@ -111,11 +111,11 @@ export class ValidationError extends InvalidResponseCode {
     }
 
     __prepareError(err) {
-        return ((this._customOptions ? this._customOptions.prepareError : null) || ValidationError.defaultPrepareError)(err, this);
+        return ((this._customConfig ? this._customConfig.prepareError : null) || ValidationError.defaultPrepareError)(err, this);
     }
 
     __parseErrors(errorText) {
-        const handler = (this._customOptions ? this._customOptions.parseErrors : null) || ValidationError.defaultParseErrors;
+        const handler = (this._customConfig ? this._customConfig.parseErrors : null) || ValidationError.defaultParseErrors;
         const result = handler(errorText, this);
 
         this.nonFieldErrors = result[0];
@@ -159,7 +159,7 @@ export class ValidationError extends InvalidResponseCode {
 
         else if (isObject(err)) {
             // Note: We clone the object just in case
-            return new ValidationError(Object.assign({}, err), instance ? instance._customOptions : null, true);
+            return new ValidationError(Object.assign({}, err), instance ? instance._customConfig : null, true);
         }
 
         else {

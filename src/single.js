@@ -1,6 +1,5 @@
 export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
-
         fetch(kwargs, query, method = 'get') {
             const thePath = this.buildThePath(kwargs);
             return this.handleRequest(this.createRequest(method, thePath, query));
@@ -8,6 +7,10 @@ export default function makeSingle(baseClass) {
 
         head(kwargs, query) {
             return this.fetch(kwargs, query, 'head');
+        }
+
+        options(kwargs, query) {
+            return this.fetch(kwargs, query, 'options');
         }
 
         post(kwargs, data, query, method = 'post') {

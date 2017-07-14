@@ -39,12 +39,12 @@ export default {
         },
     },
     'cant create router with route names which collide with router built-in methods': {
-        'options overwrite throws': () => {
+        'config overwrite throws': () => {
             expect(() => {
                 new Router({
-                    options: new Resource('kek'),
+                    config: new Resource('kek'),
                 });
-            }).to.throw(Error, /options collides with Router built-in method names/);
+            }).to.throw(Error, /config collides with Router built-in method names/);
         },
         'isBound overwrite throws': () => {
             expect(() => {
@@ -88,17 +88,17 @@ export default {
             expect(sdk.me).to.be.an.instanceof(Resource);
             expect(sdk.me.apiEndpoint).to.be.equal('user/me');
         },
-        'defaultOptions works': () => {
+        'defaultConfig works': () => {
             class SDK extends Router {
-                static defaultOptions = {
+                static defaultConfig = {
                     apiRoot: 'some/root',
                 };
             }
 
             const sdk = new SDK();
 
-            expect(sdk.options).to.be.an('object');
-            expect(sdk.options.apiRoot).to.be.equal('some/root');
+            expect(sdk.config).to.be.an('object');
+            expect(sdk.config.apiRoot).to.be.equal('some/root');
         },
     },
 };

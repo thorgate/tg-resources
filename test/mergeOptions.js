@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 
-import { mergeOptions } from '../src/util';
+import { mergeConfig } from '../src/util';
 
 
 export default {
-    'mergeOptions api': {
+    'mergeConfig api': {
         'assigns values': () => {
-            expect(mergeOptions(
+            expect(mergeConfig(
                 { foo: 1 },
                 { bar: 1 },
                 { baz: 1 },
@@ -17,21 +17,21 @@ export default {
             });
         },
         'statusSuccess is converted to an array': () => {
-            expect(mergeOptions(
+            expect(mergeConfig(
                 { statusSuccess: 200 },
             )).to.deep.equal({
                 statusSuccess: [200],
             });
         },
         'statusValidationError is converted to an array': () => {
-            expect(mergeOptions(
+            expect(mergeConfig(
                 { statusValidationError: 400 },
             )).to.deep.equal({
                 statusValidationError: [400],
             });
         },
         'overwrite order is LTR': () => {
-            expect(mergeOptions(
+            expect(mergeConfig(
                 { foo: 1 },
                 { foo: 2 },
                 { foo: 3 },
@@ -39,7 +39,7 @@ export default {
                 foo: 3,
             });
 
-            expect(mergeOptions(
+            expect(mergeConfig(
                 { statusSuccess: 200 },
                 { statusSuccess: 201 },
                 { statusSuccess: 202 },
@@ -47,7 +47,7 @@ export default {
                 statusSuccess: [202],
             });
 
-            expect(mergeOptions(
+            expect(mergeConfig(
                 { statusValidationError: 400 },
                 { statusValidationError: 401 },
                 { statusValidationError: 402 },
