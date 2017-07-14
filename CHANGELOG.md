@@ -3,6 +3,7 @@
 # Changelog
 
 - [v1.0.0](#v100)
+  - [Migrating to 1.0.0](#migrating-to-100)
 - [v0.3.3](#v033)
 - [v0.3.1](#v031)
 - [v0.3.0](#v030)
