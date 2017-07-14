@@ -16,3 +16,19 @@ after_success:
 
 notifications:
     email: false
+
+deploy:
+  provider: pypi
+  email: hi@thorgate.eu
+  api_key:
+    secure: >
+      l/FTUV6DJujpWGQfg3pwblwapt1O6NBrEP2KBV4amDmk7t7q0S/1a8/bSHQsBQODlk5FiPRkn7AMVgwPIeITAryyRr4oyt7lqyBU8aUsZLZUI
+      4AhZCWZ3qxKISc8gGXJy+PnoFaNbSRBWW/sPvmU45nnP8dbI1+O4EmGxO1oVpW24XFctC7N9chTvRJnBC6G1i1wQyMqmggL2uD7yd6f2KdNDC
+      Lii9OuR0uFNIMr8BXCIpJznCdTQES7AO9EjlHKktxhc4jTMHPQFrXKrWu3NWjmWFeOp/rqce0tThurTIGuIbdayGnTwf3vFf2JvX376D7QgRj
+      OVgdeZA7iN0Obgosfhxho2pdsIofrWycwIASAJR4bew7H1yVTNZB/JaBbxzfPH517P5wFfnLSEaLzetqGonzpAM+Ah8PZIazccZFQ29jB4ylS
+      EFRwwca7+QQjTh5GJjArO4R2Mn3YeVjqpGRtIhjRe6QwWFf0So/90hiyfaKQJ9ykSbo3SC/FB0Jtm66g0JvZcNo8yi8V+bYm+8Kt2IivKxFvT
+      9w0azo/iccNaIvJi8u9iaba/xSPRCjSwq2mTgpripiRiJhX/tLEp2FHoZqIGvfjEnjtnrJb34M+Gh6XyzifFvugJkJWHc+v154i3taM5+ynJx
+      RaJMKFE6RC2iL2rSCTqWy0wO3c040=
+  on:
+    tags: true
+    branch: master
