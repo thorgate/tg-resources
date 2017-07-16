@@ -18,7 +18,7 @@ notifications:
     email: false
 
 deploy:
-  provider: node
+  provider: npm
   email: hi@thorgate.eu
   api_key:
     secure: >
