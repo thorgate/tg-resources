@@ -1,17 +1,20 @@
 
 class ResponseWrapper {
-    constructor(response, error, disableDeserialize) {
-        this.response = response || {};
+    constructor(response, error) {
+        this._response = response;
         this._error = error;
-        this.disableDeserialize = disableDeserialize;
     }
 
-    get hasError() {
-        return !!this._error;
+    get response() {
+        return this._response || /* istanbul ignore next: safeguard */ {};
     }
 
     get error() {
         return this._error;
+    }
+
+    get hasError() {
+        return !!this.error;
     }
 
     /* istanbul ignore next */

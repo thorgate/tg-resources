@@ -7,32 +7,45 @@ import { isSubClass } from '../src/typeChecks';
 
 
 const expectResponse = (prom, expectedData, done) => {
-    prom.then((data) => {
-        expect(data).to.deep.equal(expectedData);
+    prom
+        .then((data) => {
+            expect(data).to.deep.equal(expectedData);
 
-        if (done) {
-            done();
-        }
-    }, err => done(new Error(`Request failed: ${err.toString()}`)));
+            if (done) {
+                done();
+            }
+        }, err => done(new Error(`Request failed: ${err.toString()}`)))
+        .catch(done);
 };
 
-const expectError = (prom, { errorCls, statusCode, responseText }, done) => {
+const expectError = (prom, { errorCls, statusCode, responseText, exactError }, done) => {
     prom.then(() => {
         done(new Error(`Expected request to fail with ${{ errorCls, statusCode, responseText }}`));
     }, (err) => {
-        if (errorCls) {
-            assert(isSubClass(err, errorCls), `${err} is not a subclass of ${errorCls}`);
+        let doneCalled = false;
+
+        try {
+            if (exactError) {
+                expect(err).to.deep.equal(exactError);
+            }
+
+            if (errorCls) {
+                assert(isSubClass(err, errorCls), `${err} is not a subclass of ${errorCls}`);
+            }
+
+            if (statusCode) {
+                expect(err.statusCode).to.equal(statusCode);
+            }
+
+            if (responseText) {
+                expect(err.responseText).to.equal(responseText);
+            }
+        } catch (e) {
+            done(e);
+            doneCalled = true;
         }
 
-        if (statusCode) {
-            expect(err.statusCode).to.equal(statusCode);
-        }
-
-        if (responseText) {
-            expect(err.responseText).to.equal(responseText);
-        }
-
-        if (done) {
+        if (done && !doneCalled) {
             done();
         }
     });
@@ -54,7 +67,26 @@ export default {
         'fetch `/` works': (done) => {
             const res = new Resource('/', {
                 apiRoot: 'http://127.0.0.1:3000',
-                defaultHeaders: null,
+                defaultAcceptHeader: 'text/html',
+            });
+
+            expectResponse(res.fetch(), 'home', done);
+        },
+
+        'fetch `/` works w/ manual Accept header': (done) => {
+            const res = new Resource('/', {
+                apiRoot: 'http://127.0.0.1:3000',
+                headers: {
+                    Accept: 'text/html',
+                },
+            });
+
+            expectResponse(res.fetch(), 'home', done);
+        },
+
+        'fetch `/` is HTML even if Accept header is not explicitly set': (done) => {
+            const res = new Resource('/', {
+                apiRoot: 'http://127.0.0.1:3000',
             });
 
             expectResponse(res.fetch(), 'home', done);
@@ -76,6 +108,27 @@ export default {
                     message: 'world',
                 },
                 poweredBy: 'Express',
+            }, done);
+        },
+
+        'mutateError works': (done) => {
+            const res = new Resource('/hello', {
+                apiRoot: 'http://127.0.0.1:3010',
+                mutateError(error, response) {
+                    return [
+                        'the error', // put a string here so asserting is easier
+                        error.isNetworkError,
+                        response.statusCode || -1,
+                    ];
+                },
+            });
+
+            expectError(res.fetch(), {
+                exactError: [
+                    'the error',
+                    true,
+                    -1,
+                ],
             }, done);
         },
 
@@ -155,6 +208,16 @@ export default {
             });
 
             expectResponse(res.head(), {}, done);
+        },
+
+        'options request works': (done) => {
+            const res = new Resource('/options', {
+                apiRoot: 'http://127.0.0.1:3000',
+            });
+
+            expectResponse(res.options(), {
+                message: 'options',
+            }, done);
         },
 
         'del request works': (done) => {

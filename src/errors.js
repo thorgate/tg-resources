@@ -67,10 +67,11 @@ export class ValidationError extends InvalidResponseCode {
         super(err.statusCode, err.responseText, 'ValidationError');
 
         this._customConfig = config || {};
-        this.errors = {};
-        this.nonFieldErrors = null;
 
-        this.__parseErrors(err.responseText);
+        const handler = this._customConfig.parseErrors || ValidationError.defaultParseErrors;
+        const res = handler(err.responseText, this._customConfig);
+        this.nonFieldErrors = res[0] || null;
+        this.errors = res[1] || /* istanbul ignore next: can only happen w/ custom parseErrors */ {};
     }
 
     get isValidationError() { // eslint-disable-line class-methods-use-this
@@ -83,17 +84,10 @@ export class ValidationError extends InvalidResponseCode {
 
     getError(fieldName, allowNonFields) {
         if (this.errors[fieldName] || (allowNonFields && this.nonFieldErrors)) {
-            return this.errors[fieldName] || this.nonFieldErrors || null;
+            return this.errors[fieldName] || this.nonFieldErrors;
         }
 
         return null;
-    }
-
-    /**
-     * @deprecated Will be removed in the future
-     */
-    getFieldError(fieldName, allowNonField) {
-        return this.getError(fieldName, allowNonField);
     }
 
     firstError(allowNonField) {
@@ -110,19 +104,7 @@ export class ValidationError extends InvalidResponseCode {
         return null;
     }
 
-    __prepareError(err) {
-        return ((this._customConfig ? this._customConfig.prepareError : null) || ValidationError.defaultPrepareError)(err, this);
-    }
-
-    __parseErrors(errorText) {
-        const handler = (this._customConfig ? this._customConfig.parseErrors : null) || ValidationError.defaultParseErrors;
-        const result = handler(errorText, this);
-
-        this.nonFieldErrors = result[0];
-        this.errors = result[1];
-    }
-
-    static defaultParseErrors(errorText, instance) {
+    static defaultParseErrors(errorText, parentConfig) {
         if (isString(errorText)) {
             if (errorText) {
                 errorText = JSON.parse(errorText);
@@ -134,21 +116,22 @@ export class ValidationError extends InvalidResponseCode {
         let resNonField = null;
         const resErrors = {};
 
+        const prepareError = parentConfig.prepareError || ValidationError.defaultPrepareError;
+
         const errors = typeof errorText.errors === 'undefined' ? errorText : errorText.errors;
         Object.keys(errors).forEach((key) => {
             if (key === 'non_field_errors') {
-                resNonField = instance.__prepareError(errors[key]);
+                resNonField = prepareError(errors[key], parentConfig);
             }
-
             else {
-                resErrors[key] = instance.__prepareError(errors[key]);
+                resErrors[key] = prepareError(errors[key], parentConfig);
             }
         });
 
         return [resNonField, resErrors];
     }
 
-    static defaultPrepareError(err, instance) {
+    static defaultPrepareError(err, parentConfig) {
         if (isString(err)) {
             return err;
         }
@@ -159,7 +142,7 @@ export class ValidationError extends InvalidResponseCode {
 
         else if (isObject(err)) {
             // Note: We clone the object just in case
-            return new ValidationError(Object.assign({}, err), instance ? instance._customConfig : null, true);
+            return new ValidationError(Object.assign({}, err), parentConfig, true);
         }
 
         else {
