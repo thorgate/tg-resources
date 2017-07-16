@@ -12,12 +12,28 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-### v1.1.0 [Not Released]
+### v1.1.0-alpha.1
 
- **Warning:** Breaking change (technically)
 
- * Renamed internal .options (per resource/router) to .config (see #10)
+ * Removed deprecated `ValidationError.getFieldError`
+ * Renamed internal `.options` (per resource/router) to `.config` (see #10)
+   * **Warning:** Breaking change if your code uses the internal API
  * Added built-in for `OPTIONS` request: `Resource.options` (see #10)
+ * `parseErrors` now gets parent config not parent instance as it's second
+     argument
+ * Added new configuration parameter `mutateError` (see docs)
+ * Added `defaultAcceptHeader` (see docs)
+ * Removed `defaultHeaders` - use `headers` or `defaultAcceptHeader`
+ * Setting `Accept` header to undefined/null does not cause the response to be parsed as text anymore. When migrating, just set `Accept` to `text/*`.
+ * Removed separate `tg-resources-react-native` package. Users of older
+    versions of it can safely update to `tg-resources@1.1.0`
+ * Update dev dependencies
+ * Deterministic config merge (+ tests for it)
+ * Use `jsnext:main` and `module` fields in package.json
+ * Use `react-native` field in package.json
+ * Docs: Document extra arguments of `mutateResponse`
+ * Docs: Add call signatures for `parseErrors`
+ * Docs: Add call signatures for `prepareError`
 
 ### v1.0.0
 

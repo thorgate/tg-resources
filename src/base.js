@@ -35,9 +35,8 @@ class GenericResource {
 
     get config() {
         if (!this._config) {
-            return mergeConfig(
-                DEFAULTS,
-                this._parent ? this._parent.config : null,
+            this._config = mergeConfig(
+                this.parent ? this.parent.config : DEFAULTS,
                 this._customConfig,
             );
         }
@@ -53,9 +52,17 @@ class GenericResource {
         return responseData;
     }
 
+    mutateError(error, response) {
+        if (isFunction(this.config.mutateError)) {
+            return this.config.mutateError(error, response, this);
+        }
+
+        return error;
+    }
+
     getHeaders() {
         const headers = {
-            ...(this.config.defaultHeaders || {}),
+            ...(this.parent ? this.parent.getHeaders() : {}),
             ...((isFunction(this.config.headers) ? this.config.headers() : this.config.headers) || {}),
         };
 
@@ -64,12 +71,17 @@ class GenericResource {
             headers.Cookie = cookieVal;
         }
 
+        // if Accept is null/undefined, add default accept header automatically (backwards incompatible for text/html)
+        if (!hasValue(headers.Accept)) {
+            headers.Accept = this.config.defaultAcceptHeader;
+        }
+
         return headers;
     }
 
     getCookies() {
         return {
-            ...(this._parent ? this._parent.getCookies() : {}),
+            ...(this.parent ? this.parent.getCookies() : {}),
             ...((isFunction(this.config.cookies) ? this.config.cookies() : this.config.cookies) || {}),
         };
     }
@@ -86,7 +98,7 @@ class GenericResource {
                 });
             }
 
-            this.doRequest(req, (response, error) => resolve(this.wrapResponse(response, error, req)));
+            this.doRequest(req, (response, error) => resolve(this.constructor.wrapResponse(response, error, req)));
         }));
     }
 
@@ -99,18 +111,28 @@ class GenericResource {
                     return this.mutateResponse(res.data, res);
                 } else if (this.config.statusValidationError.indexOf(res.status) !== -1) {
                     // Got statusValidationError response code, lets throw ValidationError
-                    throw new ValidationError({
-                        statusCode: res.status,
-                        responseText: res.text,
-                    }, this.config);
+                    throw this.mutateError(
+                        new ValidationError({
+                            statusCode: res.status,
+                            responseText: res.text,
+                        }, this.config),
+                        res,
+                    );
                 } else {
                     // Throw a InvalidResponseCode error
-                    throw new InvalidResponseCode(res.status, res.text);
+                    throw this.mutateError(
+                        new InvalidResponseCode(res.status, res.text),
+                        res,
+                    );
                 }
             } else {
                 // res.hasError should only be true if network level errors occur (not statuscode errors)
                 const message = res && res.hasError ? res.error : '';
-                throw new NetworkError(message || 'Something went awfully wrong with the request, check network log.');
+
+                throw this.mutateError(
+                    new NetworkError(message || 'Something went awfully wrong with the request, check network log.'),
+                    res,
+                );
             }
         });
     }
@@ -126,7 +148,7 @@ class GenericResource {
     }
 
     /* istanbul ignore next */
-    wrapResponse(res, error, req) { // eslint-disable-line class-methods-use-this, no-unused-vars
+    static wrapResponse(res, error, req) { // eslint-disable-line no-unused-vars
         throw new Error('Not implemented');
     }
 

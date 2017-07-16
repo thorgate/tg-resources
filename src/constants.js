@@ -4,6 +4,7 @@ import { ValidationError } from './errors';
 const DEFAULTS = {
     apiRoot: '',
     mutateResponse: null,
+    mutateError: null,
     headers: null,
     cookies: null,
 
@@ -13,9 +14,7 @@ const DEFAULTS = {
     statusSuccess: [200, 201, 204],
     statusValidationError: [400],
 
-    defaultHeaders: {
-        Accept: 'application/json',
-    },
+    defaultAcceptHeader: 'application/json',
 };
 
 export default DEFAULTS;

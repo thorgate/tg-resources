@@ -1,4 +1,5 @@
 import DEFAULTS from './constants';
+import { isFunction } from './typeChecks';
 import { bindResources, mergeConfig } from './util';
 
 
@@ -22,9 +23,19 @@ class Router {
         }
     }
 
+    getHeaders() {
+        const headers = {
+            ...(this.parent ? this.parent.getHeaders() : {}),
+            ...((isFunction(this.config.headers) ? this.config.headers() : this.config.headers) || {}),
+        };
+
+        return headers;
+    }
+
     getCookies() {
         return {
-            ...(this._parent ? this._parent.getCookies() : {}),
+            ...(this.parent ? this.parent.getCookies() : {}),
+            ...((isFunction(this.config.cookies) ? this.config.cookies() : this.config.cookies) || {}),
         };
     }
 
@@ -43,8 +54,7 @@ class Router {
     get config() {
         if (!this._config) {
             this._config = mergeConfig(
-                DEFAULTS,
-                this._parent ? this._parent.config : null,
+                this._parent ? this._parent.config : DEFAULTS,
                 this.defaultConfig || this.constructor.defaultConfig || null,
                 this._customConfig,
             );

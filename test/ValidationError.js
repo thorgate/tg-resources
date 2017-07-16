@@ -77,19 +77,32 @@ export default {
             expect(instance.errors.email).to.be.a.instanceof(ValidationError);
             expect(instance.errors.email.errors.something).to.be.equal('be wrong yo');
         },
-        'getFieldError works': () => {
-            expect(instance.getFieldError).to.be.a('function');
+        'getFieldError has been removed': () => {
+            expect(instance.getFieldError).to.be.a('undefined');
+        },
+        'getError works': () => {
+            expect(instance.getError).to.be.a('function');
 
-            expect(instance.getFieldError('password')).to.be.equal('too short, missing numbers');
-            expect(instance.getFieldError('remember')).to.be.equal('false');
+            expect(instance.getError('password')).to.be.equal('too short, missing numbers');
+            expect(instance.getError('remember')).to.be.equal('false');
 
             // Nested ValidationError objects
-            expect(instance.getFieldError('email')).to.be.a.instanceof(ValidationError);
-            expect(instance.getFieldError('email').getFieldError).to.be.a('function');
-            expect(instance.getFieldError('email').getFieldError('something')).to.be.equal('be wrong yo');
+            expect(instance.getError('email')).to.be.a.instanceof(ValidationError);
+            expect(instance.getError('email').getError).to.be.a('function');
+            expect(instance.getError('email').getError('something')).to.be.equal('be wrong yo');
 
-            expect(instance.getFieldError('random-field')).to.be.a('null');
-            expect(instance.getFieldError('random-field', true)).to.be.equal('Something is generally broken');
+            // with allowNonField it should return nonFieldError (if no field specific errors exist)
+            expect(instance.getError('random-field')).to.be.a('null');
+            expect(instance.getError('random-field', true)).to.be.equal('Something is generally broken');
+            expect(instance.getError('password', true)).to.be.equal('too short, missing numbers');
+
+            // If no errors it should return null
+            const noErr = new ValidationError({
+                responseText: '{}',
+            });
+
+            expect(noErr.getError('foo')).to.be.a('null');
+            expect(noErr.getError('foo', true)).to.be.a('null');
         },
         'firstError works': () => {
             expect(instance.firstError).to.be.a('function');

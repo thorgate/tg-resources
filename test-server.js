@@ -43,6 +43,12 @@ app.get('/headers', (req, res) => {
     }
 });
 
+app.options('/options', (req, res) => {
+    res.status(200).json({
+        message: 'options',
+    });
+});
+
 app.get('/cookies', (req, res) => {
     if (req.cookies.sessionid === 'secret') {
         res.status(200).json({

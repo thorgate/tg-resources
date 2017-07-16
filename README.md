@@ -16,13 +16,9 @@
 npm i tg-resources
 ```
 
-### react-native
+### Does it work on react native?
 
-For react-native please use `tg-resources-react-native` which does not depend on babel-runtime.
-
-#### Migrating to 1.0.0
-
-see the [Changelog](CHANGELOG.md#migrating-to-100)
+**YES**
 
 ## Basic Usage
 
@@ -68,14 +64,20 @@ endpoints. It's still possible to use Resources without a router(see [Resource a
 - ``headers`` *(Object|Function: Object)*: Optional Function or Object which can be used to add any additional headers to requests.
 - ``cookies`` *(Object|Function)*: Optional Function or Object which can be used to add any additional cookies to requests. Please note
                                    that in modern browsers this is disabled due to security concerns.
-- ``mutateResponse`` *(Function)*: Optional function with signature `response => response` which can be used to mutate response before
-                                   resolving it.
+- ``mutateResponse`` *(Function)*: Optional function with signature `(responseData, response, request) => responseData` which can be used to
+                                   mutate response data before resolving it. E.g. This can be used to provide access to raw response codes and
+                                   headers to your success handler.
+- ``mutateError`` *(Function)*: Optional function with signature `(error, response, request) => error` which can be used to
+                                   mutate errors before rejecting them. E.g. This can be used to provide access to raw response codes and
+                                   headers to your error handler.
 - ``statusSuccess`` *(Array[int])*: Array (or a single value) of status codes to treat as a success. Default: [200, 201, 204]
 - ``statusValidationError`` *(Array[int])*: Array (or a single value) of status codes to treat as ValidationError. Default: [400]
-- ``defaultHeaders`` *(Object)*: Object of headers which should be added to all requests: Default: `{ Accept: 'application/json' }`
-- ``parseErrors`` *(int)*: Function used to parse response errors into a ValidationError object. The default handler is built for Django/DRF
-                           errors.
-- ``prepareError`` *(int)*: Function used to normalize a single error. The default handler is built for Django/DRF errors.
+- ``defaultAcceptHeader`` *(String)*: Default accept header that is automatically added to requests (only if `headers.Accept=undefined`). Default:
+                                      `'application/json'`
+- ``parseErrors`` *(Function)*: Function with signature `(errorText, parentConfig) => [nonFieldErrors, errors]` which is used to parse response
+                                errors into a ValidationError object. The default handler is built for Django/DRF errors.
+- ``prepareError`` *(Function)*: Function with signature `(err, parentConfig) => mixed` which is used to normalize a single error. The default
+                                 handler is built for Django/DRF errors.
 
 ## Error handling
 
@@ -167,6 +169,10 @@ Do a get request to the resource endpoint with optional kwargs and query paramet
 2. `query={}` *(Object|string)*: Query parameters to use when doing the request.
 3. `method='get'` *(string)*: Lowercase name of the HTTP method that will be used for this request.
 
+### ``Resource.options``
+
+Alias for `Resource.fetch(kwargs, query, 'options')`
+
 #### Returns
 
 *(Promise)*:  Returns a `Promise` that resolves to the remote result or throws if errors occur.
@@ -255,10 +261,6 @@ Get field specific error
 ###### Returns
 
 *(any)*:  Returns a normalized error for ``fieldName`` or ``null``
-
-##### ``getFieldError``
-
-**Deprecated** alias of ``getError``
 
 ##### ``firstError``
 
