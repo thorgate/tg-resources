@@ -17,12 +17,12 @@
 
  * :exclamation: Removed deprecated `ValidationError.getFieldError`
  * :exclamation: Renamed internal `.options` (per resource/router) to `.config` (see #10)
- * Added built-in for `OPTIONS` request: `Resource.options` (see #10)
  * :exclamation: `parseErrors` now gets parent config not parent instance as it's second argument
  * :exclamation: `prepareErrors` now gets parent config not parent instance as it's second argument
  * :exclamation: Removed `defaultHeaders` - use `headers` or `defaultAcceptHeader`
  * :exclamation: Setting `Accept` header to undefined/null does not cause the response to be parsed 
     as text anymore. When migrating, just set `Accept` to `text/html`.
+ * Added built-in for `OPTIONS` request: `Resource.options` (see #10)
  * Added new configuration parameter `mutateError` (see docs)
  * Added `defaultAcceptHeader` (see docs)
  * Removed separate `tg-resources-react-native` package. Users of older
