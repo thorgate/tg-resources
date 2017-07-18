@@ -1,21 +1,23 @@
 import { assert, expect } from 'chai';
+import { spy } from 'sinon';
 
 import listen from '../test-server';
 
-import { Resource } from '../src';
+import { Resource, Response } from '../src';
 import { isSubClass } from '../src/typeChecks';
 
 
 const expectResponse = (prom, expectedData, done) => {
-    prom
-        .then((data) => {
-            expect(data).to.deep.equal(expectedData);
+    prom.then((data) => {
+        expect(data).to.deep.equal(expectedData);
 
-            if (done) {
-                done();
-            }
-        }, err => done(new Error(`Request failed: ${err.toString()}`)))
-        .catch(done);
+        if (done) {
+            done();
+        }
+    }, (err) => {
+        // fail w/ the error
+        done(new Error(`Request failed: ${err.toString()}`));
+    }).catch(done);
 };
 
 const expectError = (prom, { errorCls, statusCode, responseText, exactError }, done) => {
@@ -92,7 +94,25 @@ export default {
             expectResponse(res.fetch(), 'home', done);
         },
 
-        'mutateResponse works': (done) => {
+        'cfg.mutateResponse is called during fetch': (done) => {
+            const spyFn = spy();
+
+            const res = new Resource('/hello', {
+                apiRoot: 'http://127.0.0.1:3000',
+                mutateResponse: spyFn,
+            });
+
+            res.fetch().then(() => {
+                try {
+                    expect(spyFn.called).to.be.equal(true);
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            }, done);
+        },
+
+        'mutateResponse functionally works': (done) => {
             const res = new Resource('/hello', {
                 apiRoot: 'http://127.0.0.1:3000',
                 mutateResponse(data, raw) {
@@ -111,14 +131,36 @@ export default {
             }, done);
         },
 
-        'mutateError works': (done) => {
-            const res = new Resource('/hello', {
-                apiRoot: 'http://127.0.0.1:3010',
-                mutateError(error, response) {
+        'cfg.mutateError is called during fetch': (done) => {
+            const spyFn = spy();
+
+            const res = new Resource('/error500', {
+                apiRoot: 'http://127.0.0.1:3000',
+                mutateError: spyFn,
+            });
+
+            res.fetch().then(() => {
+                try {
+                    expect(spyFn.called).to.be.equal(true);
+                    done();
+                } catch (e) {
+                    done(e);
+                }
+            }, done);
+        },
+
+        'mutateError functionally works': (done) => {
+            const res = new Resource('/error500', {
+                apiRoot: 'http://127.0.0.1:3000',
+                mutateError(error, rawResponse, resource) {
                     return [
-                        'the error', // put a string here so asserting is easier
-                        error.isNetworkError,
-                        response.statusCode || -1,
+                        'the error', // put a string here so comparison is easy
+                        error.isInvalidResponseCode,
+                        rawResponse.statusCode + 1055,
+                        rawResponse.status + 1055,
+                        rawResponse.statusCode + 1055,
+                        resource,
+                        rawResponse.statusType,
                     ];
                 },
             });
@@ -127,8 +169,47 @@ export default {
                 exactError: [
                     'the error',
                     true,
-                    -1,
+                    1555,
+                    1555,
+                    1555,
+                    res,
+                    5, // statusCode / 100 | 100
                 ],
+            }, done);
+        },
+
+        'cfg.mutateRawResponse is called during fetch': (done) => {
+            // Why would anyone do this... :(
+            const spyFn = spy(() => new Response({
+                body: {
+                    im: 'fake',
+                },
+                text: JSON.stringify({
+                    im: 'fake',
+                }),
+                status: 200,
+                statusType: 'ok',
+                type: 'application/json',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }));
+
+            const res = new Resource('/hello', {
+                apiRoot: 'http://127.0.0.1:3000',
+                mutateRawResponse: spyFn,
+            });
+
+            res.fetch().then((data) => {
+                try {
+                    expect(spyFn.called).to.be.equal(true);
+                    expect(data).to.deep.equal({
+                        im: 'fake',
+                    });
+                    done();
+                } catch (e) {
+                    done(e);
+                }
             }, done);
         },
 

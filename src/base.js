@@ -1,7 +1,7 @@
 import renderTemplate from 'lodash.template';
 
 import DEFAULTS from './constants';
-import { InvalidResponseCode, NetworkError, ValidationError } from './errors';
+import { InvalidResponseCode, NetworkError, RequestValidationError } from './errors';
 import { isFunction, isObject, hasValue } from './typeChecks';
 import { mergeConfig, serializeCookies } from './util';
 
@@ -44,17 +44,25 @@ class GenericResource {
         return this._config;
     }
 
-    mutateResponse(responseData, response) {
+    mutateRawResponse(rawResponse) {
+        if (isFunction(this.config.mutateRawResponse)) {
+            return this.config.mutateRawResponse(rawResponse);
+        }
+
+        return rawResponse;
+    }
+
+    mutateResponse(responseData, rawResponse) {
         if (isFunction(this.config.mutateResponse)) {
-            return this.config.mutateResponse(responseData, response, this);
+            return this.config.mutateResponse(responseData, rawResponse, this);
         }
 
         return responseData;
     }
 
-    mutateError(error, response) {
+    mutateError(error, rawResponse) {
         if (isFunction(this.config.mutateError)) {
-            return this.config.mutateError(error, response, this);
+            return this.config.mutateError(error, rawResponse, this);
         }
 
         return error;
@@ -103,16 +111,18 @@ class GenericResource {
     }
 
     ensureStatusAndJson(prom) {
-        return prom.then((res) => {
+        return prom.then((origRes) => {
+            const res = this.mutateRawResponse(origRes);
+
             // If no error occured
             if (res && !res.hasError) {
                 if (this.config.statusSuccess.indexOf(res.status) !== -1) {
                     // Got statusSuccess response code, lets resolve this promise
                     return this.mutateResponse(res.data, res);
                 } else if (this.config.statusValidationError.indexOf(res.status) !== -1) {
-                    // Got statusValidationError response code, lets throw ValidationError
+                    // Got statusValidationError response code, lets throw RequestValidationError
                     throw this.mutateError(
-                        new ValidationError({
+                        new RequestValidationError({
                             statusCode: res.status,
                             responseText: res.text,
                         }, this.config),

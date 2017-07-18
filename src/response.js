@@ -23,6 +23,11 @@ class ResponseWrapper {
     }
 
     /* istanbul ignore next */
+    get statusCode() { // eslint-disable-line class-methods-use-this
+        return this.status;
+    }
+
+    /* istanbul ignore next */
     get statusType() { // eslint-disable-line class-methods-use-this
         throw new Error('Not implemented');
     }

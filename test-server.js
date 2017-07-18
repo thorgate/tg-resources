@@ -49,6 +49,12 @@ app.options('/options', (req, res) => {
     });
 });
 
+app.get('/error500', (req, res) => {
+    res.status(500).json({
+        message: 'yolo',
+    });
+});
+
 app.get('/cookies', (req, res) => {
     if (req.cookies.sessionid === 'secret') {
         res.status(200).json({
