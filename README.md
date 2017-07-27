@@ -64,12 +64,12 @@ endpoints. It's still possible to use Resources without a router(see [Resource a
 - ``headers`` *(Object|Function: Object)*: Optional Function or Object which can be used to add any additional headers to requests.
 - ``cookies`` *(Object|Function)*: Optional Function or Object which can be used to add any additional cookies to requests. Please note
                                    that in modern browsers this is disabled due to security concerns.
-- ``mutateResponse`` *(Function)*: Optional function with signature `(responseData, response, request) => responseData` which can be used to
-                                   mutate response data before resolving it. E.g. This can be used to provide access to raw response codes and
-                                   headers to your success handler.
-- ``mutateError`` *(Function)*: Optional function with signature `(error, response, request) => error` which can be used to
-                                   mutate errors before rejecting them. E.g. This can be used to provide access to raw response codes and
-                                   headers to your error handler.
+- ``mutateResponse`` *(Function)*: Optional function with signature `(responseData, rawResponse: ResponseWrapper, resource: Resource) => responseData` 
+                                   which can be used to mutate response data before resolving it. E.g. This can be used to provide access to raw 
+                                   response codes and headers to your success handler.
+- ``mutateError`` *(Function)*: Optional function with signature `(error: BaseResourceError, rawResponse: ResponseWrapper, resource: Resource) => error`
+                                which can be used to mutate errors before rejecting them. E.g. This can be used to provide access to raw response codes 
+                                and headers to your error handler.
 - ``statusSuccess`` *(Array[int])*: Array (or a single value) of status codes to treat as a success. Default: [200, 201, 204]
 - ``statusValidationError`` *(Array[int])*: Array (or a single value) of status codes to treat as ValidationError. Default: [400]
 - ``defaultAcceptHeader`` *(String)*: Default accept header that is automatically added to requests (only if `headers.Accept=undefined`). Default:
@@ -78,6 +78,9 @@ endpoints. It's still possible to use Resources without a router(see [Resource a
                                 errors into a ValidationError object. The default handler is built for Django/DRF errors.
 - ``prepareError`` *(Function)*: Function with signature `(err, parentConfig) => mixed` which is used to normalize a single error. The default
                                  handler is built for Django/DRF errors.
+- ``mutateRawResponse`` *(Function)*: **Advanced usage:** Optional function with signature `rawResponse: ResponseWrapper => rawResponse` which can be
+                                      used to mutate the response before it is resolved to `responseData` or a `BaseResourceError` subclass. Use the 
+                                      source of `ResponseWrapper`, `SuperagentResponse` and `GenericResource::ensureStatusAndJson` for guidance.
 
 ## Error handling
 

@@ -14,11 +14,10 @@
   "scripts": {
     "clean": "$(npm bin)/rimraf dist",
     "lint": "$(npm bin)/eslint src test",
-    "pretest": "npm run lint",
     "test": "cross-env BABEL_ENV=test $(npm bin)/nyc mocha -u exports test/*.js",
     "coverage": "$(npm bin)/nyc report && $(npm bin)/nyc report --reporter=html",
     "coveralls": "$(npm bin)/nyc report --reporter=text-lcov | $(npm bin)/coveralls",
-    "prebuild": "npm run clean -s",
+    "prebuild": "npm run clean -s && npm run lint",
     "build": "npm run build:umd && npm run build:es",
     "build:umd": "cross-env BABEL_ENV=commonjs $(npm bin)/babel src -d dist",
     "build:es": "cross-env BABEL_ENV=es $(npm bin)/babel src -d es",
@@ -68,6 +67,7 @@
     "mocha": "^3.4.2",
     "nyc": "^11.0.3",
     "rimraf": "*",
+    "sinon": "^2.3.8",
     "superagent": "^3.5.2",
     "uuid": "*",
     "watch": "*"

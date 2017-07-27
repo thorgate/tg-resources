@@ -1,15 +1,16 @@
-import { ValidationError } from './errors';
+import { defaultParseErrors, defaultPrepareError } from './validationError';
 
 
 const DEFAULTS = {
     apiRoot: '',
     mutateResponse: null,
     mutateError: null,
+    mutateRawResponse: null,
     headers: null,
     cookies: null,
 
-    prepareError: ValidationError.defaultPrepareError,
-    parseErrors: ValidationError.defaultParseErrors,
+    parseErrors: defaultParseErrors,
+    prepareError: defaultPrepareError,
 
     statusSuccess: [200, 201, 204],
     statusValidationError: [400],
