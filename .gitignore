@@ -8,5 +8,5 @@ tmp
 coverage
 .nyc_output
 npm-debug.log
-es/
+es
 .vscode

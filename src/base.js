@@ -122,10 +122,7 @@ class GenericResource {
                 } else if (this.config.statusValidationError.indexOf(res.status) !== -1) {
                     // Got statusValidationError response code, lets throw RequestValidationError
                     throw this.mutateError(
-                        new RequestValidationError({
-                            statusCode: res.status,
-                            responseText: res.text,
-                        }, this.config),
+                        new RequestValidationError(res.status, res.text, this.config),
                         res,
                     );
                 } else {

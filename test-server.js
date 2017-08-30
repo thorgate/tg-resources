@@ -141,4 +141,12 @@ app.delete('/dogs/:id', (req, res) => {
     }
 });
 
+app.post('/error400', (req, res) => {
+    res.status(400).json({
+        'name': [
+            'This field is required.'
+        ]
+    });
+});
+
 export default () => app.listen(port);
