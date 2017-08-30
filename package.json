@@ -1,12 +1,13 @@
 {
   "name": "tg-resources",
-  "version": "2.0.0-alpha.4",
+  "version": "2.0.0-alpha.5",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
   "main": "./dist/index.js",
   "jsnext:main": "./es/index.js",
   "module": "./es/index.js",
   "react-native": "./es/index.js",
   "files": [
+    "es/",
     "dist/",
     "src/",
     "lib.js",
