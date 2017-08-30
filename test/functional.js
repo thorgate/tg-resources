@@ -3,7 +3,7 @@ import { spy } from 'sinon';
 
 import listen from '../test-server';
 
-import { Resource, Response } from '../src';
+import { Resource, Response, RequestValidationError } from '../src';
 import { isSubClass } from '../src/typeChecks';
 
 
@@ -344,6 +344,31 @@ export default {
                     name: 'Johnty',
                 }, done);
             });
+        },
+
+        'statusValidationError is handled properly': (done) => {
+            const res = new Resource('/error400', {
+                apiRoot: 'http://127.0.0.1:3000',
+            });
+
+            res.post(null, { name: '' }).then(() => {
+                done(new Error('Expected request to fail'));
+            }, (err) => {
+                // the error must RequestValidationError
+                expect(err).to.be.an.instanceof(RequestValidationError);
+
+                // statusCode must be correct
+                expect(err.statusCode).to.equal(400);
+
+                // hasError must be true
+                expect(err.hasError()).to.be.equal(true);
+
+                // errors should be correct
+                expect(err.errors.toString()).to.equal('name: This field is required.');
+
+                // all good
+                done();
+            }).catch(done);
         },
     },
 };
