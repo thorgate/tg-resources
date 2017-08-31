@@ -149,4 +149,10 @@ app.post('/error400', (req, res) => {
     });
 });
 
+app.get('/error400_nonField', (req, res) => {
+    res.status(400).json({
+        'non_field_errors': ['Sup dog']
+    });
+});
+
 export default () => app.listen(port);
