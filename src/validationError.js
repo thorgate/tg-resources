@@ -230,7 +230,7 @@ export class ValidationError extends ParentValidationErrorInterface {
     }
 
     hasError() {
-        return this._errKeys.length > 0;
+        return this.nonFieldErrors !== null || this._errKeys.length > 0;
     }
 
     asString(glue = '; ') {

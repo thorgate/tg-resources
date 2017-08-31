@@ -370,5 +370,30 @@ export default {
                 done();
             }).catch(done);
         },
+
+        'statusValidationError is handled properly - nonField only': (done) => {
+            const res = new Resource('/error400_nonField', {
+                apiRoot: 'http://127.0.0.1:3000',
+            });
+
+            res.fetch(null).then(() => {
+                done(new Error('Expected request to fail'));
+            }, (err) => {
+                // the error must RequestValidationError
+                expect(err).to.be.an.instanceof(RequestValidationError);
+
+                // statusCode must be correct
+                expect(err.statusCode).to.equal(400);
+
+                // hasError must be true
+                expect(err.hasError()).to.be.equal(true);
+
+                // errors should be correct
+                expect(err.errors.toString()).to.equal('Sup dog');
+
+                // all good
+                done();
+            }).catch(done);
+        },
     },
 };
