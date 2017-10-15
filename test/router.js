@@ -12,7 +12,7 @@ const mockPrepareError = (...x) => DEFAULTS.prepareError(...x);
 const mockParseErrors = (...x) => DEFAULTS.parseErrors(...x);
 
 const expectConfig = (instance, expectedConfig) => {
-    const cfg = instance.config;
+    const cfg = instance.config();
 
     const deepEqualKeys = [
         'statusValidationError',
@@ -116,9 +116,9 @@ export default {
             });
 
             // router cfg flows to submissive
-            expect(api.config.apiRoot).to.equal('http://foo.localhost/baz/');
-            expect(api.submissive.config.apiRoot).to.equal('http://foo.localhost/baz/');
-            expect(api.config.cookies).to.deep.equal({
+            expect(api.config().apiRoot).to.equal('http://foo.localhost/baz/');
+            expect(api.submissive.config().apiRoot).to.equal('http://foo.localhost/baz/');
+            expect(api.config().cookies).to.deep.equal({
                 from: 'router',
                 top: 'level',
             });
@@ -126,9 +126,13 @@ export default {
                 from: 'router',
                 top: 'level',
             });
-            expect(api.submissive.config.cookies).to.deep.equal({
+            expect(api.submissive.config().cookies).to.deep.equal({
                 from: 'router',
                 top: 'level',
+            });
+            // requestConfig overrides config
+            expect(api.submissive.config({ cookies: { from: 'requestConfig' } }).cookies).to.deep.equal({
+                from: 'requestConfig',
             });
             expect(api.submissive.getCookies()).to.deep.equal({
                 from: 'router',
@@ -136,10 +140,14 @@ export default {
             });
 
             // aggressive merges w/ parent
-            expect(api.aggressive.config.apiRoot).to.equal('http://foo.localhost/baz/');
+            expect(api.aggressive.config().apiRoot).to.equal('http://foo.localhost/baz/');
             // .config.cookies is not merged
-            expect(api.aggressive.config.cookies).to.deep.equal({
+            expect(api.aggressive.config().cookies).to.deep.equal({
                 from: 'resource',
+            });
+            // requestConfig overrides config
+            expect(api.aggressive.config({ cookies: { from: 'requestConfig' } }).cookies).to.deep.equal({
+                from: 'requestConfig',
             });
             // getCookies is merged w/ parent
             expect(api.aggressive.getCookies()).to.deep.equal({
@@ -1155,8 +1163,8 @@ export default {
 
             const sdk = new SDK();
 
-            expect(sdk.config).to.be.an('object');
-            expect(sdk.config.apiRoot).to.be.equal('some/root');
+            expect(sdk.config()).to.be.an('object');
+            expect(sdk.config().apiRoot).to.be.equal('some/root');
         },
     },
 };

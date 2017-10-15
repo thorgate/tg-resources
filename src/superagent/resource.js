@@ -44,7 +44,7 @@ export class SuperAgentResource extends GenericResource {
     createRequest(method, url, query, data) { // eslint-disable-line class-methods-use-this
         method = method.toLowerCase();
 
-        let req = request[method](url);
+        let req = request[method](url).withCredentials();
 
         if (query) {
             req = req.query(query);

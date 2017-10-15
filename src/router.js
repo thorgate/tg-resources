@@ -26,7 +26,7 @@ class Router {
     getHeaders() {
         const headers = {
             ...(this.parent ? this.parent.getHeaders() : {}),
-            ...((isFunction(this.config.headers) ? this.config.headers() : this.config.headers) || {}),
+            ...((isFunction(this.config().headers) ? this.config().headers() : this.config().headers) || {}),
         };
 
         return headers;
@@ -35,7 +35,7 @@ class Router {
     getCookies() {
         return {
             ...(this.parent ? this.parent.getCookies() : {}),
-            ...((isFunction(this.config.cookies) ? this.config.cookies() : this.config.cookies) || {}),
+            ...((isFunction(this.config().cookies) ? this.config().cookies() : this.config().cookies) || {}),
         };
     }
 
@@ -51,10 +51,10 @@ class Router {
         return !!this._parent || !!this._config;
     }
 
-    get config() {
+    config() {
         if (!this._config) {
             this._config = mergeConfig(
-                this._parent ? this._parent.config : DEFAULTS,
+                this._parent ? this._parent.config() : DEFAULTS,
                 this.defaultConfig || this.constructor.defaultConfig || null,
                 this._customConfig,
             );

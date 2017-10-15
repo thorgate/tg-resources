@@ -33,70 +33,79 @@ class GenericResource {
         return !!this._parent || !!this._config;
     }
 
-    get config() {
+    config(requestConfig = null) {
         if (!this._config) {
             this._config = mergeConfig(
-                this.parent ? this.parent.config : DEFAULTS,
+                this.parent ? this.parent.config() : DEFAULTS,
                 this._customConfig,
             );
+        }
+
+        if (requestConfig && isObject(requestConfig)) {
+            return mergeConfig(this._config, requestConfig);
         }
 
         return this._config;
     }
 
-    mutateRawResponse(rawResponse) {
-        if (isFunction(this.config.mutateRawResponse)) {
-            return this.config.mutateRawResponse(rawResponse);
+    mutateRawResponse(rawResponse, requestConfig) {
+        const config = this.config(requestConfig);
+        if (isFunction(config.mutateRawResponse)) {
+            return config.mutateRawResponse(rawResponse);
         }
 
         return rawResponse;
     }
 
-    mutateResponse(responseData, rawResponse) {
-        if (isFunction(this.config.mutateResponse)) {
-            return this.config.mutateResponse(responseData, rawResponse, this);
+    mutateResponse(responseData, rawResponse, requestConfig) {
+        const config = this.config(requestConfig);
+        if (isFunction(config.mutateResponse)) {
+            return config.mutateResponse(responseData, rawResponse, this);
         }
 
         return responseData;
     }
 
-    mutateError(error, rawResponse) {
-        if (isFunction(this.config.mutateError)) {
-            return this.config.mutateError(error, rawResponse, this);
+    mutateError(error, rawResponse, requestConfig) {
+        const config = this.config(requestConfig);
+        if (isFunction(config.mutateError)) {
+            return config.mutateError(error, rawResponse, this);
         }
 
         return error;
     }
 
-    getHeaders() {
+    getHeaders(requestConfig = null) {
+        const config = this.config(requestConfig);
         const headers = {
             ...(this.parent ? this.parent.getHeaders() : {}),
-            ...((isFunction(this.config.headers) ? this.config.headers() : this.config.headers) || {}),
+            ...((isFunction(config.headers) ? config.headers() : config.headers) || {}),
         };
 
-        const cookieVal = serializeCookies(this.getCookies());
+        const cookieVal = serializeCookies(this.getCookies(requestConfig));
         if (cookieVal) {
             headers.Cookie = cookieVal;
         }
 
         // if Accept is null/undefined, add default accept header automatically (backwards incompatible for text/html)
         if (!hasValue(headers.Accept)) {
-            headers.Accept = this.config.defaultAcceptHeader;
+            headers.Accept = config.defaultAcceptHeader;
         }
 
         return headers;
     }
 
-    getCookies() {
+    getCookies(requestConfig = null) {
+        const config = this.config(requestConfig);
         return {
             ...(this.parent ? this.parent.getCookies() : {}),
-            ...((isFunction(this.config.cookies) ? this.config.cookies() : this.config.cookies) || {}),
+            ...((isFunction(config.cookies) ? config.cookies() : config.cookies) || {}),
         };
     }
 
-    handleRequest(req) {
+    handleRequest(req, requestConfig) {
         return this.ensureStatusAndJson(new Promise((resolve) => {
-            const headers = this.getHeaders();
+            const headers = this.getHeaders(requestConfig);
 
             if (headers && isObject(headers)) {
                 Object.keys(headers).forEach((key) => {
@@ -107,29 +116,32 @@ class GenericResource {
             }
 
             this.doRequest(req, (response, error) => resolve(this.constructor.wrapResponse(response, error, req)));
-        }));
+        }), requestConfig);
     }
 
-    ensureStatusAndJson(prom) {
+    ensureStatusAndJson(prom, requestConfig) {
+        const config = this.config(requestConfig);
         return prom.then((origRes) => {
-            const res = this.mutateRawResponse(origRes);
+            const res = this.mutateRawResponse(origRes, requestConfig);
 
             // If no error occured
             if (res && !res.hasError) {
-                if (this.config.statusSuccess.indexOf(res.status) !== -1) {
+                if (config.statusSuccess.indexOf(res.status) !== -1) {
                     // Got statusSuccess response code, lets resolve this promise
-                    return this.mutateResponse(res.data, res);
-                } else if (this.config.statusValidationError.indexOf(res.status) !== -1) {
+                    return this.mutateResponse(res.data, res, requestConfig);
+                } else if (config.statusValidationError.indexOf(res.status) !== -1) {
                     // Got statusValidationError response code, lets throw RequestValidationError
                     throw this.mutateError(
-                        new RequestValidationError(res.status, res.text, this.config),
+                        new RequestValidationError(res.status, res.text, config),
                         res,
+                        requestConfig,
                     );
                 } else {
                     // Throw a InvalidResponseCode error
                     throw this.mutateError(
                         new InvalidResponseCode(res.status, res.text),
                         res,
+                        requestConfig,
                     );
                 }
             } else {
@@ -144,14 +156,15 @@ class GenericResource {
         });
     }
 
-    buildThePath(urlParams) {
+    buildThePath(urlParams, requestConfig) {
         let thePath = this.apiEndpoint;
+        const config = this.config(requestConfig);
 
         if (urlParams && !(isObject(urlParams) && Object.keys(urlParams).length === 0)) {
             thePath = renderTemplate(this.apiEndpoint)(urlParams);
         }
 
-        return `${this.config.apiRoot}${thePath}`;
+        return `${config.apiRoot}${thePath}`;
     }
 
     /* istanbul ignore next */
