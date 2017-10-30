@@ -17,6 +17,11 @@ export function bindResources(routes, $this) {
             throw new Error(`Route '${routeName}' is invalid. Route names must not start with an underscore`);
         }
 
+        if (routeName === 'config') {
+            throw new Error(`Route ${routeName} collides with Router built-in method names`);
+        }
+
+
         if (routes[routeName].isBound) {
             throw new Error(`Route '${routeName}' is bound already`);
         }

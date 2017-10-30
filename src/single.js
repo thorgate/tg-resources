@@ -1,34 +1,36 @@
 export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
-        fetch(kwargs, query, method = 'get') {
-            const thePath = this.buildThePath(kwargs);
-            return this.handleRequest(this.createRequest(method, thePath, query));
+        fetch(kwargs, query, requestConfig = null, method = 'get') {
+            const thePath = this.buildThePath(kwargs, requestConfig);
+            return this.handleRequest(this.createRequest(method, thePath, query, null, requestConfig), requestConfig);
         }
 
-        head(kwargs, query) {
-            return this.fetch(kwargs, query, 'head');
+        head(kwargs, query, requestConfig = null) {
+            return this.fetch(kwargs, query, requestConfig, 'head');
         }
 
-        options(kwargs, query) {
-            return this.fetch(kwargs, query, 'options');
+        options(kwargs, query, requestConfig = null) {
+            return this.fetch(kwargs, query, requestConfig, 'options');
         }
 
-        post(kwargs, data, query, /* istanbul ignore next: https://github.com/istanbuljs/babel-plugin-istanbul/issues/94 */ method = 'post') {
-            const thePath = this.buildThePath(kwargs);
+        post(kwargs, data, query, requestConfig = null, /* istanbul ignore next: https://github.com/istanbuljs/babel-plugin-istanbul/issues/94 */ method = 'post') {
+            const thePath = this.buildThePath(kwargs, requestConfig);
 
-            return this.handleRequest(this.createRequest(method, thePath, query, data || {}));
+            return this.handleRequest(
+                this.createRequest(method, thePath, query, data || {}, requestConfig), requestConfig,
+            );
         }
 
-        patch(kwargs, data, query) {
-            return this.post(kwargs, data, query, 'patch');
+        patch(kwargs, data, query, requestConfig = null) {
+            return this.post(kwargs, data, query, requestConfig, 'patch');
         }
 
-        put(kwargs, data, query) {
-            return this.post(kwargs, data, query, 'put');
+        put(kwargs, data, query, requestConfig = null) {
+            return this.post(kwargs, data, query, requestConfig, 'put');
         }
 
-        del(kwargs, data, query) {
-            return this.post(kwargs, data, query, 'del');
+        del(kwargs, data, query, requestConfig = null) {
+            return this.post(kwargs, data, query, requestConfig, 'del');
         }
     }
 

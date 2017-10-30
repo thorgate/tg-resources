@@ -64,10 +64,10 @@ endpoints. It's still possible to use Resources without a router(see [Resource a
 - ``headers`` *(Object|Function: Object)*: Optional Function or Object which can be used to add any additional headers to requests.
 - ``cookies`` *(Object|Function)*: Optional Function or Object which can be used to add any additional cookies to requests. Please note
                                    that in modern browsers this is disabled due to security concerns.
-- ``mutateResponse`` *(Function)*: Optional function with signature `(responseData, rawResponse: ResponseWrapper, resource: Resource) => responseData` 
+- ``mutateResponse`` *(Function)*: Optional function with signature `(responseData, rawResponse: ResponseWrapper, resource: Resource, requestConfig: Object) => responseData` 
                                    which can be used to mutate response data before resolving it. E.g. This can be used to provide access to raw 
                                    response codes and headers to your success handler.
-- ``mutateError`` *(Function)*: Optional function with signature `(error: BaseResourceError, rawResponse: ResponseWrapper, resource: Resource) => error`
+- ``mutateError`` *(Function)*: Optional function with signature `(error: BaseResourceError, rawResponse: ResponseWrapper, resource: Resource, requestConfig: Object) => error`
                                 which can be used to mutate errors before rejecting them. E.g. This can be used to provide access to raw response codes 
                                 and headers to your error handler.
 - ``statusSuccess`` *(Array[int])*: Array (or a single value) of status codes to treat as a success. Default: [200, 201, 204]
@@ -78,9 +78,10 @@ endpoints. It's still possible to use Resources without a router(see [Resource a
                                 errors into a ValidationError object. The default handler is built for Django/DRF errors.
 - ``prepareError`` *(Function)*: Function with signature `(err, parentConfig) => mixed` which is used to normalize a single error. The default
                                  handler is built for Django/DRF errors.
-- ``mutateRawResponse`` *(Function)*: **Advanced usage:** Optional function with signature `rawResponse: ResponseWrapper => rawResponse` which can be
+- ``mutateRawResponse`` *(Function)*: **Advanced usage:** Optional function with signature `(rawResponse: ResponseWrapper, requestConfig: Object) => rawResponse` which can be
                                       used to mutate the response before it is resolved to `responseData` or a `BaseResourceError` subclass. Use the 
                                       source of `ResponseWrapper`, `SuperagentResponse` and `GenericResource::ensureStatusAndJson` for guidance.
+- ``withCredentials`` *(bool)*: Allow request backend to send cookies/authentication headers, useful when using same API for server-side rendering.
 
 ## Error handling
 
@@ -170,11 +171,12 @@ Do a get request to the resource endpoint with optional kwargs and query paramet
 
 1. `kwargs={}` *(Object)*: Object containing the replacement values if the resource uses tokenized urls
 2. `query={}` *(Object|string)*: Query parameters to use when doing the request.
-3. `method='get'` *(string)*: Lowercase name of the HTTP method that will be used for this request.
+3. `requestConfig=null` *(Object)*: Configuration overrides, useful when using same API for server-side rendering.
+4. `method='get'` *(string)*: Lowercase name of the HTTP method that will be used for this request.
 
 ### ``Resource.options``
 
-Alias for `Resource.fetch(kwargs, query, 'options')`
+Alias for `Resource.fetch(kwargs, query, requestConfig, 'options')`
 
 #### Returns
 
@@ -189,22 +191,23 @@ Do a `method` request to the resource endpoint with optional kwargs and query pa
 1. `kwargs={}` *(Object)*: Object containing the replacement values if the resource uses tokenized urls
 2. `data={}` *(Object|string)*: Query parameters to use when doing the request.
 3. `query={}` *(Object|string)*: Query parameters to use when doing the request.
-4. `method='post'` *(string)*: Lowercase name of the HTTP method that will be used for this request.
+4. `requestConfig=null` *(Object)*: Configuration overrides, useful when using same API for server-side rendering.
+5. `method='post'` *(string)*: Lowercase name of the HTTP method that will be used for this request.
 
 #### Returns
 *(Promise)*:  Returns a `Promise` that resolves to the remote result or throws if errors occur.
 
 ### ``Resource.patch``
 
-Alias for `Resource.post(kwargs, data, query, 'patch')`
+Alias for `Resource.post(kwargs, data, query, requestConfig, 'patch')`
 
 ### ``Resource.put``
 
-Alias for `Resource.post(kwargs, data, query, 'put')`
+Alias for `Resource.post(kwargs, data, query, requestConfig, 'put')`
 
 ### ``Resource.del``
 
-Alias for `Resource.post(kwargs, data, query, 'del')`
+Alias for `Resource.post(kwargs, data, query, requestConfig, 'del')`
 
 ### ``BaseResourceError``
 
