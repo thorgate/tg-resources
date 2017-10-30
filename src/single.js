@@ -2,7 +2,7 @@ export default function makeSingle(baseClass) {
     class SingleObjectResource extends baseClass {
         fetch(kwargs, query, requestConfig = null, method = 'get') {
             const thePath = this.buildThePath(kwargs, requestConfig);
-            return this.handleRequest(this.createRequest(method, thePath, query), requestConfig);
+            return this.handleRequest(this.createRequest(method, thePath, query, null, requestConfig), requestConfig);
         }
 
         head(kwargs, query, requestConfig = null) {
@@ -16,7 +16,9 @@ export default function makeSingle(baseClass) {
         post(kwargs, data, query, requestConfig = null, /* istanbul ignore next: https://github.com/istanbuljs/babel-plugin-istanbul/issues/94 */ method = 'post') {
             const thePath = this.buildThePath(kwargs, requestConfig);
 
-            return this.handleRequest(this.createRequest(method, thePath, query, data || {}), requestConfig);
+            return this.handleRequest(
+                this.createRequest(method, thePath, query, data || {}, requestConfig), requestConfig,
+            );
         }
 
         patch(kwargs, data, query, requestConfig = null) {

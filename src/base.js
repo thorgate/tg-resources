@@ -51,7 +51,7 @@ class GenericResource {
     mutateRawResponse(rawResponse, requestConfig) {
         const config = this.config(requestConfig);
         if (isFunction(config.mutateRawResponse)) {
-            return config.mutateRawResponse(rawResponse);
+            return config.mutateRawResponse(rawResponse, requestConfig);
         }
 
         return rawResponse;
@@ -60,7 +60,7 @@ class GenericResource {
     mutateResponse(responseData, rawResponse, requestConfig) {
         const config = this.config(requestConfig);
         if (isFunction(config.mutateResponse)) {
-            return config.mutateResponse(responseData, rawResponse, this);
+            return config.mutateResponse(responseData, rawResponse, this, requestConfig);
         }
 
         return responseData;
@@ -69,7 +69,7 @@ class GenericResource {
     mutateError(error, rawResponse, requestConfig) {
         const config = this.config(requestConfig);
         if (isFunction(config.mutateError)) {
-            return config.mutateError(error, rawResponse, this);
+            return config.mutateError(error, rawResponse, this, requestConfig);
         }
 
         return error;
@@ -173,7 +173,7 @@ class GenericResource {
     }
 
     /* istanbul ignore next */
-    createRequest(method, url, query, data) { // eslint-disable-line class-methods-use-this, no-unused-vars
+    createRequest(method, url, query, data, requestConfig) { // eslint-disable-line class-methods-use-this, no-unused-vars
         throw new Error('Not implemented');
     }
 

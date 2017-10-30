@@ -8,6 +8,7 @@ const DEFAULTS = {
     mutateRawResponse: null,
     headers: null,
     cookies: null,
+    withCredentials: false,
 
     parseErrors,
     prepareError,

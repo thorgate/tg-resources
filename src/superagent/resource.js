@@ -41,10 +41,14 @@ export class SuperAgentResource extends GenericResource {
         return new SuperagentResponse(response, error && error.status === undefined ? error : null);
     }
 
-    createRequest(method, url, query, data) { // eslint-disable-line class-methods-use-this
+    createRequest(method, url, query, data, requestConfig) { // eslint-disable-line class-methods-use-this
         method = method.toLowerCase();
 
-        let req = request[method](url).withCredentials();
+        let req = request[method](url);
+
+        if (this.config(requestConfig).withCredentials) {
+            req = req.withCredentials();
+        }
 
         if (query) {
             req = req.query(query);
