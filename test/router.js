@@ -1166,5 +1166,105 @@ export default {
             expect(sdk.config()).to.be.an('object');
             expect(sdk.config().apiRoot).to.be.equal('some/root');
         },
+
+        'setConfig works': () => {
+            class SDK extends Router {
+                static defaultConfig = {
+                    apiRoot: 'some/root',
+                    defaultAcceptHeader: 'fake/mime',
+                };
+
+                static defaultRoutes = {
+                    me: new Resource('user/me'),
+                };
+            }
+
+
+            const sdk = new SDK(null, {
+                headers: {
+                    from: 'resource',
+                },
+            });
+
+            // Check config values
+            expect(sdk.config()).to.be.an('object');
+            expect(sdk.config().apiRoot).to.be.equal('some/root');
+            expect(sdk.config().defaultAcceptHeader).to.be.equal('fake/mime');
+            expect(sdk.config().headers).to.deep.equal({
+                from: 'resource',
+            });
+            expect(sdk.me.config()).to.be.an('object');
+            expect(sdk.me.config().apiRoot).to.be.equal(sdk.config().apiRoot);
+            expect(sdk.me.config().headers).to.deep.equal(sdk.config().headers);
+            expect(sdk.me.config().defaultAcceptHeader).to.be.equal(sdk.config().defaultAcceptHeader);
+
+            // Update config via setConfig w/ no value
+            sdk.setConfig(null);
+
+            // _config should be nulled
+            expect(sdk._config).to.be.null; // eslint-disable-line no-unused-expressions
+
+            // Check config values again
+            expect(sdk.config()).to.be.an('object');
+            expect(sdk._config).to.not.be.null; // eslint-disable-line no-unused-expressions
+            expect(sdk.config().apiRoot).to.be.equal('some/root');
+            expect(sdk.config().defaultAcceptHeader).to.be.equal('fake/mime');
+            expect(sdk.config().headers).to.deep.equal({
+                from: 'resource',
+            });
+            expect(sdk.me.config()).to.be.an('object');
+            expect(sdk.me.config().apiRoot).to.be.equal(sdk.config().apiRoot);
+            expect(sdk.me.config().headers).to.deep.equal(sdk.config().headers);
+            expect(sdk.me.config().defaultAcceptHeader).to.be.equal(sdk.config().defaultAcceptHeader);
+
+            // Update config via setConfig
+            sdk.setConfig({
+                apiRoot: 'foo',
+                headers: {
+                    via: 'setConfig',
+                },
+            });
+
+            // _config should be nulled
+            expect(sdk._config).to.be.null; // eslint-disable-line no-unused-expressions
+
+            // Check config values again
+            expect(sdk.config()).to.be.an('object');
+            expect(sdk._config).to.not.be.null; // eslint-disable-line no-unused-expressions
+            expect(sdk.config().apiRoot).to.be.equal('foo');
+            expect(sdk.config().defaultAcceptHeader).to.be.equal('fake/mime');
+            expect(sdk.config().headers).to.deep.equal({
+                via: 'setConfig',
+            });
+            expect(sdk.me.config()).to.be.an('object');
+            expect(sdk.me.config().apiRoot).to.be.equal(sdk.config().apiRoot);
+            expect(sdk.me.config().headers).to.deep.equal(sdk.config().headers);
+            expect(sdk.me.config().defaultAcceptHeader).to.be.equal(sdk.config().defaultAcceptHeader);
+
+            // Call setConfig on the resource
+            sdk.me.setConfig({
+                headers: {
+                    via: 'route setConfig',
+                },
+            });
+
+            // route level _config should be nulled
+            expect(sdk.me._config).to.be.null; // eslint-disable-line no-unused-expressions
+
+            // but sdk level config should not
+            expect(sdk._config).to.not.be.null; // eslint-disable-line no-unused-expressions
+
+            // Check config values again
+            expect(sdk.me.config()).to.be.an('object');
+            expect(sdk.me.config().headers).to.deep.equal({
+                via: 'route setConfig',
+            });
+
+            // sdk level config should not be affected
+            expect(sdk.config()).to.be.an('object');
+            expect(sdk.config().headers).to.deep.equal({
+                via: 'setConfig',
+            });
+        },
     },
 };

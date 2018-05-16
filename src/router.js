@@ -13,6 +13,8 @@ class Router {
 
         const defaultRoutes = this.defaultRoutes || this.constructor.defaultRoutes;
 
+        this._childKeys = [];
+
         if (defaultRoutes) {
             bindResources(defaultRoutes, this);
         }
@@ -61,6 +63,25 @@ class Router {
         }
 
         return this._config;
+    }
+
+    setConfig(config) {
+        // Update _customConfig
+        this._customConfig = {
+            ...this._customConfig,
+            ...config || {},
+        };
+
+        // Reset _config so it is recreated in the next call to .config
+        this.clearConfigCache();
+    }
+
+    clearConfigCache() {
+        this._config = null;
+
+        this._childKeys.forEach((key) => {
+            this[key].clearConfigCache();
+        });
     }
 }
 

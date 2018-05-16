@@ -33,6 +33,9 @@ export function bindResources(routes, $this) {
         res[routeName]._setParent($this);
     });
 
+    const keyMap = $this._childKeys.concat(Object.keys(res));
+    res._childKeys = keyMap;
+
     try {
         Object.assign($this, res);
     } catch (e) {
