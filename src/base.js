@@ -48,6 +48,21 @@ class GenericResource {
         return this._config;
     }
 
+    setConfig(config) {
+        // Update _customConfig
+        this._customConfig = {
+            ...this._customConfig,
+            ...config || {},
+        };
+
+        // Reset _config so it is recreated in the next call to .config
+        this.clearConfigCache();
+    }
+
+    clearConfigCache() {
+        this._config = null;
+    }
+
     mutateRawResponse(rawResponse, requestConfig) {
         const config = this.config(requestConfig);
         if (isFunction(config.mutateRawResponse)) {
