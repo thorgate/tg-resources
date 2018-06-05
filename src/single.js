@@ -13,24 +13,24 @@ export default function makeSingle(baseClass) {
             return this.fetch(kwargs, query, requestConfig, 'options');
         }
 
-        post(kwargs, data, query, requestConfig = null, /* istanbul ignore next: https://github.com/istanbuljs/babel-plugin-istanbul/issues/94 */ method = 'post') {
+        post(kwargs, data, query, attachments, requestConfig = null, /* istanbul ignore next: https://github.com/istanbuljs/babel-plugin-istanbul/issues/94 */ method = 'post') {
             const thePath = this.buildThePath(kwargs, requestConfig);
 
             return this.handleRequest(
-                this.createRequest(method, thePath, query, data || {}, requestConfig), requestConfig,
+                this.createRequest(method, thePath, query, data || {}, attachments, requestConfig), requestConfig,
             );
         }
 
-        patch(kwargs, data, query, requestConfig = null) {
-            return this.post(kwargs, data, query, requestConfig, 'patch');
+        patch(kwargs, data, query, attachments, requestConfig = null) {
+            return this.post(kwargs, data, query, attachments, requestConfig, 'patch');
         }
 
-        put(kwargs, data, query, requestConfig = null) {
-            return this.post(kwargs, data, query, requestConfig, 'put');
+        put(kwargs, data, query, attachments, requestConfig = null) {
+            return this.post(kwargs, data, query, attachments, requestConfig, 'put');
         }
 
-        del(kwargs, data, query, requestConfig = null) {
-            return this.post(kwargs, data, query, requestConfig, 'del');
+        del(kwargs, data, query, attachments, requestConfig = null) {
+            return this.post(kwargs, data, query, attachments, requestConfig, 'del');
         }
     }
 
