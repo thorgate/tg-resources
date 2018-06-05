@@ -1,10 +1,20 @@
+import fs from 'fs';
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import multiparty from 'multiparty';
 import uuid from 'uuid';
 
+import { isArray } from './src/typeChecks';
 
-const port = 3000;
+
+export const port = 3001;
+export const hostUrl = `http://127.0.0.1:${port}`;
+
+// contains UTF-8 bytes of the string 'buffer'
+export const expectedBuffer = Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72]);
+
 const allDogs = [
     {
         pk: '26fe9717-e494-43eb-b6d0-0c77422948a2',
@@ -13,7 +23,7 @@ const allDogs = [
     {
         pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815',
         name: 'Cody',
-    }
+    },
 ];
 
 const app = express();
@@ -141,17 +151,140 @@ app.delete('/dogs/:id', (req, res) => {
     }
 });
 
-app.post('/error400', (req, res) => {
-    res.status(400).json({
-        'name': [
-            'This field is required.'
-        ]
+app.post('/error413', (req, res) => {
+    res.status(413).json({
+        name: [
+            'This field is required.',
+        ],
     });
 });
 
 app.get('/error400_nonField', (req, res) => {
     res.status(400).json({
-        'non_field_errors': ['Sup dog']
+        non_field_errors: ['Sup dog'],
+    });
+});
+
+app.post('/attachments', (req, res) => {
+    const form = new multiparty.Form();
+
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+
+        if (!fields.name || fields.name[0] !== 'foo') {
+            res.status(400).json({
+                errors: {
+                    name: 'this field must be foo',
+                },
+            });
+            return;
+        }
+
+        if (!fields.bool0 || fields.bool0[0] !== 'false') {
+            res.status(400).json({
+                errors: {
+                    bool0: 'this field must be false',
+                },
+            });
+            return;
+        }
+
+        if (!fields.bool1 || fields.bool1[0] !== 'true') {
+            res.status(400).json({
+                errors: {
+                    bool0: 'this field must be false',
+                },
+            });
+            return;
+        }
+
+        if (fields.ignored0 !== undefined || fields.ignored1 !== undefined) {
+            res.status(400).json({
+                errors: {
+                    ignored0: 'this field must be undefined',
+                    ignored1: 'this field must be undefined',
+                },
+            });
+            return;
+        }
+
+        const postedArray = fields['array[]'];
+
+        if (!postedArray || !isArray(postedArray)) {
+            res.status(400).json({
+                errors: {
+                    array: 'this field must be an array',
+                },
+            });
+            return;
+        }
+
+        if (postedArray.length !== 2 || postedArray[0] !== 'first!' || postedArray[1] !== 'first! E: missed it') {
+            res.status(400).json({
+                errors: {
+                    array: 'invalid array contents',
+                },
+            });
+            return;
+        }
+
+        if (!fields.object || fields.object[0] !== '{"foo":1,"bar":0}') {
+            res.status(400).json({
+                errors: {
+                    object: 'object must be converted to json',
+                },
+            });
+            return;
+        }
+
+        if (!files.text || files.text.length !== 1) {
+            res.status(400).json({
+                errors: {
+                    text: 'this field is required',
+                },
+            });
+        }
+
+        const fileData = files.text[0];
+
+        if (fileData.originalFilename !== 'dummy.txt') {
+            res.status(400).json({
+                errors: {
+                    text: 'this file must be named dummy.txt',
+                },
+            });
+        }
+
+        fs.readFile(fileData.path, (readErr, data) => {
+            if (readErr) {
+                res.status(500).send(readErr);
+                return;
+            }
+
+            if (!data.equals(expectedBuffer)) {
+                res.status(400).json({
+                    errors: {
+                        text: 'invalid contents of file',
+                    },
+                });
+                return;
+            }
+
+            res.status(200).json({
+                name: fields.name[0],
+                text: {
+                    name: fileData.originalFilename,
+                    size: data.length,
+                },
+                bool0: fields.bool0[0],
+                bool1: fields.bool1[0],
+                array: postedArray,
+                object: fields.object[0],
+            });
+        });
     });
 });
 

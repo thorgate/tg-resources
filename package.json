@@ -1,6 +1,6 @@
 {
   "name": "tg-resources",
-  "version": "2.0.0-alpha.9",
+  "version": "2.0.0-alpha.10",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
   "main": "./dist/index.js",
   "jsnext:main": "./es/index.js",
@@ -67,6 +67,7 @@
     "isparta": "*",
     "lodash.template": "*",
     "mocha": "^3.4.2",
+    "multiparty": "*",
     "nyc": "^11.0.3",
     "rimraf": "*",
     "sinon": "^2.3.8",

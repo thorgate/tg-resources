@@ -1,7 +1,7 @@
 import { assert, expect } from 'chai';
 import { spy } from 'sinon';
 
-import listen from '../test-server';
+import listen, { expectedBuffer, hostUrl } from '../test-server';
 
 import { Resource, Response, RequestValidationError } from '../src';
 import { isSubClass } from '../src/typeChecks';
@@ -68,7 +68,7 @@ export default {
 
         'fetch `/` works': (done) => {
             const res = new Resource('/', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 defaultAcceptHeader: 'text/html',
             });
 
@@ -77,7 +77,7 @@ export default {
 
         'fetch `/` works w/ manual Accept header': (done) => {
             const res = new Resource('/', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 headers: {
                     Accept: 'text/html',
                 },
@@ -88,7 +88,7 @@ export default {
 
         'fetch `/` is HTML even if Accept header is not explicitly set': (done) => {
             const res = new Resource('/', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             expectResponse(res.fetch(), 'home', done);
@@ -98,7 +98,7 @@ export default {
             const spyFn = spy();
 
             const res = new Resource('/hello', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 mutateResponse: spyFn,
             });
 
@@ -114,7 +114,7 @@ export default {
 
         'mutateResponse functionally works': (done) => {
             const res = new Resource('/hello', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 mutateResponse(data, raw) {
                     return {
                         data,
@@ -135,7 +135,7 @@ export default {
             const spyFn = spy();
 
             const res = new Resource('/error500', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 mutateError: spyFn,
             });
 
@@ -151,7 +151,7 @@ export default {
 
         'mutateError functionally works': (done) => {
             const res = new Resource('/error500', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 mutateError(error, rawResponse, resource) {
                     return [
                         'the error', // put a string here so comparison is easy
@@ -196,7 +196,7 @@ export default {
             }));
 
             const res = new Resource('/hello', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 mutateRawResponse: spyFn,
             });
 
@@ -215,7 +215,7 @@ export default {
 
         'fetch `/hello` works': (done) => {
             const res = new Resource('/hello', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             expectResponse(res.fetch(), {
@@ -225,7 +225,7 @@ export default {
 
         'headers work as object': (done) => {
             const res = new Resource('/headers', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 headers: { auth: 'foo' },
             });
 
@@ -236,7 +236,7 @@ export default {
 
         'headers work as function': (done) => {
             const res = new Resource('/headers', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 headers: () => ({ auth: 'foo' }),
             });
 
@@ -247,7 +247,7 @@ export default {
 
         'cookies work as object': (done) => {
             const res = new Resource('/cookies', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 cookies: { sessionid: 'secret' },
             });
 
@@ -258,7 +258,7 @@ export default {
 
         'cookies work as function': (done) => {
             const res = new Resource('/cookies', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
                 cookies: () => ({ sessionid: 'secret' }),
             });
 
@@ -269,7 +269,7 @@ export default {
 
         'kwargs work': (done) => {
             const res = new Resource('/dogs/${pk}', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             expectResponse(res.fetch({ pk: '26fe9717-e494-43eb-b6d0-0c77422948a2' }), {
@@ -285,7 +285,7 @@ export default {
 
         'head request works': (done) => {
             const res = new Resource('/hello', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             expectResponse(res.head(), {}, done);
@@ -293,7 +293,7 @@ export default {
 
         'options request works': (done) => {
             const res = new Resource('/options', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             expectResponse(res.options(), {
@@ -303,7 +303,7 @@ export default {
 
         'del request works': (done) => {
             const res = new Resource('/dogs/${pk}', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             expectResponse(res.del({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }), { deleted: true }, () => {
@@ -315,10 +315,10 @@ export default {
 
         'put request works': (done) => {
             const listRes = new Resource('/dogs/', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
             const detailRes = new Resource('/dogs/${pk}', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             listRes.put(null, { name: 'Rex' }).then((data) => {
@@ -333,7 +333,7 @@ export default {
 
         'patch request works': (done) => {
             const res = new Resource('/dogs/${pk}', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             const params = { pk: '26fe9717-e494-43eb-b6d0-0c77422948a2' };
@@ -347,18 +347,20 @@ export default {
         },
 
         'statusValidationError is handled properly': (done) => {
-            const res = new Resource('/error400', {
-                apiRoot: 'http://127.0.0.1:3000',
+            const res = new Resource('/error413', {
+                apiRoot: hostUrl,
             });
 
-            res.post(null, { name: '' }).then(() => {
+            res.post(null, { name: '' }, undefined, undefined, {
+                statusValidationError: [400, 413],
+            }).then(() => {
                 done(new Error('Expected request to fail'));
             }, (err) => {
                 // the error must RequestValidationError
                 expect(err).to.be.an.instanceof(RequestValidationError);
 
                 // statusCode must be correct
-                expect(err.statusCode).to.equal(400);
+                expect(err.statusCode).to.equal(413);
 
                 // hasError must be true
                 expect(err.hasError()).to.be.equal(true);
@@ -373,7 +375,7 @@ export default {
 
         'statusValidationError is handled properly - nonField only': (done) => {
             const res = new Resource('/error400_nonField', {
-                apiRoot: 'http://127.0.0.1:3000',
+                apiRoot: hostUrl,
             });
 
             res.fetch(null).then(() => {
@@ -394,6 +396,53 @@ export default {
                 // all good
                 done();
             }).catch(done);
+        },
+
+        'attachments work': (done) => {
+            const res = new Resource('/attachments', {
+                apiRoot: hostUrl,
+            });
+
+            const postData = {
+                name: 'foo',
+                ignored0: null,
+                ignored1: undefined,
+                bool0: false,
+                bool1: true,
+                array: [
+                    'first!',
+                    'first! E: missed it',
+                ],
+                object: {
+                    foo: 1,
+                    bar: 0,
+                },
+            };
+
+            const attachments = [
+                {
+                    field: 'text',
+                    file: expectedBuffer,
+                    name: 'dummy.txt',
+                },
+            ];
+
+            res.post(null, postData, null, attachments).then((response) => {
+                expect(response).to.deep.equal({
+                    name: 'foo',
+                    text: {
+                        name: 'dummy.txt',
+                        size: expectedBuffer.length,
+                    },
+                    bool0: 'false',
+                    bool1: 'true',
+                    array: postData.array,
+                    object: JSON.stringify(postData.object),
+                });
+
+                // all good
+                done();
+            }, done);
         },
     },
 };
