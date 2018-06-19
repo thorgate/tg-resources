@@ -244,7 +244,7 @@ Error class used when unexpected response code occurs
 
 Error class used when backend response code is in ``config.statusValidationError``.
 
-#### Extends ```InvalidResponseCode`` and overwrites:
+#### Extends ``InvalidResponseCode`` and overwrites:
 
 - ``isInvalidResponseCode`` *(bool)*: Always ``false``
 - ``isValidationError`` *(bool)*: Always ``true``
