@@ -184,7 +184,7 @@ export class ListValidationError extends ParentValidationErrorInterface {
 
     asString(glue = '; ') {
         return this._errors.map((value, key) => `${key}: ${value.asString()}`)
-                           .join(glue);
+            .join(glue);
     }
 }
 
@@ -241,7 +241,7 @@ export class ValidationError extends ParentValidationErrorInterface {
         }
 
         return prefix + this._errKeys.map(k => `${k}: ${this._errors[k].asString()}`)
-                        .join(glue);
+            .join(glue);
     }
 
     _iter() {
