@@ -65,6 +65,10 @@ app.get('/error500', (req, res) => {
     });
 });
 
+app.get('/errorNetwork', (req, res) => {
+    res.connection.destroy();
+});
+
 app.get('/cookies', (req, res) => {
     if (req.cookies.sessionid === 'secret') {
         res.status(200).json({

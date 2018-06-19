@@ -66,7 +66,7 @@ export class ValidationErrorInterface {
 
     /* istanbul ignore next: just an interface */
     hasError() { // eslint-disable-line class-methods-use-this
-        return 'ValidationErrorInterface::asString is not implemented';
+        return this._errors.length > 0;
     }
 
     bindToField(fieldName) {

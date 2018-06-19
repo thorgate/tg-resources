@@ -7,7 +7,7 @@
 [![Downloads][download-badge]][npm-url]
 
 > Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.
-> Targeted mostly against `DRF` running on `Django` so some logic might not be applicable for
+> Targeted mostly against `Django Rest Framework (DRF)` running on `Django` so some logic might not be applicable for
 > other frameworks.
 
 ## Install
@@ -90,49 +90,43 @@ With tg-resources, all errors are Rejected. The logic is best described with an 
 ```js
 const resource = new Resource('user/login');
 
+const errorHandler = (error) => {
+    // Network error occurred
+    if (error.isNetworkError) {
+        console.error({
+            type: 'NETWORK_FAILED',
+            error,
+        });
+    } else if (error.isValidationError) {
+        // Validation error occurred (e.g.: wrong credentials)
+        console.error({
+            type: 'VALIDATION_ERROR',
+            error,
+        });
+
+    } else {
+        // As a last resort, also handle invalid response codes
+        console.error({
+            type: 'SERVER_ERROR',
+            error,
+        });
+    }
+};
+
 const payload = {
     user: 'foo',
     passwrod: 'bar'
 };
 
-resource.post(null, payload).then(user => {
+resource.post(null, payload).then(user =>
     console.log({
         type: 'LOGGED_IN',
         data: {
-            user: user
-        }
-    });
-}, error => {
-    // Network error occurred
-    if (error.isNetworkError) {
-        console.error({
-            type: 'NETWORK_FAILED',
-            data: {
-                error: error
-            }
-        });
-    } else {
-        // Validation error occurred (e.g.: wrong credentials)
-        if (error.isValidationError) {
-            console.error({
-                type: 'LOGIN_FAILED',
-                data: {
-                    message: error.firstError(true),
-                    error: error
-                }
-            });
-
-        } else {
-            // As a last resort, also handle invalid response codes
-            console.error({
-                type: 'SERVER_ERROR',
-                data: {
-                    error: error
-                }
-            });
-        }
-    }
-});
+            user,
+        },
+    }),
+    errorHandler,
+);
 ```
 
 ## API
@@ -189,10 +183,11 @@ Do a `method` request to the resource endpoint with optional kwargs and query pa
 #### Arguments
 
 1. `kwargs={}` *(Object)*: Object containing the replacement values if the resource uses tokenized urls
-2. `data={}` *(Object|string)*: Query parameters to use when doing the request.
-3. `query={}` *(Object|string)*: Query parameters to use when doing the request.
-4. `requestConfig=null` *(Object)*: Configuration overrides, useful when using same API for server-side rendering.
-5. `method='post'` *(string)*: Lowercase name of the HTTP method that will be used for this request.
+1. `data={}` *(Object|string)*: Query parameters to use when doing the request.
+1. `query={}` *(Object|string)*: Query parameters to use when doing the request.
+1. `attachments=[]` *(Array)*: Attachments, creates multipart request
+1. `requestConfig=null` *(Object)*: Configuration overrides, useful when using same API for server-side rendering.
+1. `method='post'` *(string)*: Lowercase name of the HTTP method that will be used for this request.
 
 #### Returns
 *(Promise)*:  Returns a `Promise` that resolves to the remote result or throws if errors occur.
@@ -244,18 +239,53 @@ Error class used when unexpected response code occurs
 - ``statusCode`` *(string)*: Response status code
 - ``responseText`` *(int)*: Response body text
 
-### ``ValidationError``
+
+### ``RequestValidationError``
 
 Error class used when backend response code is in ``config.statusValidationError``.
 
-#### Extends ``InvalidResponseCode`` and overwrites:
+#### Extends ```InvalidResponseCode`` and overwrites:
 
 - ``isInvalidResponseCode`` *(bool)*: Always ``false``
 - ``isValidationError`` *(bool)*: Always ``true``
 
+#### Attributes
+
+- ``errors``: *(ValidationErrorInterface|any)*: The result from `requestConfig.parseError`
+
+
+### ``ValidationErrorInterface``
+
+Error types returned by the default error parser (tailored for django rest framework).
+
+Supports iteration (map/forEach/for .. of/etc)
+
+#### Attributes
+
+- ``errors``: *(any)*: Errors and error messages.
+
+#### Types
+
+Since DRF errors can be arbitrarily nested and one field can have multiple
+errors, some specific types of interest:
+
+- ``SingleValidationError``: Errors for a single field
+    the `.errors` attribute is a list of strings.
+- ``ValidationError``: Errors for an object, `.errors` is an object with field names as keys.
+- ``ListValidationError``: Errors related to list of objects. `.errors` is a list of ``ValidationErrorInterface``.
+
+
 #### Methods
 
-##### ``getError``
+(*) Not applicable to SingleValidationError
+
+##### ``hasError``
+
+###### Returns
+
+*(bool)*: True if there are any errors.
+
+##### ``getError``*
 
 Get field specific error
 
@@ -268,7 +298,7 @@ Get field specific error
 
 *(any)*:  Returns a normalized error for ``fieldName`` or ``null``
 
-##### ``firstError``
+##### ``firstError``*
 
 Get first error normalized to a string for this ValidationError
 
