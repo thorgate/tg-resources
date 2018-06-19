@@ -256,7 +256,7 @@ Error class used when backend response code is in ``config.statusValidationError
 
 ### ``ValidationErrorInterface``
 
-Error types returned by the default error parser (tailored for django rest framework).
+Error types returned by the default error parser.
 
 Supports iteration (map/forEach/for .. of/etc)
 
