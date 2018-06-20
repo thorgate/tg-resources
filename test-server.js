@@ -169,6 +169,15 @@ app.get('/error400_nonField', (req, res) => {
     });
 });
 
+app.get('/errorNested', (req, res) => {
+    res.status(400).json({
+        a_number: ['A valid integer is required.'],
+        list_of_things: [{}, { foo: ['A valid integer is required.'] }],
+        nested: {
+            bar: ['This field is required.'] },
+    });
+});
+
 app.post('/attachments', (req, res) => {
     const form = new multiparty.Form();
 
