@@ -66,7 +66,7 @@ export class ValidationErrorInterface {
 
     /* istanbul ignore next: just an interface */
     hasError() { // eslint-disable-line class-methods-use-this
-        return 'ValidationErrorInterface::asString is not implemented';
+        return this._errors.length > 0;
     }
 
     bindToField(fieldName) {
@@ -184,7 +184,7 @@ export class ListValidationError extends ParentValidationErrorInterface {
 
     asString(glue = '; ') {
         return this._errors.map((value, key) => `${key}: ${value.asString()}`)
-                           .join(glue);
+            .join(glue);
     }
 }
 
@@ -241,7 +241,7 @@ export class ValidationError extends ParentValidationErrorInterface {
         }
 
         return prefix + this._errKeys.map(k => `${k}: ${this._errors[k].asString()}`)
-                        .join(glue);
+            .join(glue);
     }
 
     _iter() {
@@ -344,7 +344,13 @@ export function prepareError(err, parentConfig) {
 
         // if no errors ensure atleast a default message is set
         if (Object.keys(resErrors).length === 0 && !resNonField) {
-            resNonField = new SingleValidationError([err || '#$empty-message$#']);
+            if (Object.keys(err).length === 0) {
+                // We are probably inside a ListValidationError where
+                // this item is not an error, represented as `{}` by DRF
+                return new ValidationError({});
+            } else {
+                resNonField = new SingleValidationError([err || '#$empty-message$#']);
+            }
         }
 
         return new ValidationError(resErrors, resNonField);

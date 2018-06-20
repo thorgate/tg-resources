@@ -65,6 +65,10 @@ app.get('/error500', (req, res) => {
     });
 });
 
+app.get('/errorNetwork', (req, res) => {
+    res.connection.destroy();
+});
+
 app.get('/cookies', (req, res) => {
     if (req.cookies.sessionid === 'secret') {
         res.status(200).json({
@@ -162,6 +166,15 @@ app.post('/error413', (req, res) => {
 app.get('/error400_nonField', (req, res) => {
     res.status(400).json({
         non_field_errors: ['Sup dog'],
+    });
+});
+
+app.get('/errorNested', (req, res) => {
+    res.status(400).json({
+        a_number: ['A valid integer is required.'],
+        list_of_things: [{}, { foo: ['A valid integer is required.'] }],
+        nested: {
+            bar: ['This field is required.'] },
     });
 });
 
