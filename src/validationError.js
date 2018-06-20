@@ -344,7 +344,13 @@ export function prepareError(err, parentConfig) {
 
         // if no errors ensure atleast a default message is set
         if (Object.keys(resErrors).length === 0 && !resNonField) {
-            resNonField = new SingleValidationError([err || '#$empty-message$#']);
+            if (Object.keys(err).length === 0) {
+                // We are probably inside a ListValidationError where
+                // this item is not an error, represented as `{}` by DRF
+                return new ValidationError({});
+            } else {
+                resNonField = new SingleValidationError([err || '#$empty-message$#']);
+            }
         }
 
         return new ValidationError(resErrors, resNonField);
