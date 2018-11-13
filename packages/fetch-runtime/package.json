@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "",
+  "description": "Fetch polyfill helper for `tg-resources`",
   "main": "./index.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
