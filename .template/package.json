@@ -1,6 +1,7 @@
 {
   "name": "<%PACKAGE_NAME%>",
   "version": "<%VERSION%>",
+  "private": false,
   "publishConfig": {
     "access": "public"
   },
