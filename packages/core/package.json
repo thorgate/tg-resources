@@ -44,9 +44,6 @@
     "clean": "rimraf ./lib",
     "lint": "tslint -p tsconfig.lint.json",
     "build": "rollup -c=../../rollup.config.js",
-    "prebuild": "yarn clean && yarn lint",
-    "prepublish": "yarn build",
-    "prepare": "yarn build -s",
-    "prepublishOnly": "yarn build -s"
+    "prebuild": "yarn clean && yarn lint"
   }
 }

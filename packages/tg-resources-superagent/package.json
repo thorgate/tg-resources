@@ -34,10 +34,12 @@
   "files": [
     "lib"
   ],
+  "dependencies": {
+    "tg-resources": "^2.0.0"
+  },
   "peerDependencies": {
     "babel-runtime": "*",
-    "superagent": ">=1.4.0",
-    "tg-resources": "^2.0.0"
+    "superagent": ">=1.4.0"
   },
   "devDependencies": {
     "@tg-resources/test-server": "*",
@@ -48,9 +50,6 @@
     "clean": "rimraf ./lib",
     "lint": "tslint -p tsconfig.lint.json",
     "build": "rollup -c=../../rollup.config.js",
-    "prebuild": "yarn clean && yarn lint",
-    "prepublish": "yarn build",
-    "prepare": "yarn build -s",
-    "prepublishOnly": "yarn build -s"
+    "prebuild": "yarn clean && yarn lint"
   }
 }

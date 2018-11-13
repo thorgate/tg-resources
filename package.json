@@ -24,6 +24,7 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "check-packages": "yarn clean && yarn build && yarn test && yarn lint",
     "bump-version": "lerna --ignore=examples/* version --no-push",
+    "prerun-publish": "yarn build",
     "run-publish": "lerna --ignore=examples/* publish from-git",
     "clean": "lerna exec yarn clean && yarn clean-logs",
     "clean-incl-deps": "yarn clean && yarn clean-deps",
