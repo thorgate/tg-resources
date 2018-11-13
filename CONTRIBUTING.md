@@ -68,7 +68,7 @@ development.
 
 3.  Install dependencies
 
-        $ npm install
+        $ yarn
 
 4.  Create a branch for local development:
 
@@ -79,8 +79,9 @@ development.
 5.  When you're done making changes, check that your the tests and linting
     still pass.
 
-        $ npm run test
-        $ npm run lint
+        $ yarn build
+        $ yarn test
+        $ yarn lint
 
 6.  Commit your changes and push your branch to GitHub:
 

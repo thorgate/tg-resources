@@ -1,28 +1,34 @@
 {
   "name": "tg-resources",
+  "private": true,
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ],
   "version": "2.0.0",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
   "main": "./dist/index.js",
   "jsnext:main": "./es/index.js",
   "module": "./es/index.js",
   "react-native": "./es/index.js",
-  "files": [
-    "es/",
-    "dist/",
-    "src/",
-    "lib.js",
-    "index.js"
-  ],
   "scripts": {
-    "clean": "$(npm bin)/rimraf dist",
-    "lint": "$(npm bin)/eslint src test",
-    "test": "cross-env BABEL_ENV=test $(npm bin)/nyc mocha -u exports test/*.js",
-    "coverage": "$(npm bin)/nyc report && $(npm bin)/nyc report --reporter=html",
-    "coveralls": "$(npm bin)/nyc report --reporter=text-lcov | $(npm bin)/coveralls",
-    "prebuild": "npm run clean -s && npm run lint",
-    "build": "npm run build:umd && npm run build:es",
-    "build:umd": "cross-env BABEL_ENV=commonjs $(npm bin)/babel src -d dist",
-    "build:es": "cross-env BABEL_ENV=es $(npm bin)/babel src -d es"
+    "lerna": "lerna",
+    "create-package": "node scripts/bootstrapPackage.js",
+    "bootstrap": "check-engines && lerna bootstrap",
+    "build": "lerna --ignore=examples/* exec yarn build",
+    "run-examples": "lerna exec --scope=run-examples yarn start",
+    "lint": "lerna --ignore=examples/* exec yarn lint",
+    "test": "jest",
+    "test:coverage": "yarn test --coverage",
+    "precoveralls": "yarn test:coverage --no-cache --maxWorkers 10",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "check-packages": "yarn clean && yarn build && yarn test && yarn lint",
+    "bump-version": "lerna --ignore=examples/* version --no-push",
+    "run-publish": "lerna --ignore=examples/* publish from-git",
+    "clean": "lerna exec yarn clean && yarn clean-logs",
+    "clean-incl-deps": "yarn clean && yarn clean-deps",
+    "clean-deps": "rimraf node_modules && rimraf packages/*/node_modules && rimraf yarn.lock && rimraf */**/yarn.lock",
+    "clean-logs": "rimraf *.log && rimraf */**/*.log"
   },
   "repository": {
     "type": "git",
@@ -35,57 +41,69 @@
     "ajax"
   ],
   "author": "Thorgate <info@thorgate.eu>",
+  "contributors": [
+    "Jürno Ader <jyrno42@gmail.com> (https://github.com/Jyrno42)",
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)",
+    "Simon Schmidt (https://github.com/simonschmidt)",
+    "Romet Tagobert (https://github.com/amPerl)",
+    "Jaak Erisalu (https://github.com/jaakerisalu)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/thorgate/tg-resources/issues"
   },
   "homepage": "https://github.com/thorgate/tg-resources#readme",
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.25.0",
-    "babel-eslint": "*",
-    "babel-plugin-istanbul": "^4.1.4",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-register": "^6.24.0",
-    "babel-runtime": "*",
+    "@babel/core": "7.1.5",
+    "@babel/plugin-transform-async-to-generator": "7.1.0",
+    "@types/body-parser": "^1.17.0",
+    "@types/cookie": "^0.3.1",
+    "@types/cookie-parser": "^1.4.1",
+    "@types/express": "^4.16.0",
+    "@types/jest": "^23.3.2",
+    "@types/lodash.template": "^4.4.4",
+    "@types/multiparty": "^0.0.31",
+    "@types/node": "^10.10.3",
+    "@types/qs": "^6.5.1",
+    "@types/superagent": "^3.8.4",
+    "@types/uuid": "^3.4.4",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "23.6.0",
     "body-parser": "^1.17.2",
-    "chai": "^4.1.0",
+    "check-engines": "1.5.0",
     "cookie-parser": "^1.4.3",
     "coveralls": "*",
-    "cross-env": "^5.0.1",
     "debug": "*",
-    "eslint": "^4.18.1",
-    "eslint-config-airbnb-base": "^11.2.0",
-    "eslint-plugin-import": "^2.7.0",
     "express": "^4.15.3",
+    "form-data": "^2.3.3",
     "fs-extra": "*",
     "isparta": "*",
+    "jest": "23.6.0",
+    "jest-cli": "23.6.0",
+    "jest-extended": "0.11.0",
+    "lerna": "3.4.3",
     "lodash.template": "*",
-    "mocha": "^3.4.2",
     "multiparty": "*",
-    "nyc": "^11.0.3",
+    "regenerator-runtime": "0.12.1",
     "rimraf": "*",
-    "sinon": "^2.3.8",
-    "superagent": "^3.5.2",
+    "rollup": "0.66.2",
+    "rollup-plugin-commonjs": "9.1.8",
+    "rollup-plugin-json": "3.1.0",
+    "rollup-plugin-node-resolve": "3.4.0",
+    "rollup-plugin-replace": "2.0.0",
+    "rollup-plugin-typescript2": "0.17.0",
+    "semver": "^5.6.0",
+    "superagent": "^3.6.0",
+    "temp-dir": "1.0.0",
+    "ts-jest": "23.10.3",
+    "tslib": "1.9.3",
+    "tslint": "5.11.0",
+    "tslint-config-standard": "8.0.1",
+    "typescript": "3.1.3",
     "uuid": "*",
     "watch": "*"
   },
-  "peerDependencies": {
-    "babel-runtime": "*",
-    "superagent": ">=1.4.0",
-    "lodash.template": "*"
-  },
-  "dependencies": {
-    "cookie": ">=0.2.2"
-  },
-  "nyc": {
-    "require": [
-      "babel-register"
-    ],
-    "sourceMap": false,
-    "instrument": false
+  "engines": {
+    "node": ">=6.14.0"
   }
 }

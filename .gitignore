@@ -2,12 +2,10 @@
 logs
 *.log
 node_modules
-dist
+lib
 .release
 tmp
 coverage
-.nyc_output
 npm-debug.log
-es
 .vscode
 .idea/
