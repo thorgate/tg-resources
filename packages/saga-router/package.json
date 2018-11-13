@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/redux-saga-router",
-  "version": "2.0.0",
+  "version": "3.0.0-alpha.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -38,12 +38,12 @@
     "redux-saga": "^1.0.0-beta.3"
   },
   "dependencies": {
-    "@tg-resources/is": "^2.0.0",
-    "tg-resources": "^2.0.0"
+    "@tg-resources/is": "^3.0.0-alpha.0",
+    "tg-resources": "^3.0.0-alpha.0"
   },
   "devDependencies": {
-    "@tg-resources/superagent": "^2.0.0",
-    "@tg-resources/test-server": "^2.0.0",
+    "@tg-resources/superagent": "^3.0.0-alpha.0",
+    "@tg-resources/test-server": "^3.0.0-alpha.0",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0-beta.3"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/fetch-runtime",
-  "version": "2.0.0",
+  "version": "3.0.0-alpha.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -34,9 +34,9 @@
     "lib"
   ],
   "dependencies": {
-    "isomorphic-fetch":"^2.2.1",
     "form-data": "^2.3.3",
-    "formdata-polyfill": "^3.0.12"
+    "formdata-polyfill": "^3.0.12",
+    "isomorphic-fetch": "^2.2.1"
   },
   "scripts": {
     "clean": "rimraf ./lib",

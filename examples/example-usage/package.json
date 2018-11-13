@@ -1,14 +1,14 @@
 {
   "name": "run-examples",
-  "version": "1.0.0",
+  "version": "3.0.0-alpha.0",
   "private": true,
   "description": "",
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
-    "@tg-resources/superagent": "^2.0.0",
-    "@tg-resources/test-server": "^2.0.0",
-    "tg-resources": "^2.0.0"
+    "@tg-resources/superagent": "^3.0.0-alpha.0",
+    "@tg-resources/test-server": "^3.0.0-alpha.0",
+    "tg-resources": "^3.0.0-alpha.0"
   },
   "scripts": {
     "lint": "echo Nothing to lint",
@@ -19,7 +19,7 @@
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.1.5",
-    "@babel/preset-env": "^7.1.5",
-    "@babel/polyfill":"^7.0.0"
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.5"
   }
 }
