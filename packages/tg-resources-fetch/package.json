@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "",
+  "description": "Fetch backend for `tg-resources`",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
@@ -40,8 +40,7 @@
     "tg-resources": "^3.0.0-alpha.0"
   },
   "devDependencies": {
-    "@tg-resources/fetch-runtime": "^3.0.0-alpha.0",
-    "tg-resources": "^2.0.0"
+    "@tg-resources/fetch-runtime": "^3.0.0-alpha.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",

@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "",
+  "description": "Redux-Saga `tg-resource` support backend",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",

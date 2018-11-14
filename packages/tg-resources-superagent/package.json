@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "",
+  "description": "Superagent backend for `tg-resources`",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
@@ -36,16 +36,14 @@
     "lib"
   ],
   "dependencies": {
+    "superagent": ">=1.4.0",
     "tg-resources": "^3.0.0-alpha.0"
   },
   "peerDependencies": {
-    "babel-runtime": "*",
-    "superagent": ">=1.4.0"
+    "babel-runtime": "*"
   },
   "devDependencies": {
-    "@tg-resources/test-server": "^3.0.0-alpha.0",
-    "superagent": "^3.6.0",
-    "tg-resources": "^2.0.0"
+    "@tg-resources/test-server": "^3.0.0-alpha.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",
