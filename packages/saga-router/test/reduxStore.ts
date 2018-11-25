@@ -1,6 +1,6 @@
 import { applyMiddleware, createStore } from 'redux';
-import createSagaMiddleware, { SagaIterator, Task } from 'redux-saga';
-import { call, putResolve } from 'redux-saga/effects';
+import createSagaMiddleware, { Effect, SagaIterator, Task } from 'redux-saga';
+import { putResolve } from 'redux-saga/effects';
 
 
 export interface State {
@@ -39,17 +39,10 @@ type ExtendedStore<S, T> = S & {
 };
 
 
-export function* SagaRunner(saga: () => SagaIterator): SagaIterator {
-    const response = yield call(saga);
+export function* SagaRunner(saga: Effect): SagaIterator {
+    const response = yield saga;
     yield putResolve(setResponse(response));
 }
-
-
-export function* SagaRunnerSequence(saga: () => SagaIterator): SagaIterator {
-    const response = yield* saga();
-    yield putResolve(setResponse(response));
-}
-
 
 export function* SagaInitialized(saga: any): SagaIterator {
     const response = yield* saga;
@@ -62,12 +55,8 @@ export function configureStore() {
         onError: () => null,
     });
 
-    function runSaga(saga: () => SagaIterator): Task {
+    function runSaga(saga: Effect): Task {
         return sagaMiddleware.run(SagaRunner, saga);
-    }
-
-    function runSagaSequence(saga: () => SagaIterator): Task {
-        return sagaMiddleware.run(SagaRunnerSequence, saga);
     }
 
     function runSagaInitialized(saga: any): Task {
@@ -80,12 +69,10 @@ export function configureStore() {
     );
 
     (store as any).runSaga = runSaga;
-    (store as any).runSagaSequence = runSagaSequence;
     (store as any).runSagaInitialized = runSagaInitialized;
 
     return store as ExtendedStore<typeof store, {
         runSaga: RunSagaEffect;
-        runSagaSequence: RunSagaEffect;
         runSagaInitialized: RunSagaEffect;
     }>;
 }

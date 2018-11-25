@@ -2,6 +2,8 @@
 
 [![NPM version][npm-image]][npm-url]
 
+> `tg-resources` [Redux-Saga](https://github.com/redux-saga/redux-saga) helper library.
+
 
 ## Installing
 
@@ -56,7 +58,7 @@ const api = createSagaRouter({
 // Do a get request to /api/v1/cats?gender=M
 function* fetchMaleCats() {
     try {
-        const response = yield call(api.cats.fetch(null, {gender: 'M'}));
+        const response = yield api.cats.fetch(null, {gender: 'M'});
         onLoad(response);
     } catch (err) {
         onError(err);
@@ -66,7 +68,7 @@ function* fetchMaleCats() {
 // Or using sequence saga pattern
 function* fetchMaleCatsSequence() {
     try {
-        const response = yield* api.cats.fetch(null, {gender: 'M'})();
+        const response = yield api.cats.fetch(null, {gender: 'M'});
         onLoad(response);
     } catch (err) {
         onError(err);
@@ -76,7 +78,7 @@ function* fetchMaleCatsSequence() {
 // Do a head request to /api/v1/cats?gender=F
 function* fetchHeader() {
     try {
-        const response = yield* api.cats.head(null, {gender: 'F'})();
+        const response = yield api.cats.head(null, {gender: 'F'});
         onLoad(response);
     } catch (err) {
         onError(err);
@@ -86,7 +88,7 @@ function* fetchHeader() {
 // Do a post request to /api/v1/cats with data: {name: 'Twinky', gender: 'M'}
 function* createTwinky() {
     try {
-        const response = yield* api.cats.post(null, {name: 'Twinky', gender: 'M'})();
+        const response = yield api.cats.post(null, {name: 'Twinky', gender: 'M'});
         onLoad(response);
     } catch (err) {
         onError(err);
@@ -96,7 +98,7 @@ function* createTwinky() {
 // Do a patch request to /api/v1/cats/1 with data: {name: 'Tinkelberg'}
 function* updateTinkelberg() {
     try {
-        const response = yield* api.cat.patch({pk: 1}, {name: 'Tinkelberg'})();
+        const response = yield api.cat.patch({pk: 1}, {name: 'Tinkelberg'});
         onLoad(response);
     } catch (err) {
         onError(err);
@@ -106,7 +108,7 @@ function* updateTinkelberg() {
 // Do a put request to /api/v1/cats with data: {pk: 1, name: 'Twinky'}
 function* fetchFemaleCats() {
     try {
-        const response = yield* api.cats.put(null, {pk: 1, name: 'Twinky', gender: 'M'})();
+        const response = yield api.cats.put(null, {pk: 1, name: 'Twinky', gender: 'M'});
         onLoad(response);
     } catch (err) {
         onError(err);
@@ -116,7 +118,7 @@ function* fetchFemaleCats() {
 // Do a delete request to /api/v1/cats/1 with data: {'free':'yes'}
 function* fetchFemaleCats() {
     try {
-        const response = yield* api.cat.del({pk: 1}, {free: 'yes'})();
+        const response = yield api.cat.del({pk: 1}, {free: 'yes'});
         onLoad(response);
     } catch (err) {
         onError(err);
@@ -151,7 +153,7 @@ Construct a new resource for loading data from a single (or dynamic) endpoint
 2. `resourceKlass` *(Object)*: Resource backend class used for providing [resource API](https://github.com/thorgate/tg-resources/tree/master/README.md#resource-api) for this endpoint.
 3. `config` *(Object)*: Object containing config for this resource. see [Configuration](#configuration)
 
-All methods returns Sagas that returns api response.
+All methods return `call` effect which yields api response or throw error if anything went wrong with api call.
 
 
 For additional information, see [resource api](https://github.com/thorgate/tg-resources/tree/master/README.md#resource-api).
