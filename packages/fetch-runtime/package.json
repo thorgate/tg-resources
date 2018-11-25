@@ -6,7 +6,7 @@
     "access": "public"
   },
   "description": "Fetch polyfill helper for `tg-resources`",
-  "main": "./index.js",
+  "main": "index.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -29,9 +29,6 @@
     "ajax",
     "fetch",
     "polyfill"
-  ],
-  "files": [
-    "lib"
   ],
   "dependencies": {
     "form-data": "^2.3.3",

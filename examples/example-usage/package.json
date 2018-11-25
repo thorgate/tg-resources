@@ -10,7 +10,11 @@
     "@tg-resources/test-server": "^3.0.0-alpha.0",
     "tg-resources": "^3.0.0-alpha.0"
   },
+  "files": [
+    "lib"
+  ],
   "scripts": {
+    "clean": "echo Nothing to clean",
     "lint": "echo Nothing to lint",
     "build": "babel src --out-dir lib",
     "prestart": "yarn build",
