@@ -132,6 +132,13 @@ const errorHandler = (error) => {
             type: 'NETWORK_FAILED',
             error,
         });
+    } else if (error.isAbortError) {
+        // Request was aborted
+        console.error({
+            type: 'ABORTED',
+            error,
+        });
+
     } else if (error.isValidationError) {
         // Validation error occurred (e.g.: wrong credentials)
         console.error({

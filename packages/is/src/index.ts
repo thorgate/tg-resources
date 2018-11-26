@@ -39,6 +39,15 @@ export const isStatusCode = (statusCodes: number | number[], status: any): statu
     )
 );
 
+export const isAbortSignal = (signal: any): signal is AbortSignal => {
+    const proto = (
+        signal
+        && typeof signal === 'object'
+        && Object.getPrototypeOf(signal)
+    );
+    return !!(proto && proto.constructor.name === 'AbortSignal');
+};
+
 
 export interface Constructable<T> {
     new(...args: any[]): T;

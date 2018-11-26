@@ -331,6 +331,14 @@ function configureServer(logger: boolean = false) {
         });
     });
 
+    app.get('/abort', (_0, res) => {
+        setTimeout(() => {
+            res.status(200).json({
+                notAborted: true,
+            });
+        }, 2000);
+    });
+
     return app;
 }
 

@@ -36,8 +36,11 @@
     "lib"
   ],
   "dependencies": {
-    "superagent": ">=1.4.0",
+    "superagent": ">=4.0.0",
     "tg-resources": "^3.0.1"
+  },
+  "peerDependencies": {
+    "babel-runtime": "*"
   },
   "devDependencies": {
     "@tg-resources/test-server": "^3.0.0"

@@ -1,4 +1,4 @@
-import { hasValue, isArray, isNumber, isObject, isString } from '@tg-resources/is';
+import { hasValue, isAbortSignal, isArray, isNumber, isObject, isString } from '@tg-resources/is';
 import cookie from 'cookie';
 
 import { ConfigType, ObjectMap, RequestConfig, ResourceFetchMethods, ResourcePostMethods } from './types';
@@ -28,6 +28,10 @@ export function mergeConfig(...config: RequestConfig[]): ConfigType {
         if (!isArray(res.statusValidationError) && hasValue(res.statusValidationError) && isNumber(res.statusValidationError)) {
             res.statusValidationError = [res.statusValidationError];
         }
+    }
+
+    if (res.signal && !isAbortSignal(res.signal)) {
+        throw new Error(`Expected signal to be an instanceof AbortSignal`);
     }
 
     // Expect to be filled by now - we use default config which will fill all the right data
