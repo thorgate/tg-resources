@@ -7,10 +7,6 @@
   ],
   "version": "2.0.0",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
-  "main": "./dist/index.js",
-  "jsnext:main": "./es/index.js",
-  "module": "./es/index.js",
-  "react-native": "./es/index.js",
   "scripts": {
     "lerna": "lerna",
     "create-package": "node scripts/bootstrapPackage.js",
@@ -28,7 +24,7 @@
     "run-publish": "lerna --ignore=examples/* publish from-git",
     "clean": "lerna exec yarn clean && yarn clean-logs",
     "clean-incl-deps": "yarn clean && yarn clean-deps",
-    "clean-deps": "rimraf node_modules && rimraf packages/*/node_modules && rimraf yarn.lock && rimraf */**/yarn.lock",
+    "clean-deps": "rimraf packages/*/node_modules && rimraf yarn.lock && rimraf */**/yarn.lock && rimraf node_modules",
     "clean-logs": "rimraf *.log && rimraf */**/*.log"
   },
   "repository": {
@@ -85,6 +81,8 @@
     "lerna": "3.4.3",
     "lodash.template": "*",
     "multiparty": "*",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.0-beta.3",
     "regenerator-runtime": "0.12.1",
     "rimraf": "*",
     "rollup": "0.66.2",
