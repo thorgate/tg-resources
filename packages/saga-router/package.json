@@ -42,7 +42,8 @@
     "tg-resources": "^3.0.0-alpha.0"
   },
   "devDependencies": {
-    "@tg-resources/superagent": "^3.0.0-alpha.0",
+    "@tg-resources/fetch-runtime": "^3.0.0-alpha.0",
+    "@tg-resources/fetch": "^3.0.0-alpha.0",
     "@tg-resources/test-server": "^3.0.0-alpha.0",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0-beta.3"

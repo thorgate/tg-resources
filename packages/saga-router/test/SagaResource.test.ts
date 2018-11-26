@@ -1,4 +1,4 @@
-import { SuperAgentResource as Resource } from '@tg-resources/superagent';
+import { FetchResource as Resource } from '@tg-resources/fetch';
 import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
 import { Server } from 'http';
 import 'jest-extended';
@@ -149,11 +149,6 @@ describe('createSagaRouter functional', () => {
         await expectResponse(store.runSaga(api.auth.fetch()), { authenticated: true });
     });
 
-    test('mutate requestConfig works :: sequence', async () => {
-        const api = createApi(addRequestConfig);
-        await expectResponse(store.runSagaSequence(api.auth.fetch()), { authenticated: true });
-    });
-
     test('mutate requestConfig works :: initialized', async () => {
         const api = createApi(addRequestConfig);
 
@@ -164,11 +159,6 @@ describe('createSagaRouter functional', () => {
     test('fetch `/hello` works :: call', async () => {
         const api = createApi();
         await expectResponse(store.runSaga(api.hello.fetch()), { message: 'world' });
-    });
-
-    test('fetch `/hello` works :: sequence', async () => {
-        const api = createApi();
-        await expectResponse(store.runSagaSequence(api.hello.fetch()), { message: 'world' });
     });
 
     test('fetch `/hello` works :: initialized', async () => {
@@ -184,32 +174,15 @@ describe('createSagaRouter functional', () => {
         await expectResponse(store.runSaga(api.hello.head()), {});
     });
 
-    test('head `/hello` works :: sequence', async () => {
-        const api = createApi();
-        await expectResponse(store.runSagaSequence(api.hello.head()), {});
-    });
-
     test('options `/options` works :: call', async () => {
         const api = createApi();
         await expectResponse(store.runSaga(api.options.options()), { message: 'options' });
-    });
-
-    test('options `/options` works :: sequence', async () => {
-        const api = createApi();
-        await expectResponse(store.runSagaSequence(api.options.options()), { message: 'options' });
     });
 
     test('url encoded data works :: call', async () => {
         const api = createApi();
         await expectResponse(
             store.runSaga(api.urlEncoded.post(null, 'test=1')), { data: { test: '1' } },
-        );
-    });
-
-    test('url encoded data works :: sequence', async () => {
-        const api = createApi();
-        await expectResponse(
-            store.runSagaSequence(api.urlEncoded.post(null, 'test=1')), { data: { test: '1' } },
         );
     });
 
@@ -220,15 +193,6 @@ describe('createSagaRouter functional', () => {
 
         await expectResponse(store.runSaga(api.dogs.details.patch(params, data)), params);
         await expectResponse(store.runSaga(api.dogs.details.fetch(params)), { ...params, ...data });
-    });
-
-    test('patch request works :: sequence', async () => {
-        const api = createApi();
-        const params = { pk: '26fe9717-e494-43eb-b6d0-0c77422948a2' };
-        const data = { name: 'Johnty' };
-
-        await expectResponse(store.runSagaSequence(api.dogs.details.patch(params, data)), params);
-        await expectResponse(store.runSagaSequence(api.dogs.details.fetch(params)), { ...params, ...data });
     });
 
     test('put request works :: call', async () => {
@@ -242,48 +206,38 @@ describe('createSagaRouter functional', () => {
         await expectResponse(store.runSaga(api.dogs.details.fetch({ pk })), { pk, ...data });
     });
 
-    test('put request works :: sequence', async () => {
-        const api = createApi();
-        const data = { name: 'Rex' };
-
-        await expectResponse(store.runSagaSequence(api.dogs.list.put(null, data)), null);
-        expect(store.getState()).toContainKey('pk');
-
-        const pk = store.getState().pk;
-        await expectResponse(store.runSagaSequence(api.dogs.details.fetch({ pk })), { pk, ...data });
-    });
-
     test('del request works :: call', async () => {
         const api = createApi(addRequestConfig);
         const params = { pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' };
 
-        await expectResponse(store.runSaga(api.dogs.details.del(params)), { deleted: true });
+        const onError = jest.fn((err: any) => {
+            expect(err).toBeInstanceOf(InvalidResponseCode);
+            expect(err.statusCode).toEqual(404);
+        });
+
+        await expectResponse(store.runSaga(api.dogs.details.del(
+            params, null, null, null, { onRequestError: onError },
+        )), { deleted: true });
 
         try {
             await store.runSaga(api.dogs.details.fetch(params)).toPromise();
-            expect(store.getState()).toEqual({});
         } catch (err) {
+            expect(err).toBeInstanceOf(InvalidResponseCode);
             expect(err.statusCode).toEqual(404);
         }
-    });
 
-    test('del request works :: sequence', async () => {
-        const api = createApi(addRequestConfig);
-        const params = { pk: '26fe9717-e494-43eb-b6d0-0c77422948a2' };
-
-        await expectResponse(store.runSagaSequence(api.dogs.details.del(params)), { deleted: true });
-
-        try {
-            await store.runSagaSequence(api.dogs.details.fetch(params)).toPromise();
-        } catch (err) {
-            expect(err.statusCode).toEqual(404);
-        }
+        expect(store.getState()).toEqual({ deleted: true });
     });
 
     test('statusValidationError is handled properly', async () => {
-        const onError = jest.fn();
-
         const api = createApi();
+
+        const onError = jest.fn((err: any) => {
+            expect(err).toBeInstanceOf(RequestValidationError);
+            expect(err.statusCode).toEqual(413);
+
+            throw err;
+        });
 
         await expectError(
             store.runSagaInitialized(api.error413.post(null, { name: '' }, null, null, {
@@ -298,8 +252,14 @@ describe('createSagaRouter functional', () => {
     });
 
     test('statusValidationError is handled properly - nonField only', async () => {
-        const onError = jest.fn();
         const api = createApi();
+
+        const onError = jest.fn((err: any) => {
+            expect(err).toBeInstanceOf(RequestValidationError);
+            expect(err.statusCode).toEqual(400);
+
+            throw err;
+        });
 
         await expectError(
             store.runSagaInitialized(api.error400_nonField.fetch(null, null, {
@@ -323,6 +283,8 @@ describe('createSagaRouter functional', () => {
         const onError = jest.fn((err: any) => {
             expect(err).toBeInstanceOf(InvalidResponseCode);
             expect(err.statusCode).toEqual(404);
+
+            throw err;
         });
 
         const requestConfig: SagaRequestConfig = {
@@ -337,13 +299,14 @@ describe('createSagaRouter functional', () => {
 
         try {
             await store.runSagaInitialized(api.dogs.details.fetch(params, null, requestConfig)).toPromise();
-            expect(store.getState()).toEqual({});
         } catch (err) {
             expect(err).toBeInstanceOf(InvalidResponseCode);
             expect(err.statusCode).toEqual(404);
 
             expect(onError.mock.calls.length).toEqual(1);
         }
+
+        expect(store.getState()).toEqual({ deleted: true });
 
         try {
             await store.runSagaInitialized(api.dogs.details.del(params, null, null, null, requestConfig)).toPromise();
@@ -355,9 +318,41 @@ describe('createSagaRouter functional', () => {
         }
     });
 
-    test('attachments require allowAttachments=true', async () => {
+    test('attachments require allowAttachments=true :: call', async () => {
         const api = createApi(addRequestConfig);
-        const onError = jest.fn();
+        const onError = jest.fn((err: any) => {
+            expect(`${err}`).toEqual(
+                'Error: Misconfiguration: "allowAttachments=true" is required when sending attachments!',
+            );
+        });
+
+        const attachments = [
+            {
+                field: 'text',
+                file: expectedBuffer,
+                name: 'dummy.txt',
+            },
+        ];
+
+        try {
+            await store.runSaga(api.attachments.post(null, null, null, attachments, {
+                onRequestError: onError,
+            })).toPromise();
+        } catch (err) {
+            expect(onError.mock.calls.length).toEqual(1);
+            expect(`${err}`).toEqual(
+                'Error: Misconfiguration: "allowAttachments=true" is required when sending attachments!',
+            );
+        }
+    });
+
+    test('attachments require allowAttachments=true :: initialized', async () => {
+        const api = createApi(addRequestConfig);
+        const onError = jest.fn((err: any) => {
+            expect(`${err}`).toEqual(
+                'Error: Misconfiguration: "allowAttachments=true" is required when sending attachments!',
+            );
+        });
 
         const attachments = [
             {
@@ -372,11 +367,11 @@ describe('createSagaRouter functional', () => {
                 initializeSaga: true, onRequestError: onError,
             })).toPromise();
         } catch (err) {
-            expect(`${err}`)
-                .toEqual('Error: Misconfiguration: "allowAttachments=true" is required when sending attachments!');
+            expect(onError.mock.calls.length).toEqual(1);
+            expect(`${err}`).toEqual(
+                'Error: Misconfiguration: "allowAttachments=true" is required when sending attachments!',
+            );
         }
-
-        expect(onError.mock.calls.length).toEqual(1);
     });
 
     test('attachments work', async () => {
