@@ -1,4 +1,4 @@
-require('isomorphic-fetch');
+require('cross-fetch/polyfill');
 
 if (typeof module !== 'undefined' && module.exports) {
     global.FormData = require('form-data');
