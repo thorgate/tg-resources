@@ -1,5 +1,15 @@
 /* tslint:disable no-empty */
-import { hasValue, isArray, isFunction, isNumber, isObject, isStatusCode, isString, isStringArray } from '../src';
+import {
+    hasValue,
+    isAbortSignal,
+    isArray,
+    isFunction,
+    isNumber,
+    isObject,
+    isStatusCode,
+    isString,
+    isStringArray,
+} from '../src';
 
 
 const mockFn = jest.fn(<T>(value: T) => value);
@@ -179,5 +189,29 @@ describe('typeChecks api', () => {
         expect(isStringArray([])).toEqual(false);
 
         expect(isStringArray(['is', 'string', 'array'])).toEqual(true);
+    });
+
+    test('isAbortSignal works', () => {
+        expect(isAbortSignal(null)).toEqual(false);
+        expect(isAbortSignal(undefined)).toEqual(false);
+        expect(isAbortSignal(false)).toEqual(false);
+        expect(isAbortSignal(true)).toEqual(false);
+        expect(isAbortSignal(1)).toEqual(false);
+        expect(isAbortSignal(NaN)).toEqual(false);
+        expect(isAbortSignal(function f() {})).toEqual(false);
+        expect(isAbortSignal(() => 1)).toEqual(false);
+        expect(isAbortSignal(isFunction)).toEqual(false);
+        expect(isAbortSignal({})).toEqual(false);
+        expect(isAbortSignal(Object())).toEqual(false);
+        expect(isAbortSignal('is string')).toEqual(false);
+        expect(isAbortSignal([])).toEqual(false);
+        expect(isAbortSignal(AbortController)).toEqual(false);
+
+        expect(isAbortSignal(new AbortController().signal)).toEqual(true);
+
+        class AbortSignal {
+
+        }
+        expect(isAbortSignal(new AbortSignal())).toEqual(true);
     });
 });

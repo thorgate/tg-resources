@@ -22,6 +22,7 @@ describe('AbortError api', () => {
 
     test('instance.type is correct', () => {
         expect(instance.type).toEqual('aborted');
+        expect(new AbortError(null).type).toEqual('aborted');
     });
 
     test('instance.type is inherited from error', () => {

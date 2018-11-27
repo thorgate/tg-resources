@@ -29,6 +29,10 @@ export class DummyResponse extends ResponseInterface {
         return this._data.headers;
     }
 
+    public get wasAborted(): boolean {
+        return false;
+    }
+
     get contentType(): string {
         return 'application/json';
     }
