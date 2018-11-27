@@ -33,7 +33,7 @@
   "dependencies": {
     "form-data": "^2.3.3",
     "formdata-polyfill": "^3.0.12",
-    "isomorphic-fetch": "^2.2.1"
+    "cross-fetch": "^2.2.3"
   },
   "scripts": {
     "clean": "rimraf ./lib",
