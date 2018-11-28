@@ -1,36 +1,43 @@
-import { isObject, isString } from '@tg-resources/is';
-import { CreateRouterMap, ResourceInterface, Router } from 'tg-resources';
+import {
+    CreateResourceFactory,
+    createRouter,
+    ObjectMap,
+    RequestConfig,
+    Resource,
+    ResourceClassConstructor,
+    ResourceConstructorObject,
+    ResourceTuple,
+    Router
+} from 'tg-resources';
 
 import { SagaResource } from './SagaResource';
 import { SagaRequestConfig } from './types';
 
 
-interface RouterMap {
-    [key: string]: Router | ResourceInterface;
-}
+// Was required to copy this here as well - Type matching did not work correctly otherwise
+type ResourceOrExtendedRouter<T, Klass extends Resource> = {
+    [P in keyof T]:
+        T[P] extends string ? SagaResource<Klass> : // If string, map as Resource
+        T[P] extends ResourceTuple ? SagaResource<Klass> : // If Resource tuple, map as Resource
+        T[P] extends ResourceConstructorObject ? SagaResource<Klass> : // If Resource constructor object, map as Resource
+        T[P] extends Router ? Router :  // If Router type, map router info to top level
+        Router & ResourceOrExtendedRouter<T[P], SagaResource<Klass>> // Default to recursive mapping
+};
 
-type ResourceOrExtendedRouter<T> = {
-    [P in keyof T]: T[P] extends string ? ResourceInterface : ResourceOrExtendedRouter<T[P]>
+
+export const createSagaResource: CreateResourceFactory = <Klass extends Resource>(
+    resourceKlass: ResourceClassConstructor<Klass>, apiEndpoint: string, config?: RequestConfig
+) => {
+    return new SagaResource<Klass>(apiEndpoint, config, resourceKlass);
 };
 
 export function createSagaRouter<
-    T extends CreateRouterMap, Klass extends ResourceInterface
+    Klass extends Resource, T extends ObjectMap = {}
 >(
-    routes: T,
-    config: SagaRequestConfig,
-    resourceKlass: { new(apiEndpoint: string, config: SagaRequestConfig): Klass },
+    routes: T, config: SagaRequestConfig | null, resourceKlass: ResourceClassConstructor<Klass>
 ) {
-    const routeMap: RouterMap = {};
+    const router = createRouter(routes, config, resourceKlass, createSagaResource) as any;
 
-    Object.keys(routes).forEach((key) => {
-        if (isString(routes[key])) {
-            routeMap[key] = new SagaResource((routes[key] as string), resourceKlass, config);
-        } else if (isObject(routes[key])) {
-            routeMap[key] = createSagaRouter((routes[key] as CreateRouterMap), null, resourceKlass);
-        } else {
-            throw new Error('Only string or object is allowed');
-        }
-    });
-
-    return new Router(routeMap, config) as Router & ResourceOrExtendedRouter<T>;
+    // Return correct typing for SagaResource
+    return router as Router & ResourceOrExtendedRouter<T, Klass>;
 }

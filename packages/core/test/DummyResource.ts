@@ -1,7 +1,14 @@
-import { Attachments, ObjectMap, Query, RequestConfig, Resource, ResponseInterface } from '../src';
+import { Attachments, ObjectMap, Optional, Query, RequestConfig, Resource, ResponseInterface } from '../src';
 
 
 export class DummyResponse extends ResponseInterface {
+    public constructor(response: Optional<any>, error: Optional<any> = null, request: Optional<any> = null) {
+        super(response, error, request);
+        this._data = response;
+    }
+
+    private _data: any;
+
     public get status(): number {
         return 200;
     }
@@ -15,11 +22,11 @@ export class DummyResponse extends ResponseInterface {
     }
 
     public get data(): any {
-        return {};
+        return this._data;
     }
 
     public get headers(): any {
-        return {};
+        return this._data.headers;
     }
 
     get contentType(): string {
@@ -60,6 +67,9 @@ class DummyRequest {
             url: this.url,
             data: this.data,
             query: this.query,
+            attachments: this.attachments,
+            requestConfig: this.requestConfig,
+            headers: this.headers,
         }, null);
     }
 }

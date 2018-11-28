@@ -205,10 +205,12 @@ export interface RouteMap {
 }
 
 
-export interface RouteAble {
+export interface RouteInterface {
     readonly parent: RouterInterface | null;
     readonly isBound: boolean;
-    setParent(parent: RouterInterface): void;
+    readonly routeName: string;
+
+    setParent(parent: RouterInterface, routeName: string): void;
     getConfig(): RequestConfig;
 
     getHeaders(): ObjectMap<string | null>;
@@ -220,12 +222,12 @@ export interface RouteAble {
 }
 
 
-export interface RouterInterface extends RouteAble {
+export interface RouterInterface extends RouteInterface {
     [key: string]: ResourceInterface | RouterInterface | any;
 }
 
 
-export interface ResourceInterface extends RouteAble {
+export interface ResourceInterface extends RouteInterface {
     readonly apiEndpoint: string;
 
     fetch<

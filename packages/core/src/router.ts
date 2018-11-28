@@ -2,13 +2,14 @@ import { isFunction } from '@tg-resources/is';
 
 import DEFAULTS from './constants';
 import { Resource } from './resource';
+import { Route } from './route';
 import {
     ConfigType,
     Optional,
     OptionalMap,
     RequestConfig,
     ResourceInterface,
-    RouteAble,
+    RouteInterface,
     RouteMap,
     RouterInterface
 } from './types';
@@ -40,7 +41,7 @@ export function bindResources(routes: RouteMap, $this: RouterInterface) {
         res[routeName] = routes[routeName];
 
         // link them up
-        res[routeName].setParent($this);
+        res[routeName].setParent($this, routeName);
     });
 
     const childKeys = $this._childKeys.concat(Object.keys(res));
@@ -66,7 +67,7 @@ export function bindResources(routes: RouteMap, $this: RouterInterface) {
 }
 
 
-export class Router implements RouterInterface {
+export class Router extends Route implements RouterInterface {
     public static defaultRoutes: Optional<RouteMap> = null;
     public static defaultConfig: Optional<OptionalMap<ConfigType>> = null;
     public _childKeys: string[] = [];
@@ -74,12 +75,7 @@ export class Router implements RouterInterface {
     [key: string]: ResourceInterface | RouterInterface | any;
 
     public constructor(routes: Optional<RouteMap> = null, config?: RequestConfig) {
-        // Set config
-        this._customConfig = config || {};
-
-        // set parent to null
-        this._parent = null;
-        this._config = null;
+        super(config);
 
         const defaultRoutes = (this.constructor as typeof Router).defaultRoutes;
 
@@ -93,37 +89,6 @@ export class Router implements RouterInterface {
         if (routes) {
             bindResources(routes, this);
         }
-    }
-
-    protected _customConfig: RequestConfig;
-    protected _parent: RouterInterface | null = null;
-    protected _config: RequestConfig = null;
-
-    public get parent() {
-        return this._parent;
-    }
-
-    /**
-     * Internal API. Not for public usage.
-     * @param parent
-     * @private
-     */
-    public setParent(parent: RouterInterface) {
-        if (!this.isBound) {
-            this._parent = parent;
-        }
-    }
-
-    public get isBound() {
-        return !!this._parent || !!this._config;
-    }
-
-    /**
-     * Internal API.
-     * @private
-     */
-    public getConfig() {
-        return this._config;
     }
 
     public getHeaders() {
@@ -156,22 +121,11 @@ export class Router implements RouterInterface {
         return this._config as ConfigType;
     }
 
-    public setConfig(config: RequestConfig) {
-        // Update _customConfig
-        this._customConfig = {
-            ...this._customConfig,
-            ...config || {},
-        };
-
-        // Reset _config so it is recreated in the next call to .config
-        this.clearConfigCache();
-    }
-
     public clearConfigCache() {
         this._config = null;
 
         this._childKeys.forEach((key) => {
-            (this[key] as RouteAble).clearConfigCache();
+            (this[key] as RouteInterface).clearConfigCache();
         });
     }
 }
