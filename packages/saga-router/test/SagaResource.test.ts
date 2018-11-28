@@ -47,7 +47,7 @@ function addRequestConfig(requestConfig?: RequestConfig): RequestConfig {
 
 const createApi = (mutate?: MutatedRequestConfigFn) => (
     createSagaRouter({
-        auth: '/headers',
+        auth: ['/headers', { headers: () => ({ auth: 'foo' }), withCredentials: true }],
         hello: '/hello',
         options: '/options',
         attachments: '/attachments',
@@ -141,16 +141,16 @@ describe('createSagaRouter functional', () => {
                 apiRoot: hostUrl,
                 mutateRequestConfig: addRequestConfig,
             }, Resource);
-        }).toThrow(/Only string or object is allowed/);
+        }).toThrow(/Unknown type used "test"/);
     });
 
     test('mutate requestConfig works :: call', async () => {
-        const api = createApi(addRequestConfig);
+        const api = createApi();
         await expectResponse(store.runSaga(api.auth.fetch()), { authenticated: true });
     });
 
     test('mutate requestConfig works :: initialized', async () => {
-        const api = createApi(addRequestConfig);
+        const api = createApi();
 
         const iter = api.auth.fetch(null, null, { initializeSaga: true });
         await expectResponse(store.runSagaInitialized(iter), { authenticated: true });

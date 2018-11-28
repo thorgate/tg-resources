@@ -3,73 +3,36 @@ import renderTemplate from 'lodash.template';
 
 import DEFAULTS from './constants';
 import { InvalidResponseCode, NetworkError, RequestValidationError } from './errors';
+import { Route } from './route';
 import {
     AllowedFetchMethods,
     AllowedPostMethods,
-    Attachments,
-    ConfigType,
+    Attachments, ConfigType,
     ObjectMap,
     Query,
     RequestConfig,
     ResourceErrorInterface,
     ResourceInterface,
     ResponseInterface,
-    RouterInterface,
 } from './types';
 import { mergeConfig, serializeCookies } from './util';
 
 
-export abstract class Resource implements ResourceInterface {
+export abstract class Resource extends Route implements ResourceInterface {
 
     /**
      * @param apiEndpoint Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
      * @param config Customize config for this resource (see `Router.config`)
      */
     public constructor(apiEndpoint: string, config: RequestConfig = null) {
+        super(config);
         this._apiEndpoint = apiEndpoint;
-
-        // Set config
-        this._customConfig = config;
-        this._config = null;
-
-        // set parent to null
-        this._parent = null;
     }
 
-    private _customConfig: RequestConfig;
     private readonly _apiEndpoint: string;
-    protected _parent: RouterInterface | null = null;
-    protected _config: RequestConfig = null;
 
     public get apiEndpoint() {
         return this._apiEndpoint;
-    }
-
-    public get parent() {
-        return this._parent;
-    }
-
-    /**
-     * Internal API. Not for public usage.
-     * @param parent
-     * @private
-     */
-    public setParent(parent: RouterInterface) {
-        if (!this.isBound) {
-            this._parent = parent;
-        }
-    }
-
-    public get isBound() {
-        return !!this._parent || !!this._config;
-    }
-
-    /**
-     * Internal API.
-     * @private
-     */
-    public getConfig() {
-        return this._config;
     }
 
     public config(requestConfig: RequestConfig = null): ConfigType {
@@ -84,17 +47,6 @@ export abstract class Resource implements ResourceInterface {
         }
 
         return this._config as ConfigType;
-    }
-
-    public setConfig(config: RequestConfig) {
-        // Update _customConfig
-        this._customConfig = {
-            ...this._customConfig,
-            ...config || {},
-        };
-
-        // Reset _config so it is recreated in the next call to .config
-        this.clearConfigCache();
     }
 
     public clearConfigCache() {
