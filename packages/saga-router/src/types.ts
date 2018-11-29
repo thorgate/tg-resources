@@ -1,13 +1,24 @@
 import { SagaIterator } from 'redux-saga';
-import { Func1 } from 'redux-saga/effects';
-import { ConfigType, Optional, OptionalMap } from 'tg-resources';
+import { Func3 } from 'redux-saga/effects';
+import {
+    Attachments,
+    ConfigType,
+    ObjectMap,
+    Optional,
+    OptionalMap,
+    Query,
+    ResourceErrorInterface,
+    ResourceInterface
+} from 'tg-resources';
 
 
-export type AllowedFetchMethods = 'fetch' | 'head' | 'options';
-
-export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del';
-
-export type AllowedMethods = AllowedFetchMethods | AllowedPostMethods;
+export interface ResourceSagaRunnerConfig<Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any> {
+    kwargs?: Params | null;
+    query?: Query | null;
+    data?: D | string | null;
+    requestConfig?: SagaRequestConfig | null;
+    attachments?: Attachments | null;
+}
 
 
 export interface SagaConfigType extends ConfigType {
@@ -18,11 +29,15 @@ export interface SagaConfigType extends ConfigType {
     onRequestError: OnRequestError;
 }
 
+export type ErrorType = ResourceErrorInterface | Error;
 
 export type SagaRequestConfig = Optional<OptionalMap<SagaConfigType>>;
 
-export type OnRequestErrorFn = (error?: any) => void;
-export type OnRequestErrorSaga = (error?: any) => SagaIterator;
-export type OnRequestError = OnRequestErrorFn | OnRequestErrorSaga;
+export interface OnRequestError<Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any> {
+    (error: ErrorType, resource: ResourceInterface, options: ResourceSagaRunnerConfig<Params, D>): void;
+    (error: ErrorType, resource: ResourceInterface, options: ResourceSagaRunnerConfig<Params, D>): SagaIterator;
+}
 
-export type MutatedRequestConfigFn = Func1<SagaIterator | SagaRequestConfig | undefined, SagaRequestConfig | undefined>;
+export type MutatedRequestConfigFn<Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any> = Func3<
+    SagaIterator | SagaRequestConfig | undefined, SagaRequestConfig | undefined, ResourceInterface, ResourceSagaRunnerConfig<Params, D>
+>;

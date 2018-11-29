@@ -1,7 +1,16 @@
 import { hasValue, isArray, isNumber, isObject, isString } from '@tg-resources/is';
 import cookie from 'cookie';
 
-import { ConfigType, ObjectMap, RequestConfig } from './types';
+import { ConfigType, ObjectMap, RequestConfig, ResourceFetchMethods, ResourcePostMethods } from './types';
+
+
+export const isFetchMethod = (method: string): method is ResourceFetchMethods => (
+    ['fetch', 'head', 'options'].includes(method)
+);
+
+export const isPostMethod = (method: string): method is ResourcePostMethods => (
+    ['post', 'patch', 'put', 'del'].includes(method)
+);
 
 
 export function mergeConfig(...config: RequestConfig[]): ConfigType {

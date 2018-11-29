@@ -9,4 +9,6 @@ export * from './errors';
 
 export * from './types';
 
+export * from './util';
+
 export * from './ValidationError';

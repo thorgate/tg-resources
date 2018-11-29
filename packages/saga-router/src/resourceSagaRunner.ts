@@ -2,40 +2,57 @@ import { isFunction } from '@tg-resources/is';
 import { SagaIterator } from 'redux-saga';
 import { call } from 'redux-saga/effects';
 
-import { Attachments, ObjectMap, Query, ResourceInterface } from 'tg-resources';
+import {
+    Attachments,
+    isFetchMethod,
+    ObjectMap,
+    Query,
+    ResourceFetchMethods,
+    ResourceInterface,
+    ResourceMethods,
+    ResourcePostMethods
+} from 'tg-resources';
 
-import { AllowedFetchMethods, AllowedMethods, AllowedPostMethods, SagaRequestConfig } from './types';
+import { ResourceSagaRunnerConfig, SagaConfigType, SagaRequestConfig } from './types';
 
-
-const isPostMethod = (method: any): method is AllowedPostMethods => (
-    ['post', 'patch', 'put', 'del'].includes(method)
-);
-
-export interface ResourceSagaRunnerConfig<Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any> {
-    kwargs: Params | null;
-    query: Query | null;
-    data?: D | string | null;
-    requestConfig: SagaRequestConfig | null;
-    attachments?: Attachments | null;
-}
 
 export function* resourceSagaRunner<
-        R = any, Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any
->(resource: ResourceInterface, method: AllowedMethods, options: ResourceSagaRunnerConfig<Params, D>): SagaIterator {
-    const { kwargs = null, query = null, data = null, attachments = null } = options;
+    R = any, Params extends { [K in keyof Params]?: string } = {},
+    D extends ObjectMap = any
+>(resource: ResourceInterface, method: ResourceMethods, options: ResourceSagaRunnerConfig<Params, D>): SagaIterator {
+    const {
+        kwargs = null,
+        query = null,
+        data = null,
+        attachments = null,
+    } = options;
+
     let { requestConfig = null } = options;
 
-    const config = resource.config(requestConfig);
+    const config = resource.config(requestConfig) as SagaConfigType;
 
     if (isFunction(config.mutateRequestConfig)) {
-        requestConfig = yield call(config.mutateRequestConfig, requestConfig);
+        requestConfig = yield call(config.mutateRequestConfig, requestConfig, resource, options);
     }
 
     let callEffect;
 
-    if (isPostMethod(method)) {
+    if (isFetchMethod(method)) {
         callEffect = call<
-            ResourceInterface, AllowedPostMethods,
+            ResourceInterface,
+            ResourceFetchMethods,
+            Promise<R>, Params | null,
+            Query | null,
+            SagaRequestConfig | null>(
+            [resource, method],
+            kwargs,
+            query,
+            requestConfig,
+        );
+    } else {
+        callEffect = call<
+            ResourceInterface,
+            ResourcePostMethods,
             Promise<R>,
             Params | null,
             D | string | null,
@@ -49,24 +66,13 @@ export function* resourceSagaRunner<
             attachments,
             requestConfig,
         );
-    } else {
-        callEffect = call<
-            ResourceInterface, AllowedFetchMethods,
-            Promise<R>, Params | null,
-            Query | null,
-            SagaRequestConfig | null>(
-            [resource, method],
-            kwargs,
-            query,
-            requestConfig,
-        );
     }
 
     try {
         return yield callEffect;
     } catch (err) {
         if (isFunction(config.onRequestError)) {
-            yield call(config.onRequestError, err);
+            yield call(config.onRequestError, err, resource, options);
         }
 
         throw err;
