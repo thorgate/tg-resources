@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/is",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0",
   "private": false,
   "publishConfig": {
     "access": "public"

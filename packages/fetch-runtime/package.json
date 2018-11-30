@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/fetch-runtime",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -31,9 +31,9 @@
     "polyfill"
   ],
   "dependencies": {
+    "cross-fetch": "^2.2.3",
     "form-data": "^2.3.3",
-    "formdata-polyfill": "^3.0.12",
-    "cross-fetch": "^2.2.3"
+    "formdata-polyfill": "^3.0.12"
   },
   "scripts": {
     "clean": "rimraf ./lib",
