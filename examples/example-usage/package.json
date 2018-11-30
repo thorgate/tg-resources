@@ -1,14 +1,14 @@
 {
   "name": "run-examples",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "description": "",
   "main": "lib/index.js",
   "license": "MIT",
   "dependencies": {
-    "@tg-resources/superagent": "^3.0.0",
+    "@tg-resources/superagent": "^3.0.1",
     "@tg-resources/test-server": "^3.0.0",
-    "tg-resources": "^3.0.0"
+    "tg-resources": "^3.0.1"
   },
   "files": [
     "lib"
