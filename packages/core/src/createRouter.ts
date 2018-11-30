@@ -21,7 +21,7 @@ export const isResourceConstructorObject = (value: any): value is ResourceConstr
 );
 
 
-type ResourceOrExtendedRouter<T, Klass extends Resource> = {
+export type ResourceOrExtendedRouter<T, Klass extends Resource> = {
     [P in keyof T]:
         T[P] extends string ? Klass : // If string, map as Resource
         T[P] extends ResourceTuple ? Klass : // If Resource tuple, map as Resource

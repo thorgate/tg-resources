@@ -15,7 +15,7 @@ import { SagaRequestConfig } from './types';
 
 
 // Was required to copy this here as well - Type matching did not work correctly otherwise
-type ResourceOrExtendedRouter<T, Klass extends Resource> = {
+export type ResourceOrExtendedRouter<T, Klass extends Resource> = {
     [P in keyof T]:
         T[P] extends string ? SagaResource<Klass> : // If string, map as Resource
         T[P] extends ResourceTuple ? SagaResource<Klass> : // If Resource tuple, map as Resource

@@ -49,6 +49,15 @@ export function* SagaInitialized(saga: any): SagaIterator {
     yield putResolve(setResponse(response));
 }
 
+export function* RunnerWithError(saga: any) {
+    try {
+        const response = yield* saga;
+        yield putResolve(setResponse(response));
+    } catch (err) {
+        yield putResolve({ type: 'FAILED_API_RESPONSE', error: err });
+    }
+}
+
 
 export function configureStore() {
     const sagaMiddleware = createSagaMiddleware({

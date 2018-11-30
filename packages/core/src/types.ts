@@ -193,6 +193,13 @@ export interface Attachment {
 export type Attachments = null | Attachment[];
 
 
+export type ResourceFetchMethods = 'fetch' | 'head' | 'options';
+
+export type ResourcePostMethods = 'post' | 'patch' | 'put' | 'del';
+
+export type ResourceMethods = ResourceFetchMethods | ResourcePostMethods;
+
+
 export type AllowedFetchMethods = 'get' | 'head' | 'options';
 
 export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del';

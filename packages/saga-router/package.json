@@ -35,7 +35,7 @@
     "lib"
   ],
   "peerDependencies": {
-    "redux-saga": "^1.0.0-beta.3"
+    "redux-saga": "^1.0.0-beta.1"
   },
   "dependencies": {
     "@tg-resources/is": "^3.0.0",
@@ -46,7 +46,8 @@
     "@tg-resources/fetch-runtime": "^3.0.0",
     "@tg-resources/test-server": "^3.0.0",
     "redux": "^4.0.1",
-    "redux-saga": "^1.0.0-beta.3"
+    "redux-saga": "^1.0.0-beta.1",
+    "redux-saga-test-plan": "^4.0.0-beta.1"
   },
   "scripts": {
     "clean": "rimraf ./lib",

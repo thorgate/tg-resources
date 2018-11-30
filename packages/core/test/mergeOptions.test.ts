@@ -1,4 +1,4 @@
-import { mergeConfig } from '../src/util';
+import { mergeConfig } from '../src';
 
 
 describe('mergeConfig api', () => {
