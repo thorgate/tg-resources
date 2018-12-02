@@ -126,10 +126,49 @@ function* fetchFemaleCats() {
 }
 ```
 
-This package adds extra configuration methods for `Router` and `Resource`.
+
+## `resourceEffectFactory` example
+
+
+```
+import { resourceEffectFactory } from '@tg-resources/redux-saga-router';
+
+
+const resource = new SagaResource('/test', null, Resource);
+const resourceWithParameter = new SagaResource('/test/${pk}', null, Resource);
+
+
+function* someSaga() {
+    // Use saga resource
+    yield resourceEffectFactory(resource, 'fetch');
+    
+    // Use resource backend
+    yield resourceEffectFactory(resource.resource, 'fetch');
+    
+    // Use saga resource with options
+    yield resourceEffectFactory(resourceWithParameter, 'fetch', { kwargs: { pk: 1 } });
+    
+    // Use resource backend with options
+    yield resourceEffectFactory(resourceWithParameter.resource, 'fetch', { kwargs: { pk: 1 } });
+    
+    // Use saga resource
+    yield resourceEffectFactory(resource, 'fetch');
+    
+    // Use resource backend
+    yield resourceEffectFactory(resource.resource, 'fetch');
+    
+    // Use saga resource with options
+    yield resourceEffectFactory(resourceWithParameter, 'fetch', { kwargs: { pk: 1 } });
+    
+    // Use resource backend with options
+    yield resourceEffectFactory(resourceWithParameter.resource, 'fetch', { kwargs: { pk: 1 } });
+}
+```
 
 
 ## <a name="configuration"></a>Configuration
+
+This package adds extra configuration methods for `Router` and `Resource`.
 
 - ``mutateRequestConfig`` *(Function)*: Optional function with signature `(config?: SagaRequestConfig, resource: Resource, options: ResourceSagaRunnerConfig) => SagaIterator | SagaRequestConfig | undefined` 
                                    which can be used to mutate request config before it is handed to resource backend.

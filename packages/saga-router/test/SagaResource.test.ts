@@ -4,7 +4,7 @@ import { Server } from 'http';
 import 'jest-extended';
 import { InvalidResponseCode, RequestValidationError } from 'tg-resources';
 
-import { createSagaRouter, SagaRequestConfig } from '../src';
+import { createSagaRouter, isSagaResource, isSagaResourceInitialized, SagaRequestConfig } from '../src';
 import { configureStore } from './reduxStore';
 import { addRequestConfig, createApi, expectError, expectResponse } from './utils';
 
@@ -38,6 +38,23 @@ describe('createSagaRouter functional', () => {
                 mutateRequestConfig: addRequestConfig,
             }, Resource);
         }).toThrow(/Unknown type used "test"/);
+    });
+
+    test('isSagaResource works', () => {
+        const api = createApi(hostUrl, Resource);
+
+        expect(isSagaResource(api.dogs.details)).toBeTrue();
+        expect(isSagaResource(api.dogs.details.resource)).toBeFalse();
+        expect(isSagaResource('test')).toBeFalse();
+        expect(isSagaResource({ resource: {} })).toBeFalse();
+    });
+
+    test('isSagaResourceInitialized works', () => {
+        const api = createApi(hostUrl, Resource);
+
+        expect(isSagaResourceInitialized(api.dogs.details, { initializeSaga: false })).toBeFalse();
+        expect(isSagaResourceInitialized(api.dogs.details, { initializeSaga: true })).toBeTrue();
+        expect(isSagaResourceInitialized(api.dogs.details.resource, { initializeSaga: true })).toBeFalse();
     });
 
     test('mutate requestConfig works :: call', async () => {

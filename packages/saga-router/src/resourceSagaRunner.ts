@@ -19,7 +19,7 @@ import { ResourceSagaRunnerConfig, SagaConfigType, SagaRequestConfig } from './t
 export function* resourceSagaRunner<
     R = any, Params extends { [K in keyof Params]?: string } = {},
     D extends ObjectMap = any
->(resource: ResourceInterface, method: ResourceMethods, options: ResourceSagaRunnerConfig<Params, D>): SagaIterator {
+>(resource: ResourceInterface, method: ResourceMethods, options: ResourceSagaRunnerConfig<Params, D> = {}): SagaIterator {
     const {
         kwargs = null,
         query = null,
