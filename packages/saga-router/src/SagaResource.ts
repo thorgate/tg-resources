@@ -14,6 +14,19 @@ import { resourceSagaRunner } from './resourceSagaRunner';
 import { ResourceSagaRunnerConfig, SagaConfigType, SagaRequestConfig } from './types';
 
 
+export function isSagaResource<Klass extends Resource>(obj: any): obj is SagaResource<Klass> {
+    return obj instanceof Resource &&
+        'resource' in obj &&
+        typeof (obj as any).resource !== 'undefined' &&
+        typeof (obj as any).resource === 'object';
+}
+
+
+export function isSagaResourceInitialized(obj: any, config: SagaRequestConfig): boolean {
+    return isSagaResource(obj) && obj.config(config).initializeSaga;
+}
+
+
 export class SagaResource<Klass extends Resource> extends Resource {
     public constructor(
         apiEndpoint: string,

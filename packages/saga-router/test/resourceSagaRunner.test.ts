@@ -33,7 +33,7 @@ const sagaResource = new SagaResource('/test', undefined, Resource);
 
 describe('resourceSagaRunner unit', () => {
     test('fetch :: mutateRequestConfig', async () => {
-        const sagaIter = resourceSagaRunner(fetchResource, 'fetch', {});
+        const sagaIter = resourceSagaRunner(fetchResource, 'fetch');
         const testResponse: any = { testResource: 1 };
 
         await expectSaga(RunnerWithError, sagaIter)
