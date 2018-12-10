@@ -40,7 +40,7 @@ yarn add @tg-resources/fetch
 ## Basic Usage
 
 ```js
-import { createSagaRouter } from "@thorgate/redux-saga-router"
+import { createSagaRouter } from "@tg-resources/redux-saga-router"
 import { SuperagentResource } from "@tg-resources/superagent"
 import { call } from 'redux-saga/effects';
 
