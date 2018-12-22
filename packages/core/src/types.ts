@@ -233,6 +233,16 @@ export interface RouterInterface extends RouteInterface {
     [key: string]: ResourceInterface | RouterInterface | any;
 }
 
+export type ResourceFetchMethod<
+    R = any, Params extends { [K in keyof Params]?: string } = {}
+> = (kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null) => Promise<R> | any;
+
+export type ResourcePostMethod<
+    R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+> = (
+    kwargs?: Params | null, data?: D | string | null, query?: Query | null, attachments?: Attachments, requestConfig?: RequestConfig | null
+) => Promise<R> | any;
+
 
 export interface ResourceInterface extends RouteInterface {
     readonly apiEndpoint: string;

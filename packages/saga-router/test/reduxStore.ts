@@ -1,6 +1,9 @@
+import { Effect, SagaIterator, Task } from '@redux-saga/types';
 import { applyMiddleware, createStore } from 'redux';
-import createSagaMiddleware, { Effect, SagaIterator, Task } from 'redux-saga';
+import createSagaMiddleware, { SagaMiddleware } from 'redux-saga';
 import { putResolve } from 'redux-saga/effects';
+
+import { ResourceSagaRunnerConfig } from '../src';
 
 
 export interface State {
@@ -15,15 +18,36 @@ interface ApiResponseAction {
     response: any;
 }
 
+interface ApiErrorAction {
+    type: 'FAILED_RESPONSE';
+    error: any;
+    endpoint: string;
+    options: ResourceSagaRunnerConfig;
+}
+
+
 const setResponse = (response: any): ApiResponseAction => ({
     type: 'API_RESPONSE',
     response,
 });
 
-function reducer(state: State = initialState, action: ApiResponseAction) {
+export const setError = (error: any, endpoint: string, options: ResourceSagaRunnerConfig): ApiErrorAction => ({
+    type: 'FAILED_RESPONSE', error, endpoint, options
+});
+
+
+function reducer(state: State = initialState, action: ApiResponseAction | ApiErrorAction) {
     switch (action.type) {
         case 'API_RESPONSE':
             return action.response;
+
+        case 'FAILED_RESPONSE':
+            return {
+                failed: true,
+                error: action.error,
+                endpoint: action.endpoint,
+                options: action.options,
+            };
 
         default:
             return state;
@@ -79,9 +103,11 @@ export function configureStore() {
 
     (store as any).runSaga = runSaga;
     (store as any).runSagaInitialized = runSagaInitialized;
+    (store as any).sagaMiddleware = sagaMiddleware;
 
     return store as ExtendedStore<typeof store, {
         runSaga: RunSagaEffect;
         runSagaInitialized: RunSagaEffect;
+        sagaMiddleware: SagaMiddleware,
     }>;
 }

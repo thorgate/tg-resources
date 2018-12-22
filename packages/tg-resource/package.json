@@ -1,15 +1,14 @@
 {
-  "name": "@tg-resources/core",
-  "version": "3.0.1",
+  "name": "tg-resources",
+  "version": "3.0.2",
   "private": false,
   "publishConfig": {
     "access": "public"
   },
-  "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
+  "description": "",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
-  "react-native": "lib/index.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -19,17 +18,13 @@
     "Romet Tagobert (https://github.com/amPerl)",
     "Jaak Erisalu (https://github.com/jaakerisalu)"
   ],
-  "homepage": "https://github.com/thorgate/tg-resources/tree/master/packages/core#readme",
+  "homepage": "https://github.com/thorgate/tg-resources/tree/master/packages/tg-resource#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thorgate/tg-resources.git"
   },
   "bugs": "https://github.com/thorgate/tg-resources/issues",
   "keywords": [
-    "api",
-    "request",
-    "http",
-    "ajax"
   ],
   "files": [
     "lib"
@@ -38,13 +33,15 @@
     "lodash.template": "*"
   },
   "dependencies": {
-    "@tg-resources/is": "^3.0.0",
-    "cookie": ">=0.3.1"
+    "@tg-resources/core": "^3.0.1"
   },
   "scripts": {
     "clean": "rimraf ./lib",
     "lint": "tslint -p tsconfig.lint.json",
     "build": "rollup -c=../../rollup.config.js",
-    "prebuild": "yarn clean && yarn lint"
+    "prebuild": "yarn clean && yarn lint",
+    "prepublish": "yarn build",
+    "prepare": "yarn build -s",
+    "prepublishOnly": "yarn build -s"
   }
 }

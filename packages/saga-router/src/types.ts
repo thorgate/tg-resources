@@ -1,5 +1,4 @@
-import { SagaIterator } from 'redux-saga';
-import { Func3 } from 'redux-saga/effects';
+import { SagaIterator } from '@redux-saga/types';
 import {
     Attachments,
     ConfigType,
@@ -38,6 +37,6 @@ export interface OnRequestError<Params extends { [K in keyof Params]?: string } 
     (error: ErrorType, resource: ResourceInterface, options: ResourceSagaRunnerConfig<Params, D>): SagaIterator;
 }
 
-export type MutatedRequestConfigFn<Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any> = Func3<
-    SagaIterator | SagaRequestConfig | undefined, SagaRequestConfig | undefined, ResourceInterface, ResourceSagaRunnerConfig<Params, D>
->;
+export type MutatedRequestConfigFn<Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any> = (
+    requestConfig: SagaRequestConfig | undefined, resource: ResourceInterface, config: ResourceSagaRunnerConfig<Params, D>,
+) => SagaIterator | SagaRequestConfig | undefined;
