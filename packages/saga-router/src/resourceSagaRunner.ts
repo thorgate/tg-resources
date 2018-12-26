@@ -3,21 +3,17 @@ import { SagaIterator } from 'redux-saga';
 import { call } from 'redux-saga/effects';
 
 import {
-    Attachments,
     isFetchMethod,
     ObjectMap,
-    Query,
-    ResourceFetchMethods,
     ResourceInterface,
     ResourceMethods,
-    ResourcePostMethods
 } from 'tg-resources';
 
-import { ResourceSagaRunnerConfig, SagaConfigType, SagaRequestConfig } from './types';
+import { ResourceSagaRunnerConfig, SagaConfigType } from './types';
 
 
 export function* resourceSagaRunner<
-    R = any, Params extends { [K in keyof Params]?: string } = {},
+    Params extends { [K in keyof Params]?: string } = {},
     D extends ObjectMap = any
 >(resource: ResourceInterface, method: ResourceMethods, options: ResourceSagaRunnerConfig<Params, D> = {}): SagaIterator {
     const {
@@ -38,27 +34,14 @@ export function* resourceSagaRunner<
     let callEffect;
 
     if (isFetchMethod(method)) {
-        callEffect = call<
-            ResourceInterface,
-            ResourceFetchMethods,
-            Promise<R>, Params | null,
-            Query | null,
-            SagaRequestConfig | null>(
+        callEffect = call(
             [resource, method],
             kwargs,
             query,
             requestConfig,
         );
     } else {
-        callEffect = call<
-            ResourceInterface,
-            ResourcePostMethods,
-            Promise<R>,
-            Params | null,
-            D | string | null,
-            Query | null,
-            Attachments | null,
-            SagaRequestConfig | null>(
+        callEffect = call(
             [resource, method],
             kwargs,
             data,

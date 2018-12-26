@@ -1,4 +1,4 @@
-# `@tg-resources/core`
+# tg-resources
 
 [![NPM version][npm-image]][npm-url]
 
@@ -35,5 +35,5 @@ see [Configuration](https://github.com/thorgate/tg-resources/tree/master/README.
 
 MIT © [Thorgate](http://github.com/thorgate)
 
-[npm-url]: https://npmjs.org/package/@tg-resources/core
-[npm-image]: https://img.shields.io/npm/v/@tg-resources/core.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/tg-resources
+[npm-image]: https://img.shields.io/npm/v/tg-resources.svg?style=flat-square
