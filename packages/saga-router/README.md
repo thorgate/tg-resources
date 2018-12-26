@@ -176,6 +176,7 @@ This package adds extra configuration methods for `Router` and `Resource`.
 - ``onRequestError`` *(Function)*: Optional function with signature `(error: ErrorType, resource: Resource, options: ResourceSagaRunnerConfig) => void | SagaIterator`.
                                    This can be used to handle Sentry missing error handling.
 - ``initializeSaga`` *(bool)*: **Advanced usage:** Initialize Saga iterator. This option disables usage of ``call`` effect.
+- ``signal`` *(AbortSignal|null)*: **Advanced usage:** Manually provide signal to abort request. If it is not provided then AbortController is created internally and triggered when task is cancelled.
 
 For additional configuration, see [Configuration](https://github.com/thorgate/tg-resources/tree/master/README.md#configuration).
 

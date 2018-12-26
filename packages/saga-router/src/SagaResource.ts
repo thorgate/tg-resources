@@ -7,10 +7,12 @@ import {
     Resource,
     ResourceFetchMethods,
     ResourcePostMethods,
-    RouterInterface } from 'tg-resources';
+    RouterInterface,
+} from 'tg-resources';
 
+import { DEFAULT_CONFIG } from './constants';
 import { resourceSagaRunner } from './resourceSagaRunner';
-import { ResourceSagaRunnerConfig, SagaConfigType, SagaRequestConfig } from './types';
+import { ResourceSagaRunnerConfig, SagaConfigType, SagaRequestConfig, SagaRouteConfig } from './types';
 
 
 export function isSagaResource<Klass extends Resource>(obj: any): obj is SagaResource<Klass> {
@@ -29,7 +31,7 @@ export function isSagaResourceInitialized(obj: any, config: SagaRequestConfig): 
 export class SagaResource<Klass extends Resource> extends Resource {
     public constructor(
         apiEndpoint: string,
-        config: SagaRequestConfig = null,
+        config: SagaRouteConfig = null,
         resourceKlass: { new(apiEndpoint: string, config?: RequestConfig): Klass; },
     ) {
         super(apiEndpoint, config as Pick<typeof config, keyof RequestConfig>);
@@ -82,7 +84,10 @@ export class SagaResource<Klass extends Resource> extends Resource {
     }
 
     public config(requestConfig?: SagaRequestConfig): SagaConfigType {
-        return this._resource.config(requestConfig) as SagaConfigType;
+        return {
+            ...DEFAULT_CONFIG,
+            ...this._resource.config(requestConfig),
+        } as SagaConfigType;
     }
 
     /* istanbul ignore next: not in use directly */

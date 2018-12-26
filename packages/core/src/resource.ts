@@ -7,13 +7,15 @@ import { Route } from './route';
 import {
     AllowedFetchMethods,
     AllowedPostMethods,
-    Attachments, ConfigType,
+    Attachments,
+    ConfigType,
     ObjectMap,
     Query,
     RequestConfig,
     ResourceErrorInterface,
     ResourceInterface,
     ResponseInterface,
+    RouteConfig,
 } from './types';
 import { mergeConfig, serializeCookies } from './util';
 
@@ -24,7 +26,7 @@ export abstract class Resource extends Route implements ResourceInterface {
      * @param apiEndpoint Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
      * @param config Customize config for this resource (see `Router.config`)
      */
-    public constructor(apiEndpoint: string, config: RequestConfig = null) {
+    public constructor(apiEndpoint: string, config: RouteConfig = null) {
         super(config);
         this._apiEndpoint = apiEndpoint;
     }

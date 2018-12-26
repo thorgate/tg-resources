@@ -1,3 +1,6 @@
+import { Omit } from '@tg-resources/is';
+
+
 export type Optional<T> = T | null;
 
 export type OptionalMap<T> = {
@@ -89,6 +92,15 @@ export interface ConfigType {
     // allow Index Signature
     [key: string]: any;
 }
+
+
+/**
+ * Router and Resource config
+ */
+export type RouteConfigType = Omit<ConfigType, 'signal'>;
+
+
+export type RouteConfig = Optional<OptionalMap<RouteConfigType>>;
 
 
 export type RequestConfig = Optional<OptionalMap<ConfigType>>;
@@ -229,8 +241,8 @@ export interface RouteInterface {
     getHeaders(): ObjectMap<string | null>;
     getCookies(): ObjectMap<string | null>;
 
-    config(requestConfig?: RequestConfig): ConfigType;
-    setConfig(config: RequestConfig): void;
+    config(requestConfig?: RequestConfig): RouteConfigType;
+    setConfig(config: RouteConfigType): void;
     clearConfigCache(): void;
 }
 
@@ -252,6 +264,8 @@ export type ResourcePostMethod<
 
 export interface ResourceInterface extends RouteInterface {
     readonly apiEndpoint: string;
+
+    config(requestConfig?: RequestConfig): ConfigType;
 
     fetch<
         R = any, Params extends { [K in keyof Params]?: string } = {}

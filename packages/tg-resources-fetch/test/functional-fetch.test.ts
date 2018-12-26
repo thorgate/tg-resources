@@ -506,7 +506,7 @@ describe('Resource basic requests work', () => {
             });
         };
 
-        await expect(checkResource).toThrow(/Expected signal to be an instanceof AbortSignal/);
+        await expect(checkResource).toThrow(/AbortSignal is not supported at top-level/);
         await expect(checkRequest()).rejects.toThrow(/Expected signal to be an instanceof AbortSignal/);
     });
 

@@ -2,16 +2,16 @@ import {
     CreateResourceFactory,
     createRouter,
     ObjectMap,
-    RequestConfig,
     Resource,
     ResourceClassConstructor,
     ResourceConstructorObject,
     ResourceTuple,
-    Router
+    RouteConfig,
+    Router,
 } from 'tg-resources';
 
 import { SagaResource } from './SagaResource';
-import { SagaRequestConfig } from './types';
+import { SagaRouteConfig } from './types';
 
 
 // Was required to copy this here as well - Type matching did not work correctly otherwise
@@ -26,7 +26,7 @@ export type ResourceOrExtendedRouter<T, Klass extends Resource> = {
 
 
 export const createSagaResource: CreateResourceFactory = <Klass extends Resource>(
-    resourceKlass: ResourceClassConstructor<Klass>, apiEndpoint: string, config?: RequestConfig
+    resourceKlass: ResourceClassConstructor<Klass>, apiEndpoint: string, config?: RouteConfig
 ) => {
     return new SagaResource<Klass>(apiEndpoint, config, resourceKlass);
 };
@@ -34,7 +34,7 @@ export const createSagaResource: CreateResourceFactory = <Klass extends Resource
 export function createSagaRouter<
     Klass extends Resource, T extends ObjectMap = {}
 >(
-    routes: T, config: SagaRequestConfig | null, resourceKlass: ResourceClassConstructor<Klass>
+    routes: T, config: SagaRouteConfig | null, resourceKlass: ResourceClassConstructor<Klass>
 ) {
     const router = createRouter(routes, config, resourceKlass, createSagaResource) as any;
 

@@ -61,7 +61,21 @@ const expectError = async (apiEndpoint: string, error: any, sagaIter: any, optio
 };
 
 
-describe('resourceSagaRunner unit', () => {
+describe('resourceSagaRunner unit :: Resource', () => {
+    test('unknown method', async (done: any) => {
+        try {
+            const resource = createResource(null, null);
+            const sagaIter = resourceSagaRunner(resource, 'unknown');
+            await store.runSagaInitialized(sagaIter).toPromise();
+
+            done(new Error('Expected to throw for unknown method'));
+        } catch (error) {
+            expect(`${error}`).toEqual('Error: Unknown resource method used.');
+
+            done();
+        }
+    });
+
     test('fetch :: mutateRequestConfig', async () => {
         const data = { testResource: 1 };
         const resource = createResource(data);
@@ -92,7 +106,7 @@ describe('resourceSagaRunner unit', () => {
 });
 
 
-describe('SagaResource unit', () => {
+describe('resourceSagaRunner unit :: SagaResource', () => {
     test('fetch :: mutateRequestConfig', async () => {
         const data = { testResource: 1 };
         const resource = createSagaResource(data);
