@@ -30,6 +30,14 @@ describe('mergeConfig api', () => {
         });
     });
 
+    test('signal is typechecked', () => {
+        expect(() => {
+            mergeConfig(
+                { signal: new Error('fake') as any, },
+            );
+        }).toThrow(/Expected signal to be an instanceof AbortSignal/);
+    });
+
     test('overwrite order is LTR', () => {
         expect(mergeConfig(
             { apiRoot: '' },

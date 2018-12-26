@@ -7,6 +7,26 @@ import { parseErrors, prepareError } from './ValidationError';
 
 export type ResponseText = string | boolean | undefined | any;
 
+export class AbortError extends ResourceErrorInterface {
+    public readonly error: any;
+
+    public readonly name: string;
+    public readonly type: string;
+
+    constructor(error: any) {
+        super('AbortError: The user aborted a request.');
+
+        this.error = error;
+
+        this.name = 'AbortError';
+        this.type = (error ? error.type : null) || 'aborted';
+    }
+
+    get isAbortError() {
+        return true;
+    }
+}
+
 export class NetworkError extends ResourceErrorInterface {
     public readonly error: any;
 

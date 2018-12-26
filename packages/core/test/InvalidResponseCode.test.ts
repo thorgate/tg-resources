@@ -20,6 +20,10 @@ describe('InvalidResponseCode api', () => {
         expect(instance.toString()).toEqual('InvalidResponseCode 500: Internal Server Error');
     });
 
+    test('isAbortError is false', () => {
+        expect(instance.isAbortError).toEqual(false);
+    });
+
     test('isNetworkError is false', () => {
         expect(instance.isNetworkError).toEqual(false);
     });

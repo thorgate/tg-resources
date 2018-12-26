@@ -2,7 +2,14 @@ import { isObject } from '@tg-resources/is';
 import { expectedBuffer, getHostUrl, hostUrl, listen } from '@tg-resources/test-server';
 import { Server } from 'http';
 import 'jest-extended';
-import { NetworkError, RequestValidationError, ResourceErrorInterface, ResourceInterface, ResponseInterface } from 'tg-resources';
+import {
+    AbortError,
+    NetworkError,
+    RequestValidationError,
+    ResourceErrorInterface,
+    ResourceInterface,
+    ResponseInterface,
+} from 'tg-resources';
 
 import { SuperAgentResource as Resource, SuperagentResponse as Response } from '../src';
 
@@ -465,5 +472,70 @@ describe('Resource basic requests work', () => {
             array: postData.array,
             object: JSON.stringify(postData.object),
         });
+    });
+
+    test('aborting raises a wrapped AbortError', async (done: any) => {
+        const controller = new AbortController();
+
+        const res = new Resource('/abort', {
+            apiRoot: hostUrl,
+            allowAttachments: true,
+            headers: {
+                ack: 'attachments',
+            },
+        });
+
+        const prom = res.fetch(null, null, {
+            signal: controller.signal,
+        });
+
+        setTimeout(() => {
+            controller.abort();
+        }, 100);
+
+        try {
+            const data = await prom;
+            done(new Error('Request should be aborted!' + JSON.stringify(data)));
+        } catch (error) {
+            // We are expecting the promise to reject with an AbortError
+            expect(error).toBeInstanceOf(AbortError);
+            expect(error).toMatchObject({
+                isAbortError: true,
+                type: 'aborted',
+                name: 'AbortError',
+            });
+            done();
+        }
+    });
+
+    test('should reject immediately if signal has already been aborted', async (done: any) => {
+        const controller = new AbortController();
+        controller.abort();
+
+        const res = new Resource('/abort', {
+            apiRoot: hostUrl,
+            allowAttachments: true,
+            headers: {
+                ack: 'attachments',
+            },
+        });
+
+        const prom = res.fetch(null, null, {
+            signal: controller.signal,
+        });
+
+        try {
+            const data = await prom;
+            done(new Error('Request should be aborted!' + JSON.stringify(data)));
+        } catch (error) {
+            // We are expecting the promise to reject with an AbortError
+            expect(error).toBeInstanceOf(AbortError);
+            expect(error).toMatchObject({
+                isAbortError: true,
+                type: 'aborted',
+                name: 'AbortError',
+            });
+            done();
+        }
     });
 });

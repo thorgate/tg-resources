@@ -89,6 +89,13 @@ export class FetchResponse extends ResponseInterface {
         // istanbul ignore next: Only happens on network errors
         return {};
     }
+
+    public get wasAborted(): boolean {
+        return this.hasError
+            && this.error
+            && this.error.type === 'aborted'
+            && this.error.name === 'AbortError';
+    }
 }
 
 
@@ -234,12 +241,14 @@ export class FetchResource extends Resource {
             credentials = 'include';
         }
 
+        const signal = this.config(requestConfig).signal;
 
         const req = new Request(theUrl, {
             method: parseMethod(method),
             redirect: 'follow',
             credentials,
             body,
+            signal: signal || null,
         });
 
         if (hasValue(headers)) {

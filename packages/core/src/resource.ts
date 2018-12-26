@@ -2,7 +2,7 @@ import { hasValue, isFunction, isObject, isStatusCode } from '@tg-resources/is';
 import renderTemplate from 'lodash.template';
 
 import DEFAULTS from './constants';
-import { InvalidResponseCode, NetworkError, RequestValidationError } from './errors';
+import { AbortError, InvalidResponseCode, NetworkError, RequestValidationError } from './errors';
 import { Route } from './route';
 import {
     AllowedFetchMethods,
@@ -136,10 +136,6 @@ export abstract class Resource extends Route implements ResourceInterface {
     ): Promise<R> | any => {
         return this._post<R, D, Params>(kwargs, data, query, attachments, requestConfig, 'del');
     };
-
-    // When Abort controller is fully implemented and supported
-    // Add correct implementation
-    // public abstract abort(): void;
 
     public renderPath<
         Params extends { [K in keyof Params]?: string } = {}
@@ -284,11 +280,19 @@ export abstract class Resource extends Route implements ResourceInterface {
                     );
                 }
             } else {
-                // res.hasError should only be true if network level errors occur (not statuscode errors)
-                const message = res && res.hasError ? res.error : '';
+                let error;
+
+                if (res && res.wasAborted) {
+                    error = new AbortError(res.error);
+                } else {
+                    // res.hasError should only be true if network level errors occur (not statuscode errors)
+                    const message = res && res.hasError ? res.error : '';
+
+                    error = new NetworkError(message || 'Something went awfully wrong with the request, check network log.');
+                }
 
                 throw this.mutateError(
-                    new NetworkError(message || 'Something went awfully wrong with the request, check network log.'),
+                    error,
                     res,
                     requestConfig,
                 );

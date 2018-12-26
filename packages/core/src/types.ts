@@ -80,6 +80,12 @@ export interface ConfigType {
      */
     allowAttachments: boolean;
 
+    /**
+     * signal allows passing in an AbortSignal object that allows you
+     *  to abort one or more requests as and when desired.
+     */
+    signal: Optional<AbortSignal>;
+
     // allow Index Signature
     [key: string]: any;
 }
@@ -305,12 +311,16 @@ export abstract class ResourceErrorInterface {
         return false;
     }
 
-    // istanbul ignore next: Tested in package that implement Resource
+    // istanbul ignore next: Tested in packages that implement Resource
     public get isInvalidResponseCode() {
         return false;
     }
 
     public get isValidationError() {
+        return false;
+    }
+
+    public get isAbortError() {
         return false;
     }
 }
@@ -352,6 +362,8 @@ export abstract class ResponseInterface {
     public abstract get headers(): Optional<any>;
 
     public abstract get contentType(): Optional<string>;
+
+    public abstract get wasAborted(): boolean;
 
     protected readonly _response: Optional<any>;
     protected readonly _error: Optional<any>;

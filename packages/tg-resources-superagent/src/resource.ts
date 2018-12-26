@@ -66,6 +66,12 @@ export class SuperagentResponse extends ResponseInterface {
         // istanbul ignore next: Only happens on network errors
         return null;
     }
+
+    public get wasAborted(): boolean {
+        return this.hasError
+            && this.error
+            && `${this.error}`.includes('request has been aborted');
+    }
 }
 
 
@@ -128,11 +134,46 @@ export class SuperAgentResource extends Resource {
             }
         }
 
+        const signal = this.config(requestConfig).signal;
+        if (signal) {
+            // This is not pretty, but it avoids the need to keep a memory of requests
+            //  in the resource. Once the request ends the listener is cleaned up.
+            (req as any).tg$Signal = signal;
+            (req as any).tg$Listener = () => {
+                req.abort();
+            };
+
+            signal.addEventListener('abort', (req as any).tg$Listener);
+
+            if (signal.aborted) {
+                req.abort();
+            }
+        }
+
         return req;
     }
 
-    protected doRequest(req: SuperAgentRequest, resolve: (response: Response, error: ResponseError) => void) {
+    protected doRequest(req: SuperAgentRequest, resolve: (response: Optional<Response>, error: Optional<ResponseError | Error>) => void) {
+        const cleanupSignal = () => {
+            if ((req as any).tg$Signal) {
+                (req as any).tg$Signal.removeEventListener('abort', (req as any).tg$Listener);
+
+                // Early cleanup
+                delete (req as any).tg$Listener;
+                delete (req as any).tg$Signal;
+            }
+        };
+
+        // see https://github.com/visionmedia/superagent/issues/1344#issuecomment-386120607
+        req.on('abort', () => {
+            cleanupSignal();
+
+            resolve(null, new Error('request has been aborted'));
+        });
+
         req.end((err, res) => {
+            cleanupSignal();
+
             resolve(res, err);
         });
     }

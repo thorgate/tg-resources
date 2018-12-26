@@ -28,6 +28,10 @@ describe('NetworkError api', () => {
         expect(instance.isInvalidResponseCode).toEqual(false);
     });
 
+    test('isAbortError is false', () => {
+        expect(instance.isAbortError).toEqual(false);
+    });
+
     test('isNetworkError is true', () => {
         expect(instance.isNetworkError).toEqual(true);
     });

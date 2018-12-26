@@ -21,6 +21,8 @@ const DEFAULTS: ConfigType = {
     defaultAcceptHeader: 'application/json',
 
     allowAttachments: false,
+
+    signal: null,
 };
 
 export default DEFAULTS;
