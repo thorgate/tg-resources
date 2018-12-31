@@ -1,19 +1,25 @@
 import {
-    ConfigType, ObjectMap,
+    ObjectMap,
     RequestConfig,
+    RouteConfig,
+    RouteConfigType,
     RouteInterface,
     RouterInterface,
 } from './types';
 
 
 export abstract class Route implements RouteInterface {
-    protected _customConfig: RequestConfig = null;
+    protected _customConfig: RouteConfig = null;
     protected _routeName: string = '';
     protected _parent: RouterInterface | null = null;
     protected _config: RequestConfig = null;
 
-    protected constructor(config: RequestConfig = null) {
+    protected constructor(config: RouteConfig = null) {
         this._customConfig = config;
+
+        if (config && 'signal' in config) {
+            throw new Error('AbortSignal is not supported at top-level.');
+        }
     }
 
     public get parent() {
@@ -66,9 +72,9 @@ export abstract class Route implements RouteInterface {
         return this._config;
     }
 
-    public abstract config(): ConfigType;
+    public abstract config(): RouteConfigType;
 
-    public setConfig(config: RequestConfig) {
+    public setConfig(config: RouteConfig) {
         // Update _customConfig
         this._customConfig = {
             ...this._customConfig,

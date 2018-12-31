@@ -52,3 +52,6 @@ export const isAbortSignal = (signal: any): signal is AbortSignal => {
 export interface Constructable<T> {
     new(...args: any[]): T;
 }
+
+
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;

@@ -1,12 +1,12 @@
 import { isFunction } from '@tg-resources/is';
 import { SagaIterator } from 'redux-saga';
-import { call } from 'redux-saga/effects';
+import { call, cancelled } from 'redux-saga/effects';
 
 import {
     isFetchMethod,
+    isPostMethod,
     ObjectMap,
     ResourceInterface,
-    ResourceMethods,
 } from 'tg-resources';
 
 import { ResourceSagaRunnerConfig, SagaConfigType } from './types';
@@ -15,7 +15,7 @@ import { ResourceSagaRunnerConfig, SagaConfigType } from './types';
 export function* resourceSagaRunner<
     Params extends { [K in keyof Params]?: string } = {},
     D extends ObjectMap = any
->(resource: ResourceInterface, method: ResourceMethods, options: ResourceSagaRunnerConfig<Params, D> = {}): SagaIterator {
+>(resource: ResourceInterface, method: string, options: ResourceSagaRunnerConfig<Params, D> = {}): SagaIterator {
     const {
         kwargs = null,
         query = null,
@@ -31,6 +31,17 @@ export function* resourceSagaRunner<
         requestConfig = yield call(config.mutateRequestConfig, requestConfig, resource, options);
     }
 
+    let controller: AbortController | null = null;
+    if (!(requestConfig && requestConfig.signal)) {
+        controller = new AbortController();
+
+        requestConfig = {
+            ...requestConfig || {},
+
+            signal: controller.signal,
+        };
+    }
+
     let callEffect;
 
     if (isFetchMethod(method)) {
@@ -40,7 +51,7 @@ export function* resourceSagaRunner<
             query,
             requestConfig,
         );
-    } else {
+    } else if (isPostMethod(method)) {
         callEffect = call(
             [resource, method],
             kwargs,
@@ -49,6 +60,8 @@ export function* resourceSagaRunner<
             attachments,
             requestConfig,
         );
+    } else {
+        throw new Error('Unknown resource method used.');
     }
 
     try {
@@ -59,5 +72,12 @@ export function* resourceSagaRunner<
         }
 
         throw err;
+    } finally {
+        const isCancelled = yield cancelled();
+
+        // If current task is cancelled AND no signal is provided, trigger controller.abort
+        if (isCancelled && controller) {
+            controller.abort();
+        }
     }
 }

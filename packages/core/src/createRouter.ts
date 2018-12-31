@@ -2,7 +2,7 @@ import { isArray, isObject, isString } from '@tg-resources/is';
 
 import { Resource } from './resource';
 import { Router } from './router';
-import { ConfigType, ObjectMap, OptionalMap, RequestConfig } from './types';
+import { ConfigType, ObjectMap, OptionalMap, RouteConfig, RouteConfigType } from './types';
 
 
 export type ResourceTuple<Config = OptionalMap<ConfigType>> = [string, Config];
@@ -12,7 +12,7 @@ export const isResourceTuple = (value: any): value is ResourceTuple => (
 );
 
 
-export interface ResourceConstructorObject extends OptionalMap<ConfigType> {
+export interface ResourceConstructorObject extends OptionalMap<RouteConfigType> {
     apiEndpoint: string;
 }
 
@@ -32,20 +32,20 @@ export type ResourceOrExtendedRouter<T, Klass extends Resource> = {
 
 
 export interface ResourceClassConstructor<Klass> {
-    new(apiEndpoint: string, config?: RequestConfig | null): Klass;
+    new(apiEndpoint: string, config?: RouteConfig | null): Klass;
 }
 
 
 export type CreateResourceFactory = <
     Klass extends Resource
 >(
-    resourceKlass: ResourceClassConstructor<Klass>, apiEndpoint: string, config?: RequestConfig, options?: ObjectMap
+    resourceKlass: ResourceClassConstructor<Klass>, apiEndpoint: string, config?: RouteConfig, options?: ObjectMap
 ) => any;
 
 
 export const createResource: CreateResourceFactory = <
     Klass extends Resource
->(resourceKlass: ResourceClassConstructor<Klass>, apiEndpoint: string, config?: RequestConfig, _0?: ObjectMap): Klass => (
+>(resourceKlass: ResourceClassConstructor<Klass>, apiEndpoint: string, config?: RouteConfig, _0?: ObjectMap): Klass => (
     new resourceKlass(apiEndpoint, config)
 );
 
@@ -53,7 +53,7 @@ export const createResource: CreateResourceFactory = <
 export function createRouter<
     Klass extends Resource, T extends ObjectMap = {}
 >(
-    routes: T, config: RequestConfig | null, resourceKlass: ResourceClassConstructor<Klass>,
+    routes: T, config: RouteConfig, resourceKlass: ResourceClassConstructor<Klass>,
     createResourceFactory: CreateResourceFactory = createResource
 ) {
     const routeMap: {
@@ -83,7 +83,7 @@ export function createRouter<
                 'string',
                 '[string, config]',
                 '{apiEndpoint: string, ..config}',
-                '{ ...any }',
+                'Router',
             ];
             throw new Error(`Unknown type used "${key}", one of [${types.join(',')}] is allowed`);
         }

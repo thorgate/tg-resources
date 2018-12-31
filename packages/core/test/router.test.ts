@@ -66,6 +66,12 @@ describe('routers work', () => {
                 },
             } as any);
         }).toThrow(/All routes must be instances of Router or Resource/);
+
+        expect(() => {
+            new Router(null, {
+                signal: new Error('fake') as any,
+            });
+        }).toThrow(/AbortSignal is not supported at top-level/);
     });
 
     test('rebind fails', () => {

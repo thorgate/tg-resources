@@ -31,6 +31,7 @@ export const createApi = <
         hello: '/hello',
         options: '/options',
         attachments: '/attachments',
+        abortingResource: '/abort',
         dogs: {
             list: '/dogs/',
             details: '/dogs/${pk}',

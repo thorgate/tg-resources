@@ -2,7 +2,8 @@ import { FetchResource as Resource } from '@tg-resources/fetch';
 import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
 import { Server } from 'http';
 import 'jest-extended';
-import { InvalidResponseCode, RequestValidationError } from 'tg-resources';
+import { call, delay, race } from 'redux-saga/effects';
+import { AbortError, InvalidResponseCode, RequestValidationError } from 'tg-resources';
 
 import { createSagaRouter, isSagaResource, isSagaResourceInitialized, SagaRequestConfig } from '../src';
 import { configureStore } from './reduxStore';
@@ -332,5 +333,107 @@ describe('createSagaRouter functional', () => {
             array: postData.array,
             object: JSON.stringify(postData.object),
         });
+    });
+
+    test('aborting with signal manually raises a wrapped AbortError', async (done: any) => {
+        const controller = new AbortController();
+        const onError = jest.fn((error: any) => {
+            expect(`${error}`).toEqual('AbortError: The user aborted a request.');
+            expect(error).toBeInstanceOf(AbortError);
+        });
+
+        const api = createApi(hostUrl, Resource);
+
+        function* runner() {
+            yield api.abortingResource.fetch(
+                null, null, { signal: controller.signal, onRequestError: onError },
+            );
+        }
+
+        try {
+            setTimeout(() => {
+                controller.abort();
+            }, 100);
+
+            await store.sagaMiddleware.run(runner).toPromise();
+
+            done(new Error('Request should be aborted!'));
+        } catch (error) {
+            // We are expecting the promise to reject with an AbortError
+            expect(error).toBeInstanceOf(AbortError);
+            expect(error).toMatchObject({
+                isAbortError: true,
+                type: 'aborted',
+                name: 'AbortError',
+            });
+
+            expect(onError.mock.calls.length).toEqual(1);
+            done();
+        }
+    });
+
+    test('internal AbortController exits early', async () => {
+        const onError = jest.fn((error: any) => {
+            // We are expecting the promise to reject with an AbortError
+            expect(error).toBeInstanceOf(AbortError);
+            expect(error).toMatchObject({
+                isAbortError: true,
+                type: 'aborted',
+                name: 'AbortError',
+            });
+        });
+
+        const api = createApi(hostUrl, Resource);
+
+        function* runner() {
+            return yield api.abortingResource.fetch(
+                null, null, { onRequestError: onError },
+            );
+        }
+
+        function* execWithCancel() {
+            return yield race({
+                result: call(runner),
+                cancelled: delay(100, true),
+            });
+        }
+
+        const res = await store.sagaMiddleware.run(execWithCancel).toPromise();
+
+        // With internal AbortController, finally is triggered before and then no error handler is called
+        expect(onError.mock.calls.length).toEqual(0);
+
+        expect(res).toEqual({ cancelled: true });
+    });
+
+    test('should reject immediately if signal has already been aborted', async (done: any) => {
+        const controller = new AbortController();
+        const onError = jest.fn((error: any) => {
+            expect(`${error}`).toEqual('AbortError: The user aborted a request.');
+            expect(error).toBeInstanceOf(AbortError);
+        });
+
+        const api = createApi(hostUrl, Resource);
+
+        try {
+            controller.abort();
+
+            await store.runSaga(api.abortingResource.fetch(
+                null, null, { signal: controller.signal, onRequestError: onError },
+            )).toPromise();
+
+            done(new Error('Request should be aborted!'));
+        } catch (error) {
+            // We are expecting the promise to reject with an AbortError
+            expect(error).toBeInstanceOf(AbortError);
+            expect(error).toMatchObject({
+                isAbortError: true,
+                type: 'aborted',
+                name: 'AbortError',
+            });
+
+            expect(onError.mock.calls.length).toEqual(1);
+            done();
+        }
     });
 });
