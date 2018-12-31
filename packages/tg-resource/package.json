@@ -1,6 +1,6 @@
 {
   "name": "tg-resources",
-  "version": "3.0.2",
+  "version": "3.1.0-beta.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -24,8 +24,7 @@
     "url": "git+https://github.com/thorgate/tg-resources.git"
   },
   "bugs": "https://github.com/thorgate/tg-resources/issues",
-  "keywords": [
-  ],
+  "keywords": [],
   "files": [
     "lib"
   ],
@@ -33,7 +32,7 @@
     "lodash.template": "*"
   },
   "dependencies": {
-    "@tg-resources/core": "^3.0.1"
+    "@tg-resources/core": "^3.1.0-beta.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",
