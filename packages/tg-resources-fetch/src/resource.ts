@@ -131,7 +131,17 @@ function parseHeaders(headers: Headers): HeadersObject {
 
 
 function parseFetchResponse(response: Response, req: Request): Promise<FetchResponseInterface> {
-    // Content type will be required
+    // Content type will not be required when there is no content
+    // This is only valid for HEAD requests and status_code=204
+    if (response.status === 204 || req.method.toLowerCase() === 'head') {
+        return Promise.resolve({
+            status: response.status,
+            headers: parseHeaders(response.headers),
+            // Respond with same values that superagent produces
+            body: response.status === 204 ? null : {},
+            text: response.status === 204 ? null : '{}',
+        });
+    }
     if (!response.headers.has('content-type')) {
         // istanbul ignore next: Only happens w/ custom server that does not set Content-Type
         throw new Error('Content type is missing from request');
@@ -139,15 +149,6 @@ function parseFetchResponse(response: Response, req: Request): Promise<FetchResp
 
     // Get content string to use correct parser
     const contentType: string = response.headers.get('content-type') as string;
-
-    if (req.method.toLowerCase() === 'head') {
-        return Promise.resolve({
-            status: response.status,
-            headers: parseHeaders(response.headers),
-            body: {},
-            text: '{}',
-        });
-    }
 
     if (contentType.includes('application/json')) {
         return response.json().then((body: any) => ({

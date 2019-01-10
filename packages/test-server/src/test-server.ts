@@ -167,10 +167,8 @@ function configureServer(logger: boolean = false) {
 
         if (dogIndex !== -1) {
             allDogs.splice(dogIndex, 1);
-
-            res.status(200).json({
-                deleted: true,
-            });
+            res.removeHeader('Content-Type');
+            res.status(204).end();
         } else {
             res.status(404).json({
                 message: 'object does not exist',
