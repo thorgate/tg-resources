@@ -131,7 +131,7 @@ describe('createSagaRouter functional', () => {
 
         await expectResponse(store.runSaga(api.dogs.details.del(
             params, null, null, null, { onRequestError: onError },
-        )), { deleted: true }, store);
+        )), null, store);
 
         try {
             await store.runSaga(api.dogs.details.fetch(params)).toPromise();
@@ -140,7 +140,7 @@ describe('createSagaRouter functional', () => {
             expect(err.statusCode).toEqual(404);
         }
 
-        expect(store.getState()).toEqual({ deleted: true });
+        expect(store.getState()).toEqual(null);
     });
 
     test('statusValidationError is handled properly', async () => {
@@ -208,7 +208,7 @@ describe('createSagaRouter functional', () => {
 
         await expectResponse(
             store.runSagaInitialized(api.dogs.details.del(params, null, null, null, requestConfig)),
-            { deleted: true }, store,
+            null, store,
         );
 
         try {
@@ -220,7 +220,7 @@ describe('createSagaRouter functional', () => {
             expect(onError.mock.calls.length).toEqual(1);
         }
 
-        expect(store.getState()).toEqual({ deleted: true });
+        expect(store.getState()).toEqual(null);
 
         try {
             await store.runSagaInitialized(api.dogs.details.del(params, null, null, null, requestConfig)).toPromise();

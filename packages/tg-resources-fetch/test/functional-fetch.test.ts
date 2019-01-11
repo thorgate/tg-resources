@@ -330,7 +330,7 @@ describe('Resource basic requests work', () => {
             apiRoot: hostUrl,
         });
 
-        await expectResponse(res.del({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }), { deleted: true });
+        await expectResponse(res.del({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }), null);
         await expectError(res.fetch({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }), { statusCode: 404 });
     });
 
