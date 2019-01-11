@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/test-resource",
-  "version": "3.1.0-beta.0",
+  "version": "3.1.0-beta.1",
   "private": true,
   "description": "",
   "main": "lib/index.js",
@@ -22,7 +22,7 @@
     "lib"
   ],
   "dependencies": {
-    "tg-resources": "^3.1.0-beta.0"
+    "tg-resources": "^3.1.0-beta.1"
   },
   "scripts": {
     "clean": "rimraf ./lib",
