@@ -61,6 +61,13 @@ api.cats.put(null, {pk: 1, name: 'Twinky', gender: 'M'}).then(onLoad, onError);
 api.cat.del({pk: 1}, {free: 'yes'}).then(onLoad, onError);
 ```
 
+
+## <a name="configuration"></a>Configuration
+
+This package adds extra configuration methods for `Router` and `FetchResource`.
+
+- ``querySerializeOptions`` *(Object|undefined)*: **Advanced usage:** Options to configure query-string serialization. See [qs.stringify](https://github.com/ljharb/qs#stringifying).
+
 This package is just Resource implementation using `fetch`. 
 For additional configuration, see [Configuration](https://github.com/thorgate/tg-resources/tree/master/README.md#configuration).
 

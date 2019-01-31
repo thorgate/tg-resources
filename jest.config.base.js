@@ -23,7 +23,7 @@ const config = {
 };
 
 
-if (semver.gte(process.version, '6.14.0') && semver.lt(process.version, '8.0.0')) {
+if (semver.gte(process.version, '6.10.0') && semver.lt(process.version, '8.0.0')) {
     config.globals = {
         'ts-jest': {
             babelConfig: {
