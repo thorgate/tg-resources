@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/superagent",
-  "version": "3.1.0-beta.1",
+  "version": "3.1.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -37,13 +37,13 @@
   ],
   "dependencies": {
     "superagent": ">=4.0.0",
-    "tg-resources": "^3.1.0-beta.1"
+    "tg-resources": "^3.1.0"
   },
   "peerDependencies": {
     "babel-runtime": "*"
   },
   "devDependencies": {
-    "@tg-resources/test-server": "^3.1.0-beta.1"
+    "@tg-resources/test-server": "^3.1.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",
