@@ -234,7 +234,8 @@ export class FetchResource extends Resource {
 
         let theUrl = url;
         if (query) {
-            theUrl = `${theUrl}?${qs.stringify(query)}`;
+            const querySerializeOptions: qs.IStringifyOptions | undefined = this.config(requestConfig).querySerializeOptions;
+            theUrl = `${theUrl}?${qs.stringify(query, querySerializeOptions)}`;
         }
 
         let credentials: 'omit' | 'include' = 'omit';

@@ -525,9 +525,11 @@ describe('Resource basic requests work', () => {
         } catch (error) {
             // We are expecting the promise to reject with an AbortError
             expect(error).toBeInstanceOf(Error);
+            expect(error).not.toBeInstanceOf(AbortError);
+            expect(error.name).toEqual('AbortError');
             expect(error).toMatchObject({
+                message: 'The user aborted a request.',
                 type: 'aborted',
-                name: 'AbortError',
             });
             done();
         }
