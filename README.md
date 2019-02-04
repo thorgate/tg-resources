@@ -40,6 +40,14 @@ yarn add @tg-resources/fetch
 
 **YES**
 
+#### <a name="signal-rn"></a>Using `signal` with react-native
+
+Use [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill) until https://github.com/facebook/react-native/issues/18115 is resolved in react-native core. The polyfill does not actually close the connection, but instead ensures the fetch rejects the promise with `AbortError`. To use the polyfill add the following to the top of your app entrypoint:
+
+```
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
+```
+
 ## Basic Usage
 
 ```js
@@ -117,8 +125,7 @@ endpoints. It's still possible to use Resources without a router(see [Resource a
                                       source of `ResponseWrapper`, `SuperagentResponse` and `Resource::ensureStatusAndJson` for guidance.
 - ``withCredentials`` *(bool)*: Allow request backend to send cookies/authentication headers, useful when using same API for server-side rendering.
 - ``allowAttachments`` *(bool)*: Allow POST like methods to send attachments.
-- ``signal``: *(AbortSignal)*: **Notice: This is not supported in React Native.** Pass in an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) object to abort the request when desired. 
-                               **Only supported via request config.** Default: [null].
+- ``signal``: *(AbortSignal)*: Pass in an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) object to abort the request when desired. **Only supported via request config.** Default: [null]. For react-native a [polyfill](#signal-rn) is needed.
 
 ## Error handling
 
