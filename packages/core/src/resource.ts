@@ -9,6 +9,7 @@ import {
     AllowedPostMethods,
     Attachments,
     ConfigType,
+    Kwargs,
     ObjectMap,
     Query,
     RequestConfig,
@@ -84,27 +85,27 @@ export abstract class Resource extends Route implements ResourceInterface {
     }
 
     public fetch = <
-        R = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, Params extends Kwargs<Params> = {}
     >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any => {
         return this._fetch<R, Params>(kwargs, query, requestConfig, 'get');
     };
 
     public head = <
-        R = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, Params extends Kwargs<Params> = {}
     >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any => {
         // istanbul ignore next: Tested in package that implement Resource
         return this._fetch<R, Params>(kwargs, query, requestConfig, 'head');
     };
 
     public options = <
-        R = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, Params extends Kwargs<Params> = {}
     >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any => {
         // istanbul ignore next: Tested in package that implement Resource
         return this._fetch<R, Params>(kwargs, query, requestConfig, 'options');
     };
 
     public post = <
-        R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
     >(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments | null, requestConfig?: RequestConfig | null
@@ -113,7 +114,7 @@ export abstract class Resource extends Route implements ResourceInterface {
     };
 
     public patch = <
-        R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
     >(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments | null, requestConfig?: RequestConfig | null
@@ -122,7 +123,7 @@ export abstract class Resource extends Route implements ResourceInterface {
     };
 
     public put = <
-        R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
     >(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments | null, requestConfig?: RequestConfig | null
@@ -131,7 +132,7 @@ export abstract class Resource extends Route implements ResourceInterface {
     };
 
     public del = <
-        R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
     >(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments | null, requestConfig?: RequestConfig | null
@@ -140,7 +141,7 @@ export abstract class Resource extends Route implements ResourceInterface {
     };
 
     public renderPath<
-        Params extends { [K in keyof Params]?: string } = {}
+        Params extends Kwargs<Params> = {}
     >(urlParams: Params | null = null, requestConfig: RequestConfig = null): string {
         let thePath = this.apiEndpoint;
         const config = this.config(requestConfig);
@@ -164,7 +165,7 @@ export abstract class Resource extends Route implements ResourceInterface {
 
     protected _fetch<
         R = any,
-        Params extends { [K in keyof Params]?: string } = {}
+        Params extends Kwargs<Params> = {}
     >(
         kwargs: Params | null = null, query: Query | null = null, requestConfig: RequestConfig | null = null, method: AllowedFetchMethods
     ): Promise<R> {
@@ -175,7 +176,7 @@ export abstract class Resource extends Route implements ResourceInterface {
     protected _post<
         R = any,
         D extends ObjectMap = any,
-        Params extends { [K in keyof Params]?: string } = {}
+        Params extends Kwargs<Params> = {}
     >(
         kwargs: Params | null = null, data: D | string | null = null, query: Query = null, attachments: Attachments = null,
         requestConfig: RequestConfig = null, method: AllowedPostMethods

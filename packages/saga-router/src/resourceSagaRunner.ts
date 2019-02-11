@@ -5,6 +5,7 @@ import { call, cancelled } from 'redux-saga/effects';
 import {
     isFetchMethod,
     isPostMethod,
+    Kwargs,
     ObjectMap,
     ResourceInterface,
 } from 'tg-resources';
@@ -13,7 +14,7 @@ import { ResourceSagaRunnerConfig, SagaConfigType } from './types';
 
 
 export function* resourceSagaRunner<
-    Params extends { [K in keyof Params]?: string } = {},
+    Params extends Kwargs<Params> = {},
     D extends ObjectMap = any
 >(resource: ResourceInterface, method: string, options: ResourceSagaRunnerConfig<Params, D> = {}): SagaIterator {
     const {

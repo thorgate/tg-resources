@@ -1,5 +1,5 @@
 import { call } from 'redux-saga/effects';
-import { isFetchMethod, isPostMethod, ObjectMap, RequestConfig, Resource } from 'tg-resources';
+import { isFetchMethod, isPostMethod, Kwargs, ObjectMap, RequestConfig, Resource } from 'tg-resources';
 
 import { resourceSagaRunner } from './resourceSagaRunner';
 import { isSagaResource, SagaResource } from './SagaResource';
@@ -7,7 +7,7 @@ import { ResourceSagaRunnerConfig, SagaRequestConfig } from './types';
 
 
 export interface EffectCreatorOptions<
-    Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any
+    Params extends Kwargs<Params> = {}, D extends ObjectMap = any
 > extends ResourceSagaRunnerConfig<Params, D> {
     requestConfig?: RequestConfig | SagaRequestConfig | null;
 }
@@ -23,7 +23,7 @@ export interface EffectCreatorOptions<
  * @param options Resource method parameters
  */
 export const resourceEffectFactory = <
-    Klass extends Resource, Params extends { [K in keyof Params]?: string } = {}, D extends ObjectMap = any
+    Klass extends Resource, Params extends Kwargs<Params> = {}, D extends ObjectMap = any
 >(
     resource: Klass | SagaResource<Klass>,
     method: string,

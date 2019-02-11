@@ -7,6 +7,8 @@ export type OptionalMap<T> = {
     [K in keyof T]?: T[K]
 };
 
+export type Kwargs<KW> = { [K in keyof KW]?: string | undefined; };
+
 export interface ObjectMap<T = any> {
     [key: string]: T;
 }
@@ -252,11 +254,11 @@ export interface RouterInterface extends RouteInterface {
 }
 
 export type ResourceFetchMethod<
-    R = any, Params extends { [K in keyof Params]?: string } = {}
+    R = any, Params extends Kwargs<Params> = {}
 > = (kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null) => Promise<R> | any;
 
 export type ResourcePostMethod<
-    R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+    R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
 > = (
     kwargs?: Params | null, data?: D | string | null, query?: Query | null, attachments?: Attachments, requestConfig?: RequestConfig | null
 ) => Promise<R> | any;
@@ -268,42 +270,42 @@ export interface ResourceInterface extends RouteInterface {
     config(requestConfig?: RequestConfig): ConfigType;
 
     fetch<
-        R = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, Params extends Kwargs<Params> = {}
     >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any;
     head<
-        R = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, Params extends Kwargs<Params> = {}
     >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any;
     options<
-        R = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, Params extends Kwargs<Params> = {}
     >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any;
 
     post<
-        R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
     >(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments, requestConfig?: RequestConfig | null
     ): Promise<R> | any;
     patch<
-        R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
     >(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments, requestConfig?: RequestConfig | null
     ): Promise<R> | any;
     put<
-        R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
     >(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments, requestConfig?: RequestConfig | null
     ): Promise<R> | any;
     del<
-        R = any, D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}
+        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
     >(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments, requestConfig?: RequestConfig | null
     ): Promise<R> | any;
 
     renderPath<
-        Params extends { [K in keyof Params]?: string } = {}
+        Params extends Kwargs<Params> = {}
     >(urlParams?: Params | null, requestConfig?: RequestConfig | null): string;
 
     [key: string]: any;
