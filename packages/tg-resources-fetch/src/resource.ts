@@ -93,7 +93,6 @@ export class FetchResponse extends ResponseInterface {
     public get wasAborted(): boolean {
         return this.hasError
             && this.error
-            && this.error.type === 'aborted'
             && this.error.name === 'AbortError';
     }
 }
