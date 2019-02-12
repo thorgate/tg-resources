@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/superagent",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -37,7 +37,7 @@
   ],
   "dependencies": {
     "superagent": ">=4.0.0",
-    "tg-resources": "^3.1.0"
+    "tg-resources": "^3.1.1"
   },
   "peerDependencies": {
     "babel-runtime": "*"
