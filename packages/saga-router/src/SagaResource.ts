@@ -1,6 +1,7 @@
 import { call } from 'redux-saga/effects';
 import {
     Attachments,
+    Kwargs,
     ObjectMap,
     Query,
     RequestConfig,
@@ -101,53 +102,53 @@ export class SagaResource<Klass extends Resource> extends Resource {
     }
 
     /* Public API */
-    public fetch = <Params extends { [K in keyof Params]?: string } = {}>(
+    public fetch = <Params extends Kwargs<Params> = {}>(
         kwargs?: Params | null, query?: Query | null, sagaRequestConfig?: SagaRequestConfig | null
     ) => {
         return this._sagaFetch<Params | null | undefined>('fetch', kwargs, query, sagaRequestConfig);
     };
 
-    public head = <Params extends { [K in keyof Params]?: string } = {}>(
+    public head = <Params extends Kwargs<Params> = {}>(
         kwargs?: Params | null, query?: Query | null, sagaRequestConfig?: SagaRequestConfig | null
     ) => {
         return this._sagaFetch<Params | null | undefined>('head', kwargs, query, sagaRequestConfig);
     };
 
-    public options = <Params extends { [K in keyof Params]?: string } = {}>(
+    public options = <Params extends Kwargs<Params> = {}>(
         kwargs?: Params | null, query?: Query | null, sagaRequestConfig?: SagaRequestConfig | null
     ) => {
         return this._sagaFetch<Params | null | undefined>('options', kwargs, query, sagaRequestConfig);
     };
 
-    public post = <D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}>(
+    public post = <D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments | null, sagaRequestConfig?: SagaRequestConfig | null
     ) => {
         return this._sagaPost<D, Params>('post', kwargs, data, query, attachments, sagaRequestConfig);
     };
 
-    public patch = <D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}>(
+    public patch = <D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments | null, sagaRequestConfig?: SagaRequestConfig | null
     ) => {
         return this._sagaPost<D, Params>('patch', kwargs, data, query, attachments, sagaRequestConfig);
     };
 
-    public put = <D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}>(
+    public put = <D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments | null, sagaRequestConfig?: SagaRequestConfig | null
     ) => {
         return this._sagaPost<D, Params>('put', kwargs, data, query, attachments, sagaRequestConfig);
     };
 
-    public del = <D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}>(
+    public del = <D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
         kwargs?: Params | null, data?: D | string | null, query?: Query | null,
         attachments?: Attachments | null, sagaRequestConfig?: SagaRequestConfig | null
     ) => {
         return this._sagaPost<D, Params>('del', kwargs, data, query, attachments, sagaRequestConfig);
     };
 
-    protected _sagaFetch<Params extends { [K in keyof Params]?: string } = {}>(
+    protected _sagaFetch<Params extends Kwargs<Params> = {}>(
         method: ResourceFetchMethods, kwargs: Params | null = null, query: Query | null = null,
         sagaRequestConfig: SagaRequestConfig | null = null
     ) {
@@ -169,7 +170,7 @@ export class SagaResource<Klass extends Resource> extends Resource {
         );
     }
 
-    protected _sagaPost<D extends ObjectMap = any, Params extends { [K in keyof Params]?: string } = {}>(
+    protected _sagaPost<D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
         method: ResourcePostMethods, kwargs: Params | null = null, data: D | string | null = null, query: Query | null = null,
         attachments: Attachments | null = null, sagaRequestConfig: SagaRequestConfig | null = null
     ) {
