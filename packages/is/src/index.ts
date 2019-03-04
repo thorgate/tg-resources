@@ -41,11 +41,17 @@ export const isStatusCode = (statusCodes: number | number[], status: any): statu
 
 export const isAbortSignal = (signal: any): signal is AbortSignal => {
     const proto = (
-        signal
+        !!signal
         && typeof signal === 'object'
         && Object.getPrototypeOf(signal)
     );
-    return !!(proto && proto.constructor.name === 'AbortSignal');
+    // Fail-safe fallback, is required to work with some browsers that do not have native implementation of AbortSignal
+    const isCompatible = (
+        !!signal
+        && typeof signal.aborted !== 'undefined'
+        && typeof signal.onabort !== 'undefined'
+    );
+    return !!(proto && proto.constructor.name === 'AbortSignal') || isCompatible;
 };
 
 
