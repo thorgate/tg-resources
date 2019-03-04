@@ -213,5 +213,6 @@ describe('typeChecks api', () => {
 
         }
         expect(isAbortSignal(new AbortSignal())).toEqual(true);
+        expect(isAbortSignal({ aborted: false, onabort: null, listeners: {} })).toEqual(true);
     });
 });
