@@ -21,7 +21,7 @@
     "check-packages": "yarn clean && yarn build && yarn test && yarn lint",
     "bump-version": "lerna --ignore=examples/* version --no-push --exact",
     "prerun-publish": "yarn build",
-    "run-publish": "lerna --ignore=examples/* publish --exact",
+    "run-publish": "lerna --ignore=examples/* publish",
     "clean": "lerna exec yarn clean && yarn clean-logs",
     "clean-incl-deps": "yarn clean && yarn clean-deps",
     "clean-deps": "rimraf packages/*/node_modules && rimraf yarn.lock && rimraf */**/yarn.lock && rimraf node_modules",
