@@ -394,7 +394,7 @@ MIT © [Thorgate](http://github.com/thorgate)
 [npm-url]: https://npmjs.org/package/tg-resources
 [npm-image]: https://img.shields.io/npm/v/tg-resources.svg?style=flat-square
 
-[travis-url]: https://travis-ci.org/thorgate/tg-resources
+[travis-url]: https://travis-ci.com/thorgate/tg-resources
 [travis-image]: https://img.shields.io/travis/thorgate/tg-resources.svg?style=flat-square
 
 [depstat-url]: https://david-dm.org/thorgate/tg-resources

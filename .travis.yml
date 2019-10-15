@@ -22,6 +22,12 @@ script:
 - yarn test
 - yarn run-examples
 
+branches:
+  only:
+    - master
+    - greenkeeper/*
+    - /^greenkeeper/.*$/
+
 after_success:
 - test $TRAVIS_NODE_VERSION = 8 && yarn coveralls
 
