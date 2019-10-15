@@ -1,12 +1,11 @@
 # tg-resources
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/thorgate/tg-resources.svg)](https://greenkeeper.io/)
-
 [![NPM version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Dependency Status][depstat-image]][depstat-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Downloads][download-badge]][npm-url]
+[![Greenkeeper badge][greenkeeper-badge]][greenkeeper-url]
 
 > Abstractions on-top of `superagent` and `fetch` (or other Ajax libaries) for communication with REST.
 > Targeted mostly against `Django Rest Framework (DRF)` running on `Django` so some logic might not be applicable for
@@ -406,3 +405,6 @@ MIT © [Thorgate](http://github.com/thorgate)
 [coveralls-image]: https://coveralls.io/repos/github/thorgate/tg-resources/badge.svg?branch=master
 
 [download-badge]: http://img.shields.io/npm/dm/tg-resources.svg?style=flat-square
+
+[greenkeeper-badge]: https://badges.greenkeeper.io/thorgate/tg-resources.svg
+[greenkeeper-url]: https://badges.greenkeeper.io/thorgate/tg-resources.svg
