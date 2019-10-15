@@ -13,37 +13,37 @@ import {
 import DEFAULTS from '../src/constants';
 import { DummyResource } from './DummyResource';
 
-
 // Mocks
 // TODO : Define multiple types for this via interface
-const mockMutateResponse = <R>(responseData: R) => (
-    responseData
-);
-const mockMutateError = (error: ResourceErrorInterface) => (
-    error
-);
+const mockMutateResponse = <R>(responseData: R) => responseData;
+const mockMutateError = (error: ResourceErrorInterface) => error;
 
-const mockPrepareError = (error: any, config: ConfigType) => DEFAULTS.prepareError(error, config);
-const mockParseErrors = (errorText: any, config: ConfigType) => DEFAULTS.parseErrors(errorText, config);
+const mockPrepareError = (error: any, config: ConfigType) =>
+    DEFAULTS.prepareError(error, config);
+const mockParseErrors = (errorText: any, config: ConfigType) =>
+    DEFAULTS.parseErrors(errorText, config);
 
-
-const expectConfig = (instance: Router | Resource, expectedConfig: OptionalMap<ConfigType>) => {
+const expectConfig = (
+    instance: Router | Resource,
+    expectedConfig: OptionalMap<ConfigType>
+) => {
     const cfg = instance.config();
 
     // sort used so errors are deterministic
-    Object.keys(expectedConfig).sort().forEach((cfgKey) => {
-        let value: any = cfg[cfgKey];
-        const expected: any = expectedConfig[cfgKey];
+    Object.keys(expectedConfig)
+        .sort()
+        .forEach(cfgKey => {
+            let value: any = cfg[cfgKey];
+            const expected: any = expectedConfig[cfgKey];
 
-        // load values from instance methods
-        if (cfgKey === 'getCookies' || cfgKey === 'getHeaders') {
-            value = instance[cfgKey]();
-        }
+            // load values from instance methods
+            if (cfgKey === 'getCookies' || cfgKey === 'getHeaders') {
+                value = instance[cfgKey]();
+            }
 
-        expect(value).toEqual(expected);
-    });
+            expect(value).toEqual(expected);
+        });
 };
-
 
 describe('routers work', () => {
     test('routes are type-checked', () => {
@@ -55,15 +55,13 @@ describe('routers work', () => {
 
         expect(() => {
             new Router({
-                top() {
-                },
+                top() {},
             } as any);
         }).toThrow(/All routes must be instances of Router or Resource/);
 
         expect(() => {
             new Router({
-                top: () => {
-                },
+                top: () => {},
             } as any);
         }).toThrow(/All routes must be instances of Router or Resource/);
 
@@ -111,24 +109,29 @@ describe('routers work', () => {
     });
 
     test('config flows down', () => {
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                cookies: {
-                    from: 'resource',
-                },
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            apiRoot: 'http://foo.localhost/baz/',
-            cookies: {
-                from: 'router',
-                top: 'level',
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    cookies: {
+                        from: 'resource',
+                    },
+                }),
+                submissive: new DummyResource('meow'),
             },
-        });
+            {
+                apiRoot: 'http://foo.localhost/baz/',
+                cookies: {
+                    from: 'router',
+                    top: 'level',
+                },
+            }
+        );
 
         // router cfg flows to submissive
         expect(api.config().apiRoot).toEqual('http://foo.localhost/baz/');
-        expect(api.submissive.config().apiRoot).toEqual('http://foo.localhost/baz/');
+        expect(api.submissive.config().apiRoot).toEqual(
+            'http://foo.localhost/baz/'
+        );
         expect(api.config().cookies).toEqual({
             from: 'router',
             top: 'level',
@@ -142,7 +145,10 @@ describe('routers work', () => {
             top: 'level',
         });
         // requestConfig overrides config
-        expect(api.submissive.config({ cookies: { from: 'requestConfig' } }).cookies).toEqual({
+        expect(
+            api.submissive.config({ cookies: { from: 'requestConfig' } })
+                .cookies
+        ).toEqual({
             from: 'requestConfig',
         });
         expect(api.submissive.getCookies()).toEqual({
@@ -151,13 +157,18 @@ describe('routers work', () => {
         });
 
         // aggressive merges w/ parent
-        expect(api.aggressive.config().apiRoot).toEqual('http://foo.localhost/baz/');
+        expect(api.aggressive.config().apiRoot).toEqual(
+            'http://foo.localhost/baz/'
+        );
         // .config.cookies is not merged
         expect(api.aggressive.config().cookies).toEqual({
             from: 'resource',
         });
         // requestConfig overrides config
-        expect(api.aggressive.config({ cookies: { from: 'requestConfig' } }).cookies).toEqual({
+        expect(
+            api.aggressive.config({ cookies: { from: 'requestConfig' } })
+                .cookies
+        ).toEqual({
             from: 'requestConfig',
         });
         // getCookies is merged w/ parent
@@ -170,23 +181,26 @@ describe('routers work', () => {
 
 describe('router config merge -', () => {
     test('simple config keys flow down', () => {
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                apiRoot: 'http://rawr.localhost/baz/',
-                mutateResponse: mockMutateResponse,
-                mutateError: mockMutateError,
-                prepareError: mockPrepareError,
-                parseErrors: mockParseErrors,
-                statusValidationError: [5678],
-                statusSuccess: [2337],
-                defaultAcceptHeader: 'text/html',
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            apiRoot: 'http://foo.localhost/baz/',
-            statusValidationError: [1234],
-            statusSuccess: [1337],
-        });
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    apiRoot: 'http://rawr.localhost/baz/',
+                    mutateResponse: mockMutateResponse,
+                    mutateError: mockMutateError,
+                    prepareError: mockPrepareError,
+                    parseErrors: mockParseErrors,
+                    statusValidationError: [5678],
+                    statusSuccess: [2337],
+                    defaultAcceptHeader: 'text/html',
+                }),
+                submissive: new DummyResource('meow'),
+            },
+            {
+                apiRoot: 'http://foo.localhost/baz/',
+                statusValidationError: [1234],
+                statusSuccess: [1337],
+            }
+        );
 
         const routerLevelConfig = {
             apiRoot: 'http://foo.localhost/baz/',
@@ -222,27 +236,33 @@ describe('router config merge -', () => {
     });
 
     test('simple config keys flow down [nested routers]', () => {
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                apiRoot: 'http://rawr.localhost/baz/',
-                mutateResponse: mockMutateResponse,
-                mutateError: mockMutateError,
-                prepareError: mockPrepareError,
-                parseErrors: mockParseErrors,
-                statusValidationError: [5678],
-                statusSuccess: [2337],
-                defaultAcceptHeader: 'text/html',
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            apiRoot: 'http://foo.localhost/baz/',
-            statusValidationError: [1234],
-            statusSuccess: [1337],
-        });
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        apiRoot: 'http://rawr.localhost/baz/',
+                        mutateResponse: mockMutateResponse,
+                        mutateError: mockMutateError,
+                        prepareError: mockPrepareError,
+                        parseErrors: mockParseErrors,
+                        statusValidationError: [5678],
+                        statusSuccess: [2337],
+                        defaultAcceptHeader: 'text/html',
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
+            },
+            {
+                apiRoot: 'http://foo.localhost/baz/',
+                statusValidationError: [1234],
+                statusSuccess: [1337],
+            }
+        );
 
         const routerLevelConfig: OptionalMap<ConfigType> = {
             apiRoot: 'http://foo.localhost/baz/',
@@ -281,21 +301,24 @@ describe('router config merge -', () => {
     });
 
     test('cookies flow down', () => {
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                cookies: {
-                    from: 'resource',
-                    will_be: null,
-                },
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            cookies: {
-                from: 'router',
-                top: 'level',
-                will_be: 'deleted',
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    cookies: {
+                        from: 'resource',
+                        will_be: null,
+                    },
+                }),
+                submissive: new DummyResource('meow'),
             },
-        });
+            {
+                cookies: {
+                    from: 'router',
+                    top: 'level',
+                    will_be: 'deleted',
+                },
+            }
+        );
 
         const routerLevelConfig = {
             cookies: {
@@ -326,25 +349,31 @@ describe('router config merge -', () => {
     });
 
     test('cookies flow down [nested routers]', () => {
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                cookies: {
-                    from: 'resource',
-                    will_be: null,
-                },
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            cookies: {
-                from: 'router',
-                top: 'level',
-                will_be: 'deleted',
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        cookies: {
+                            from: 'resource',
+                            will_be: null,
+                        },
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
             },
-        });
+            {
+                cookies: {
+                    from: 'router',
+                    top: 'level',
+                    will_be: 'deleted',
+                },
+            }
+        );
 
         const routerLevelConfig = {
             cookies: {
@@ -393,14 +422,17 @@ describe('router config merge -', () => {
             will_be: null,
         });
 
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                cookies: aggressiveCookies,
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            cookies: genericCookies,
-        });
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    cookies: aggressiveCookies,
+                }),
+                submissive: new DummyResource('meow'),
+            },
+            {
+                cookies: genericCookies,
+            }
+        );
 
         const routerLevelConfig = {
             cookies: genericCookies,
@@ -434,18 +466,24 @@ describe('router config merge -', () => {
             will_be: null,
         });
 
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                cookies: aggressiveCookies,
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            cookies: genericCookies,
-        });
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        cookies: aggressiveCookies,
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
+            },
+            {
+                cookies: genericCookies,
+            }
+        );
 
         const routerLevelConfig = {
             cookies: genericCookies,
@@ -477,18 +515,21 @@ describe('router config merge -', () => {
             will_be: null,
         });
 
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                cookies: aggressiveCookies,
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            cookies: {
-                from: 'router',
-                top: 'level',
-                will_be: 'deleted',
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    cookies: aggressiveCookies,
+                }),
+                submissive: new DummyResource('meow'),
             },
-        });
+            {
+                cookies: {
+                    from: 'router',
+                    top: 'level',
+                    will_be: 'deleted',
+                },
+            }
+        );
 
         const routerLevelConfig = {
             cookies: {
@@ -525,22 +566,28 @@ describe('router config merge -', () => {
             will_be: null,
         });
 
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                cookies: aggressiveCookies,
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            cookies: {
-                from: 'router',
-                top: 'level',
-                will_be: 'deleted',
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        cookies: aggressiveCookies,
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
             },
-        });
+            {
+                cookies: {
+                    from: 'router',
+                    top: 'level',
+                    will_be: 'deleted',
+                },
+            }
+        );
 
         const routerLevelConfig = {
             cookies: {
@@ -581,17 +628,20 @@ describe('router config merge -', () => {
             will_be: 'deleted',
         });
 
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                cookies: {
-                    from: 'resource',
-                    will_be: null,
-                },
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            cookies: genericCookies,
-        });
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    cookies: {
+                        from: 'resource',
+                        will_be: null,
+                    },
+                }),
+                submissive: new DummyResource('meow'),
+            },
+            {
+                cookies: genericCookies,
+            }
+        );
 
         const routerLevelConfig = {
             cookies: genericCookies,
@@ -625,21 +675,27 @@ describe('router config merge -', () => {
             will_be: 'deleted',
         });
 
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                cookies: {
-                    from: 'resource',
-                    will_be: null,
-                },
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            cookies: genericCookies,
-        });
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        cookies: {
+                            from: 'resource',
+                            will_be: null,
+                        },
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
+            },
+            {
+                cookies: genericCookies,
+            }
+        );
 
         const routerLevelConfig = {
             cookies: genericCookies,
@@ -670,21 +726,24 @@ describe('router config merge -', () => {
     });
 
     test('headers flow down', () => {
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                headers: {
-                    from: 'resource',
-                    will_be: null,
-                },
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            headers: {
-                from: 'router',
-                top: 'level',
-                will_be: 'deleted',
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    headers: {
+                        from: 'resource',
+                        will_be: null,
+                    },
+                }),
+                submissive: new DummyResource('meow'),
             },
-        });
+            {
+                headers: {
+                    from: 'router',
+                    top: 'level',
+                    will_be: 'deleted',
+                },
+            }
+        );
 
         const routerLevelConfig = {
             headers: {
@@ -716,25 +775,31 @@ describe('router config merge -', () => {
     });
 
     test('headers flow down [nested routers]', () => {
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                headers: {
-                    from: 'resource',
-                    will_be: null,
-                },
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            headers: {
-                from: 'router',
-                top: 'level',
-                will_be: 'deleted',
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        headers: {
+                            from: 'resource',
+                            will_be: null,
+                        },
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
             },
-        });
+            {
+                headers: {
+                    from: 'router',
+                    top: 'level',
+                    will_be: 'deleted',
+                },
+            }
+        );
 
         const routerLevelConfig = {
             headers: {
@@ -795,14 +860,17 @@ describe('router config merge -', () => {
             will_be: null,
         });
 
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                headers: aggressiveHeaders,
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            headers: genericHeaders,
-        });
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    headers: aggressiveHeaders,
+                }),
+                submissive: new DummyResource('meow'),
+            },
+            {
+                headers: genericHeaders,
+            }
+        );
 
         const routerLevelConfig = {
             headers: genericHeaders,
@@ -843,18 +911,24 @@ describe('router config merge -', () => {
             will_be: null,
         });
 
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                headers: aggressiveHeaders,
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            headers: genericHeaders,
-        });
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        headers: aggressiveHeaders,
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
+            },
+            {
+                headers: genericHeaders,
+            }
+        );
 
         const routerLevelConfig = {
             headers: genericHeaders,
@@ -900,18 +974,21 @@ describe('router config merge -', () => {
             will_be: null,
         });
 
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                headers: aggressiveHeaders,
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            headers: {
-                from: 'router',
-                top: 'level',
-                will_be: 'deleted',
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    headers: aggressiveHeaders,
+                }),
+                submissive: new DummyResource('meow'),
             },
-        });
+            {
+                headers: {
+                    from: 'router',
+                    top: 'level',
+                    will_be: 'deleted',
+                },
+            }
+        );
 
         const routerLevelConfig = {
             headers: {
@@ -955,22 +1032,28 @@ describe('router config merge -', () => {
             will_be: null,
         });
 
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                headers: aggressiveHeaders,
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            headers: {
-                from: 'router',
-                top: 'level',
-                will_be: 'deleted',
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        headers: aggressiveHeaders,
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
             },
-        });
+            {
+                headers: {
+                    from: 'router',
+                    top: 'level',
+                    will_be: 'deleted',
+                },
+            }
+        );
 
         const routerLevelConfig = {
             headers: {
@@ -1023,17 +1106,20 @@ describe('router config merge -', () => {
             will_be: 'deleted',
         });
 
-        const api = new Router({
-            aggressive: new DummyResource('rawr', {
-                headers: {
-                    from: 'resource',
-                    will_be: null,
-                },
-            }),
-            submissive: new DummyResource('meow'),
-        }, {
-            headers: genericHeaders,
-        });
+        const api = new Router(
+            {
+                aggressive: new DummyResource('rawr', {
+                    headers: {
+                        from: 'resource',
+                        will_be: null,
+                    },
+                }),
+                submissive: new DummyResource('meow'),
+            },
+            {
+                headers: genericHeaders,
+            }
+        );
 
         const routerLevelConfig = {
             headers: genericHeaders,
@@ -1076,21 +1162,27 @@ describe('router config merge -', () => {
             will_be: 'deleted',
         });
 
-        const api = new Router({
-            aggressive: new Router({
-                first: new DummyResource('rawr'),
-            }, {
-                headers: {
-                    from: 'resource',
-                    will_be: null,
-                },
-            }),
-            submissive: new Router({
-                first: new DummyResource('meow'),
-            }),
-        }, {
-            headers: genericHeaders,
-        });
+        const api = new Router(
+            {
+                aggressive: new Router(
+                    {
+                        first: new DummyResource('rawr'),
+                    },
+                    {
+                        headers: {
+                            from: 'resource',
+                            will_be: null,
+                        },
+                    }
+                ),
+                submissive: new Router({
+                    first: new DummyResource('meow'),
+                }),
+            },
+            {
+                headers: genericHeaders,
+            }
+        );
 
         const routerLevelConfig = {
             headers: genericHeaders,
@@ -1133,7 +1225,6 @@ describe('router config merge -', () => {
     });
 });
 
-
 describe('cant create router with route names which collide with router built-in methods', () => {
     test('config overwrite throws', () => {
         expect(() => {
@@ -1164,7 +1255,9 @@ describe('cant create router with route names which collide with router built-in
             new Router({
                 _setParent: new DummyResource('kek'),
             });
-        }).toThrow(/Route '_setParent' is invalid. Route names must not start with an underscore/);
+        }).toThrow(
+            /Route '_setParent' is invalid. Route names must not start with an underscore/
+        );
     });
 
     test('route names cant start with underscore', () => {
@@ -1172,10 +1265,11 @@ describe('cant create router with route names which collide with router built-in
             new Router({
                 _randomRoute: new DummyResource('kek'),
             });
-        }).toThrow(/Route '_randomRoute' is invalid. Route names must not start with an underscore/);
+        }).toThrow(
+            /Route '_randomRoute' is invalid. Route names must not start with an underscore/
+        );
     });
 });
-
 
 describe('defaults work', () => {
     test('defaultRoutes works', () => {
@@ -1232,7 +1326,9 @@ describe('defaults work', () => {
         expect(sdk.me.config()).toBeObject();
         expect(sdk.me.config().apiRoot).toEqual(sdk.config().apiRoot);
         expect(sdk.me.config().headers).toEqual(sdk.config().headers);
-        expect(sdk.me.config().defaultAcceptHeader).toEqual(sdk.config().defaultAcceptHeader);
+        expect(sdk.me.config().defaultAcceptHeader).toEqual(
+            sdk.config().defaultAcceptHeader
+        );
 
         // Update config via setConfig w/ no value
         sdk.setConfig(null);
@@ -1251,7 +1347,9 @@ describe('defaults work', () => {
         expect(sdk.me.config()).toBeObject();
         expect(sdk.me.config().apiRoot).toEqual(sdk.config().apiRoot);
         expect(sdk.me.config().headers).toEqual(sdk.config().headers);
-        expect(sdk.me.config().defaultAcceptHeader).toEqual(sdk.config().defaultAcceptHeader);
+        expect(sdk.me.config().defaultAcceptHeader).toEqual(
+            sdk.config().defaultAcceptHeader
+        );
 
         // Update config via setConfig
         sdk.setConfig({
@@ -1275,7 +1373,9 @@ describe('defaults work', () => {
         expect(sdk.me.config()).toBeObject();
         expect(sdk.me.config().apiRoot).toEqual(sdk.config().apiRoot);
         expect(sdk.me.config().headers).toEqual(sdk.config().headers);
-        expect(sdk.me.config().defaultAcceptHeader).toEqual(sdk.config().defaultAcceptHeader);
+        expect(sdk.me.config().defaultAcceptHeader).toEqual(
+            sdk.config().defaultAcceptHeader
+        );
 
         // Call setConfig on the resource
         sdk.me.setConfig({

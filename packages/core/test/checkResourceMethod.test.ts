@@ -2,7 +2,6 @@ import 'jest-extended';
 
 import { isFetchMethod, isPostMethod } from '../src';
 
-
 describe('checkResource methods', () => {
     // check Fetch methods
     test('isFetchMethod :: fetch', () => {

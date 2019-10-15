@@ -1,10 +1,13 @@
 import { Task } from 'redux-saga';
-import { RequestConfig, Resource, ResourceClassConstructor } from 'tg-resources';
+import {
+    RequestConfig,
+    Resource,
+    ResourceClassConstructor,
+} from 'tg-resources';
 
 import { createSagaRouter, MutatedRequestConfigFn } from '../src';
 
 import { configureStore } from './reduxStore';
-
 
 export function addRequestConfig(requestConfig?: RequestConfig): RequestConfig {
     const newConfig = {
@@ -22,31 +25,41 @@ export function addRequestConfig(requestConfig?: RequestConfig): RequestConfig {
     return newConfig;
 }
 
-
-export const createApi = <
-    Klass extends Resource
->(hostUrl: string, ResourceKlass: ResourceClassConstructor<Klass>, mutate?: MutatedRequestConfigFn) => (
-    createSagaRouter({
-        auth: ['/headers', { headers: () => ({ auth: 'foo' }), withCredentials: true }],
-        hello: '/hello',
-        options: '/options',
-        attachments: '/attachments',
-        abortingResource: '/abort',
-        dogs: {
-            list: '/dogs/',
-            details: '/dogs/${pk}',
+export const createApi = <Klass extends Resource>(
+    hostUrl: string,
+    ResourceKlass: ResourceClassConstructor<Klass>,
+    mutate?: MutatedRequestConfigFn
+) =>
+    createSagaRouter(
+        {
+            auth: [
+                '/headers',
+                { headers: () => ({ auth: 'foo' }), withCredentials: true },
+            ],
+            hello: '/hello',
+            options: '/options',
+            attachments: '/attachments',
+            abortingResource: '/abort',
+            dogs: {
+                list: '/dogs/',
+                details: '/dogs/${pk}',
+            },
+            error413: '/error413',
+            error400_nonField: '/error400_nonField',
+            urlEncoded: '/url-encoded',
         },
-        error413: '/error413',
-        error400_nonField: '/error400_nonField',
-        urlEncoded: '/url-encoded',
-    }, {
-        apiRoot: hostUrl,
-        mutateRequestConfig: mutate,
-    }, ResourceKlass)
-);
+        {
+            apiRoot: hostUrl,
+            mutateRequestConfig: mutate,
+        },
+        ResourceKlass
+    );
 
-
-export async function expectResponse(task: Task, expectedData: any | null, store: ReturnType<typeof configureStore>) {
+export async function expectResponse(
+    task: Task,
+    expectedData: any | null,
+    store: ReturnType<typeof configureStore>
+) {
     await task.toPromise();
 
     if (expectedData) {
@@ -63,8 +76,17 @@ interface ErrorInfo {
     exactError?: any[];
 }
 
-
-export async function expectError(task: Task, { errorCls, statusCode, responseText, exactError, errorString, hasError }: ErrorInfo) {
+export async function expectError(
+    task: Task,
+    {
+        errorCls,
+        statusCode,
+        responseText,
+        exactError,
+        errorString,
+        hasError,
+    }: ErrorInfo
+) {
     let errorHandled = true;
     let error = null;
 
@@ -78,9 +100,10 @@ export async function expectError(task: Task, { errorCls, statusCode, responseTe
             }
 
             if (errorCls) {
-                expect(`${err} is not a subclass of ${errorCls}: ${err instanceof errorCls}`).toEqual(
-                    `${err} is not a subclass of ${errorCls}: true`,
-                );
+                expect(
+                    `${err} is not a subclass of ${errorCls}: ${err instanceof
+                        errorCls}`
+                ).toEqual(`${err} is not a subclass of ${errorCls}: true`);
             }
 
             if (typeof hasError !== 'undefined') {
@@ -104,7 +127,13 @@ export async function expectError(task: Task, { errorCls, statusCode, responseTe
     }
 
     if (!errorHandled) {
-        throw new Error(`Expected request to fail with ${{ errorCls, statusCode, responseText }}`);
+        throw new Error(
+            `Expected request to fail with ${{
+                errorCls,
+                statusCode,
+                responseText,
+            }}`
+        );
     }
 
     if (error) {

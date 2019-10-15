@@ -1,8 +1,19 @@
-import { Attachments, ObjectMap, Optional, Query, RequestConfig, Resource, ResponseInterface } from '../src';
-
+import {
+    Attachments,
+    ObjectMap,
+    Optional,
+    Query,
+    RequestConfig,
+    Resource,
+    ResponseInterface,
+} from '../src';
 
 export class DummyResponse extends ResponseInterface {
-    public constructor(response: Optional<any>, error: Optional<any> = null, request: Optional<any> = null) {
+    public constructor(
+        response: Optional<any>,
+        error: Optional<any> = null,
+        request: Optional<any> = null
+    ) {
         super(response, error, request);
         this._data = response;
     }
@@ -38,7 +49,6 @@ export class DummyResponse extends ResponseInterface {
     }
 }
 
-
 class DummyRequest {
     public readonly method: string;
     public readonly url: string;
@@ -49,7 +59,14 @@ class DummyRequest {
 
     public headers: ObjectMap;
 
-    constructor(method: string, url: string, query: Query, data: any | null, attachments: Attachments, requestConfig: RequestConfig) {
+    constructor(
+        method: string,
+        url: string,
+        query: Query,
+        data: any | null,
+        attachments: Attachments,
+        requestConfig: RequestConfig
+    ) {
         this.method = method;
         this.url = url;
         this.query = query;
@@ -66,31 +83,52 @@ class DummyRequest {
     }
 
     public end(resolve: (response: any, error: any) => void) {
-        resolve({
-            method: this.method,
-            url: this.url,
-            data: this.data,
-            query: this.query,
-            attachments: this.attachments,
-            requestConfig: this.requestConfig,
-            headers: this.headers,
-        }, null);
+        resolve(
+            {
+                method: this.method,
+                url: this.url,
+                data: this.data,
+                query: this.query,
+                attachments: this.attachments,
+                requestConfig: this.requestConfig,
+                headers: this.headers,
+            },
+            null
+        );
     }
 }
 
-
 export class DummyResource extends Resource {
-    public wrapResponse<Req, Res, Err>(res: Res, error: Err, req: Req): ResponseInterface {
+    public wrapResponse<Req, Res, Err>(
+        res: Res,
+        error: Err,
+        req: Req
+    ): ResponseInterface {
         return new DummyResponse(res, error, req);
     }
 
-    public createRequest<
-        D extends ObjectMap = any,
-    >(method: string, url: string, query: Query, data: D | null, attachments: Attachments, requestConfig: RequestConfig) {
-        return new DummyRequest(method, url, query, data, attachments, requestConfig);
+    public createRequest<D extends ObjectMap = any>(
+        method: string,
+        url: string,
+        query: Query,
+        data: D | null,
+        attachments: Attachments,
+        requestConfig: RequestConfig
+    ) {
+        return new DummyRequest(
+            method,
+            url,
+            query,
+            data,
+            attachments,
+            requestConfig
+        );
     }
 
-    public doRequest<Response, ErrorType>(req: any, resolve: (response: Response, error: ErrorType) => void): void {
+    public doRequest<Response, ErrorType>(
+        req: any,
+        resolve: (response: Response, error: ErrorType) => void
+    ): void {
         (req as DummyRequest).end(resolve);
     }
 

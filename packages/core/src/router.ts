@@ -14,22 +14,33 @@ import {
 } from './types';
 import { mergeConfig } from './util';
 
-
 export function bindResources(routes: RouteMap, $this: RouterInterface) {
     const res: RouteMap = {};
 
-    Object.keys(routes).forEach((routeName) => {
+    Object.keys(routes).forEach(routeName => {
         // tslint:disable-next-line no-use-before-declare
-        if (!routes[routeName] || !(routes[routeName] instanceof Router || routes[routeName] instanceof Resource)) {
-            throw new Error(`All routes must be instances of Router or Resource (see '${routeName}')`);
+        if (
+            !routes[routeName] ||
+            !(
+                routes[routeName] instanceof Router ||
+                routes[routeName] instanceof Resource
+            )
+        ) {
+            throw new Error(
+                `All routes must be instances of Router or Resource (see '${routeName}')`
+            );
         }
 
         if (routeName[0] === '_') {
-            throw new Error(`Route '${routeName}' is invalid. Route names must not start with an underscore`);
+            throw new Error(
+                `Route '${routeName}' is invalid. Route names must not start with an underscore`
+            );
         }
 
         if (routeName === 'config') {
-            throw new Error(`Route ${routeName} collides with Router built-in method names`);
+            throw new Error(
+                `Route ${routeName} collides with Router built-in method names`
+            );
         }
 
         if (routes[routeName].isBound) {
@@ -49,7 +60,10 @@ export function bindResources(routes: RouteMap, $this: RouterInterface) {
         Object.assign($this, res, { _childKeys: childKeys });
     } catch (e) {
         if (e instanceof TypeError) {
-            let fieldName: string | RegExpExecArray | null = /property ([^\s]+) of/gi.exec(`${e}`);
+            let fieldName:
+                | string
+                | RegExpExecArray
+                | null = /property ([^\s]+) of/gi.exec(`${e}`);
             if (fieldName) {
                 fieldName = `Route ${fieldName[1]} collides`;
             } else {
@@ -65,7 +79,6 @@ export function bindResources(routes: RouteMap, $this: RouterInterface) {
     }
 }
 
-
 export class Router extends Route implements RouterInterface {
     public static defaultRoutes: Optional<RouteMap> = null;
     public static defaultConfig: RouteConfig = null;
@@ -73,7 +86,10 @@ export class Router extends Route implements RouterInterface {
 
     [key: string]: ResourceInterface | RouterInterface | any;
 
-    public constructor(routes: Optional<RouteMap> = null, config: RouteConfig = null) {
+    public constructor(
+        routes: Optional<RouteMap> = null,
+        config: RouteConfig = null
+    ) {
         super(config);
 
         const defaultRoutes = (this.constructor as typeof Router).defaultRoutes;
@@ -95,7 +111,9 @@ export class Router extends Route implements RouterInterface {
 
         return {
             ...(this.parent ? this.parent.getHeaders() : {}),
-            ...((isFunction(config.headers) ? config.headers() : config.headers) || {}),
+            ...((isFunction(config.headers)
+                ? config.headers()
+                : config.headers) || {}),
         };
     }
 
@@ -104,7 +122,9 @@ export class Router extends Route implements RouterInterface {
 
         return {
             ...(this.parent ? this.parent.getCookies() : {}),
-            ...((isFunction(config.cookies) ? config.cookies() : config.cookies) || {}),
+            ...((isFunction(config.cookies)
+                ? config.cookies()
+                : config.cookies) || {}),
         };
     }
 
@@ -113,7 +133,7 @@ export class Router extends Route implements RouterInterface {
             this._config = mergeConfig(
                 this._parent ? this._parent.config() : DEFAULTS,
                 (this.constructor as typeof Router).defaultConfig || null,
-                this._customConfig,
+                this._customConfig
             );
         }
 
@@ -123,7 +143,7 @@ export class Router extends Route implements RouterInterface {
     public clearConfigCache() {
         this._config = null;
 
-        this._childKeys.forEach((key) => {
+        this._childKeys.forEach(key => {
             (this[key] as RouteInterface).clearConfigCache();
         });
     }

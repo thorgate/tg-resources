@@ -8,9 +8,8 @@ import {
     Query,
     RequestConfig,
     Resource,
-    ResponseInterface
+    ResponseInterface,
 } from 'tg-resources';
-
 
 interface HeadersObject {
     [key: string]: any;
@@ -23,7 +22,6 @@ interface FetchResponseInterface {
     text: string | null;
     body: any | null;
 }
-
 
 export class FetchResponse extends ResponseInterface {
     public get response(): Optional<FetchResponseInterface> {
@@ -42,7 +40,7 @@ export class FetchResponse extends ResponseInterface {
     public get statusType() {
         if (this.status) {
             /* tslint:disable-next-line:no-bitwise */
-            return this.status / 100 | 0;
+            return (this.status / 100) | 0;
         }
 
         // istanbul ignore next: Only happens on network errors
@@ -91,12 +89,9 @@ export class FetchResponse extends ResponseInterface {
     }
 
     public get wasAborted(): boolean {
-        return this.hasError
-            && this.error
-            && this.error.name === 'AbortError';
+        return this.hasError && this.error && this.error.name === 'AbortError';
     }
 }
-
 
 function parseMethod(method: AllowedMethods) {
     switch (method) {
@@ -117,7 +112,6 @@ function parseMethod(method: AllowedMethods) {
     }
 }
 
-
 function parseHeaders(headers: Headers): HeadersObject {
     const headersObject: HeadersObject = {};
 
@@ -128,8 +122,10 @@ function parseHeaders(headers: Headers): HeadersObject {
     return headersObject;
 }
 
-
-function parseFetchResponse(response: Response, req: Request): Promise<FetchResponseInterface> {
+function parseFetchResponse(
+    response: Response,
+    req: Request
+): Promise<FetchResponseInterface> {
     // Content type will not be required when there is no content
     // This is only valid for HEAD requests and status_code=204
     if (response.status === 204 || req.method.toLowerCase() === 'head') {
@@ -177,13 +173,14 @@ function parseFetchResponse(response: Response, req: Request): Promise<FetchResp
     }));
 }
 
-
 export class FetchResource extends Resource {
-    protected createRequest<
-        D extends ObjectMap = any
-    >(
-        method: AllowedMethods, url: string, query: Query, data: D | string | null,
-        attachments: Attachments, requestConfig: RequestConfig
+    protected createRequest<D extends ObjectMap = any>(
+        method: AllowedMethods,
+        url: string,
+        query: Query,
+        data: D | string | null,
+        attachments: Attachments,
+        requestConfig: RequestConfig
     ): any {
         let headers: { [key: string]: any } | null = null;
         let body: string | FormData | null = null;
@@ -195,19 +192,23 @@ export class FetchResource extends Resource {
             } else if (attachments) {
                 const form = new FormData();
 
-                attachments.forEach((attachment) => {
-                    form.append(attachment.field, attachment.file as any, attachment.name);
+                attachments.forEach(attachment => {
+                    form.append(
+                        attachment.field,
+                        attachment.file as any,
+                        attachment.name
+                    );
                 });
 
                 // Set all the fields
-                Object.keys(data).forEach((fieldKey) => {
+                Object.keys(data).forEach(fieldKey => {
                     const value = data[fieldKey];
 
                     // Future: Make this logic configurable
                     if (hasValue(value)) {
                         if (isArray(value)) {
                             // Send arrays as multipart arrays
-                            value.forEach((fValue) => {
+                            value.forEach(fValue => {
                                 form.append(`${fieldKey}[]`, fValue);
                             });
                         } else if (isObject(value)) {
@@ -233,7 +234,9 @@ export class FetchResource extends Resource {
 
         let theUrl = url;
         if (query) {
-            const querySerializeOptions: qs.IStringifyOptions | undefined = this.config(requestConfig).querySerializeOptions;
+            const querySerializeOptions:
+                | qs.IStringifyOptions
+                | undefined = this.config(requestConfig).querySerializeOptions;
             theUrl = `${theUrl}?${qs.stringify(query, querySerializeOptions)}`;
         }
 
@@ -253,7 +256,7 @@ export class FetchResource extends Resource {
         });
 
         if (hasValue(headers)) {
-            Object.keys(headers).forEach((key) => {
+            Object.keys(headers).forEach(key => {
                 if (hasValue(headers)) {
                     req.headers.set(key, headers[key]);
                 }
@@ -267,13 +270,16 @@ export class FetchResource extends Resource {
         return req;
     }
 
-    protected doRequest(req: Request, resolve: (response: any, error: any) => void): void {
+    protected doRequest(
+        req: Request,
+        resolve: (response: any, error: any) => void
+    ): void {
         fetch(req)
-            .then((res) => parseFetchResponse(res, req))
-            .then((response) => {
+            .then(res => parseFetchResponse(res, req))
+            .then(response => {
                 resolve(response, null);
             })
-            .catch((error) => {
+            .catch(error => {
                 resolve(null, error);
             });
     }
@@ -286,8 +292,11 @@ export class FetchResource extends Resource {
         return req;
     }
 
-    protected wrapResponse(res: FetchResponseInterface | null, error: any, req?: Request): ResponseInterface {
+    protected wrapResponse(
+        res: FetchResponseInterface | null,
+        error: any,
+        req?: Request
+    ): ResponseInterface {
         return new FetchResponse(res, error, req);
     }
-
 }

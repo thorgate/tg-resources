@@ -1,6 +1,5 @@
 import { AbortError } from '../src';
 
-
 let instance: AbortError;
 const errObject = {
     text: 'im an error, for real!',
@@ -9,7 +8,6 @@ const errObject = {
 beforeEach(() => {
     instance = new AbortError(errObject);
 });
-
 
 describe('AbortError api', () => {
     test('instance.error is correct', () => {
@@ -26,13 +24,17 @@ describe('AbortError api', () => {
     });
 
     test('instance.type is inherited from error', () => {
-        expect(new AbortError({
-            type: 'foo',
-        }).type).toEqual('foo');
+        expect(
+            new AbortError({
+                type: 'foo',
+            }).type
+        ).toEqual('foo');
     });
 
     test('toString works', () => {
-        expect(instance.toString()).toEqual('AbortError: The user aborted a request.');
+        expect(instance.toString()).toEqual(
+            'AbortError: The user aborted a request.'
+        );
     });
 
     test('isValidationError is false', () => {

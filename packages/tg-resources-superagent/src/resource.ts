@@ -1,7 +1,19 @@
 import { hasValue, isArray, isObject } from '@tg-resources/is';
-import request, { Response, ResponseError, SuperAgentRequest } from 'superagent';
-import { AllowedMethods, Attachments, ObjectMap, Optional, Query, RequestConfig, Resource, ResponseInterface } from 'tg-resources';
-
+import request, {
+    Response,
+    ResponseError,
+    SuperAgentRequest,
+} from 'superagent';
+import {
+    AllowedMethods,
+    Attachments,
+    ObjectMap,
+    Optional,
+    Query,
+    RequestConfig,
+    Resource,
+    ResponseInterface,
+} from 'tg-resources';
 
 export class SuperagentResponse extends ResponseInterface {
     public get response(): Optional<Response> {
@@ -68,15 +80,19 @@ export class SuperagentResponse extends ResponseInterface {
     }
 
     public get wasAborted(): boolean {
-        return this.hasError
-            && this.error
-            && `${this.error}`.includes('request has been aborted');
+        return (
+            this.hasError &&
+            this.error &&
+            `${this.error}`.includes('request has been aborted')
+        );
     }
 }
 
-
 export class SuperAgentResource extends Resource {
-    protected wrapResponse(response: Response, error: ResponseError | Error | null = null) {
+    protected wrapResponse(
+        response: Response,
+        error: ResponseError | Error | null = null
+    ) {
         // For superagent, all 4XX/5XX response codes also return an error object. Since
         // tg-resources handles these errors in the Resource we need to only send
         // error object here if it is not due to a response code.
@@ -84,13 +100,18 @@ export class SuperAgentResource extends Resource {
         // Network errors in superagent don't have `err.status`
         return new SuperagentResponse(
             response,
-            error && ('status' in error) && hasValue(error.status) ? null : error,
+            error && 'status' in error && hasValue(error.status) ? null : error
         );
     }
 
-    protected createRequest<
-        D extends ObjectMap = any
-    >(method: AllowedMethods, url: string, query: Query, data: D | null, attachments: Attachments, requestConfig: RequestConfig) {
+    protected createRequest<D extends ObjectMap = any>(
+        method: AllowedMethods,
+        url: string,
+        query: Query,
+        data: D | null,
+        attachments: Attachments,
+        requestConfig: RequestConfig
+    ) {
         let req = request[method](url);
 
         if (this.config(requestConfig).withCredentials) {
@@ -104,19 +125,23 @@ export class SuperAgentResource extends Resource {
         if (hasValue(data)) {
             // If attachments are used construct a multipart request
             if (attachments) {
-                attachments.forEach((attachment) => {
-                    req = req.attach(attachment.field, attachment.file, attachment.name);
+                attachments.forEach(attachment => {
+                    req = req.attach(
+                        attachment.field,
+                        attachment.file,
+                        attachment.name
+                    );
                 });
 
                 // Set all the fields
-                Object.keys(data).forEach((fieldKey) => {
+                Object.keys(data).forEach(fieldKey => {
                     const value = data[fieldKey];
 
                     // Future: Make this logic configurable
                     if (hasValue(value)) {
                         if (isArray(value)) {
                             // Send arrays as multipart arrays
-                            value.forEach((fValue) => {
+                            value.forEach(fValue => {
                                 req = req.field(`${fieldKey}[]`, fValue);
                             });
                         } else if (isObject(value)) {
@@ -153,10 +178,19 @@ export class SuperAgentResource extends Resource {
         return req;
     }
 
-    protected doRequest(req: SuperAgentRequest, resolve: (response: Optional<Response>, error: Optional<ResponseError | Error>) => void) {
+    protected doRequest(
+        req: SuperAgentRequest,
+        resolve: (
+            response: Optional<Response>,
+            error: Optional<ResponseError | Error>
+        ) => void
+    ) {
         const cleanupSignal = () => {
             if ((req as any).tg$Signal) {
-                (req as any).tg$Signal.removeEventListener('abort', (req as any).tg$Listener);
+                (req as any).tg$Signal.removeEventListener(
+                    'abort',
+                    (req as any).tg$Listener
+                );
 
                 // Early cleanup
                 delete (req as any).tg$Listener;

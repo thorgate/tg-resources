@@ -1,18 +1,16 @@
-import { RequestValidationError, ValidationError, ValidationErrorInterface } from '../src';
-
+import {
+    RequestValidationError,
+    ValidationError,
+    ValidationErrorInterface,
+} from '../src';
 
 let instance: RequestValidationError;
 
 const responseText = JSON.stringify({
     errors: {
-        non_field_errors: [
-            'Something is generally broken',
-        ],
+        non_field_errors: ['Something is generally broken'],
 
-        password: [
-            'too short',
-            'missing numbers',
-        ],
+        password: ['too short', 'missing numbers'],
 
         email: {
             something: 'be wrong yo',
@@ -47,7 +45,9 @@ describe('RequestValidationError api', () => {
     });
 
     test('toString works', () => {
-        expect(instance.toString()).toEqual(`RequestValidationError 400: ${responseText}`);
+        expect(instance.toString()).toEqual(
+            `RequestValidationError 400: ${responseText}`
+        );
     });
 
     test('isAbortError is false', () => {
@@ -91,7 +91,7 @@ describe('RequestValidationError api', () => {
             new RequestValidationError(400),
         ];
 
-        toTest.forEach((element) => {
+        toTest.forEach(element => {
             expect(element.hasError()).toEqual(true);
         });
     });

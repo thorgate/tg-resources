@@ -1,12 +1,15 @@
 {
-  "extends": ["tslint:recommended", "tslint-config-standard"],
+  "extends": [
+    "tslint:recommended", "tslint-config-standard", "tslint-plugin-prettier"
+  ],
   "linterOptions": {
     "exclude": [
-      "**/lib/**/*.ts",
-      "**/.template/*"
+      "**/lib/**/*.ts"
     ]
   },
   "rules": {
+    "prettier": [true, "/prettier.config.js"],
+    "arrow-parens": [true, "ban-single-arg-parens"],
     "jsx-wrap-multiline": false,
     "align": [true, "parameters", "statements"],
     "ban": false,
@@ -15,9 +18,7 @@
     "curly": true,
     "eofline": false,
     "forin": true,
-    "ter-indent": [true, 4, {
-      "SwitchCase": 1
-    }],
+    "ter-indent": false,
     "indent": [true, "spaces"],
     "interface-name": [true, "never-prefix"],
     "jsdoc-format": true,
@@ -55,7 +56,6 @@
     "no-switch-case-fall-through": true,
     "no-trailing-whitespace": false,
     "no-unused-expression": true,
-    "no-use-before-declare": true,
     "one-line": [true, "check-catch", "check-else", "check-open-brace", "check-whitespace"],
     "quotemark": [true, "single", "jsx-double"],
     "radix": true,

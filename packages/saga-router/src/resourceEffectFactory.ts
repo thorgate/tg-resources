@@ -1,17 +1,23 @@
+import {
+    isFetchMethod,
+    isPostMethod,
+    Kwargs,
+    ObjectMap,
+    RequestConfig,
+    Resource,
+} from '@tg-resources/core';
 import { call } from 'redux-saga/effects';
-import { isFetchMethod, isPostMethod, Kwargs, ObjectMap, RequestConfig, Resource } from 'tg-resources';
 
 import { resourceSagaRunner } from './resourceSagaRunner';
 import { isSagaResource, SagaResource } from './SagaResource';
 import { ResourceSagaRunnerConfig, SagaRequestConfig } from './types';
 
-
 export interface EffectCreatorOptions<
-    Params extends Kwargs<Params> = {}, D extends ObjectMap = any
+    Params extends Kwargs<Params> = {},
+    D extends ObjectMap = any
 > extends ResourceSagaRunnerConfig<Params, D> {
     requestConfig?: RequestConfig | SagaRequestConfig | null;
 }
-
 
 /**
  * Create Redux-Saga effect for Resource or SagaResource.
@@ -23,7 +29,9 @@ export interface EffectCreatorOptions<
  * @param options Resource method parameters
  */
 export const resourceEffectFactory = <
-    Klass extends Resource, Params extends Kwargs<Params> = {}, D extends ObjectMap = any
+    Klass extends Resource,
+    Params extends Kwargs<Params> = {},
+    D extends ObjectMap = any
 >(
     resource: Klass | SagaResource<Klass>,
     method: string,
@@ -31,32 +39,34 @@ export const resourceEffectFactory = <
 ) => {
     if (isSagaResource(resource)) {
         if (resource.config(options.requestConfig).initializeSaga) {
-            throw new Error('Misconfiguration: InitializeSaga is not supported');
+            throw new Error(
+                'Misconfiguration: InitializeSaga is not supported'
+            );
         }
 
         if (isFetchMethod(method)) {
-            return resource[method](options.kwargs, options.query, options.requestConfig);
+            return resource[method](
+                options.kwargs,
+                options.query,
+                options.requestConfig
+            );
         } else if (isPostMethod(method)) {
-            return resource[method](options.kwargs, options.data, options.query, options.attachments, options.requestConfig);
+            return resource[method](
+                options.kwargs,
+                options.data,
+                options.query,
+                options.attachments,
+                options.requestConfig
+            );
         }
     }
 
     if (isFetchMethod(method)) {
-        return call(
-            resourceSagaRunner,
-            resource,
-            method,
-            options,
-        );
+        return call(resourceSagaRunner, resource, method, options);
     }
 
     if (isPostMethod(method)) {
-        return call(
-            resourceSagaRunner,
-            resource,
-            method,
-            options,
-        );
+        return call(resourceSagaRunner, resource, method, options);
     }
 
     throw new Error('Unknown method used');

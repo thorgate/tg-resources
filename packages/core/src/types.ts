@@ -1,13 +1,10 @@
-import { Omit } from '@tg-resources/is';
-
-
 export type Optional<T> = T | null;
 
 export type OptionalMap<T> = {
-    [K in keyof T]?: T[K]
+    [K in keyof T]?: T[K];
 };
 
-export type Kwargs<KW> = { [K in keyof KW]?: string | undefined; };
+export type Kwargs<KW> = { [K in keyof KW]?: string | undefined };
 
 export interface ObjectMap<T = any> {
     [key: string]: T;
@@ -15,24 +12,38 @@ export interface ObjectMap<T = any> {
 
 export type ObjectMapFn<T = any> = () => ObjectMap<T>;
 
-
-export type ConfigObjectFn = ObjectMap<string | null> | ObjectMapFn<string | null>;
-
+export type ConfigObjectFn =
+    | ObjectMap<string | null>
+    | ObjectMapFn<string | null>;
 
 export type Query = ObjectMap<string> | null;
 
 export type MutateResponseFn = <R>(
-    responseData: R, rawResponse?: ResponseInterface, resource?: ResourceInterface, requestConfig?: RequestConfig
+    responseData: R,
+    rawResponse?: ResponseInterface,
+    resource?: ResourceInterface,
+    requestConfig?: RequestConfig
 ) => any;
 export type MutateErrorFn = (
-    error: ResourceErrorInterface, rawResponse?: ResponseInterface, resource?: ResourceInterface, requestConfig?: RequestConfig
+    error: ResourceErrorInterface,
+    rawResponse?: ResponseInterface,
+    resource?: ResourceInterface,
+    requestConfig?: RequestConfig
 ) => any;
-export type MutateRawResponseFn = (rawResponse?: ResponseInterface, requestConfig?: RequestConfig) => any;
+export type MutateRawResponseFn = (
+    rawResponse?: ResponseInterface,
+    requestConfig?: RequestConfig
+) => any;
 
-export type ParseErrorFn = (errorText: any, config: ConfigType) => ValidationErrorInterface | null;
+export type ParseErrorFn = (
+    errorText: any,
+    config: ConfigType
+) => ValidationErrorInterface | null;
 
-export type PrepareErrorFn = (err: any, config: ConfigType) => ValidationErrorInterface | null | any;
-
+export type PrepareErrorFn = (
+    err: any,
+    config: ConfigType
+) => ValidationErrorInterface | null | any;
 
 export interface ConfigType {
     /**
@@ -95,18 +106,14 @@ export interface ConfigType {
     [key: string]: any;
 }
 
-
 /**
  * Router and Resource config
  */
 export type RouteConfigType = Omit<ConfigType, 'signal'>;
 
-
 export type RouteConfig = Optional<OptionalMap<RouteConfigType>>;
 
-
 export type RequestConfig = Optional<OptionalMap<ConfigType>>;
-
 
 export abstract class ValidationErrorInterface {
     public fieldName: string | number | undefined;
@@ -170,7 +177,7 @@ export abstract class ValidationErrorInterface {
         if (process.env.NODE_ENV !== 'production') {
             if (this.fieldName && this.fieldName !== fieldName) {
                 console.error(
-                    `ValidationErrorInterface: Unexpected rebind of ${this} as ${fieldName} (was ${this.fieldName})`,
+                    `ValidationErrorInterface: Unexpected rebind of ${this} as ${fieldName} (was ${this.fieldName})`
                 );
             }
         }
@@ -184,15 +191,24 @@ export abstract class ValidationErrorInterface {
         return this.asString();
     }
 
-    public map<U>(callbackfn: (value: any, index?: number, array?: any[]) => U, thisArg?: any): U[] {
+    public map<U>(
+        callbackfn: (value: any, index?: number, array?: any[]) => U,
+        thisArg?: any
+    ): U[] {
         return this._iter().map(callbackfn, thisArg);
     }
 
-    public forEach(callbackfn: (value: any, index?: number, array?: any[]) => void, thisArg?: any): void {
+    public forEach(
+        callbackfn: (value: any, index?: number, array?: any[]) => void,
+        thisArg?: any
+    ): void {
         this._iter().forEach(callbackfn, thisArg);
     }
 
-    public filter(callbackfn: (value: any, index?: number, array?: any[]) => boolean, thisArg?: any) {
+    public filter(
+        callbackfn: (value: any, index?: number, array?: any[]) => boolean,
+        thisArg?: any
+    ) {
         return this._iter().filter(callbackfn, thisArg);
     }
 
@@ -212,13 +228,11 @@ export interface Attachment {
 
 export type Attachments = null | Attachment[];
 
-
 export type ResourceFetchMethods = 'fetch' | 'head' | 'options';
 
 export type ResourcePostMethods = 'post' | 'patch' | 'put' | 'del';
 
 export type ResourceMethods = ResourceFetchMethods | ResourcePostMethods;
-
 
 export type AllowedFetchMethods = 'get' | 'head' | 'options';
 
@@ -226,11 +240,9 @@ export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del';
 
 export type AllowedMethods = AllowedFetchMethods | AllowedPostMethods;
 
-
 export interface RouteMap {
     [key: string]: ResourceInterface | RouterInterface;
 }
-
 
 export interface RouteInterface {
     readonly parent: RouterInterface | null;
@@ -248,69 +260,93 @@ export interface RouteInterface {
     clearConfigCache(): void;
 }
 
-
 export interface RouterInterface extends RouteInterface {
     [key: string]: ResourceInterface | RouterInterface | any;
 }
 
-export type ResourceFetchMethod<
-    R = any, Params extends Kwargs<Params> = {}
-> = (kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null) => Promise<R> | any;
-
-export type ResourcePostMethod<
-    R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
-> = (
-    kwargs?: Params | null, data?: D | string | null, query?: Query | null, attachments?: Attachments, requestConfig?: RequestConfig | null
+export type ResourceFetchMethod<R = any, Params extends Kwargs<Params> = {}> = (
+    kwargs?: Params | null,
+    query?: Query | null,
+    requestConfig?: RequestConfig | null
 ) => Promise<R> | any;
 
+export type ResourcePostMethod<
+    R = any,
+    D extends ObjectMap = any,
+    Params extends Kwargs<Params> = {}
+> = (
+    kwargs?: Params | null,
+    data?: D | string | null,
+    query?: Query | null,
+    attachments?: Attachments,
+    requestConfig?: RequestConfig | null
+) => Promise<R> | any;
 
 export interface ResourceInterface extends RouteInterface {
     readonly apiEndpoint: string;
 
     config(requestConfig?: RequestConfig): ConfigType;
 
-    fetch<
-        R = any, Params extends Kwargs<Params> = {}
-    >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any;
-    head<
-        R = any, Params extends Kwargs<Params> = {}
-    >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any;
-    options<
-        R = any, Params extends Kwargs<Params> = {}
-    >(kwargs?: Params | null, query?: Query | null, requestConfig?: RequestConfig | null): Promise<R> | any;
+    fetch<R = any, Params extends Kwargs<Params> = {}>(
+        kwargs?: Params | null,
+        query?: Query | null,
+        requestConfig?: RequestConfig | null
+    ): Promise<R> | any;
+    head<R = any, Params extends Kwargs<Params> = {}>(
+        kwargs?: Params | null,
+        query?: Query | null,
+        requestConfig?: RequestConfig | null
+    ): Promise<R> | any;
+    options<R = any, Params extends Kwargs<Params> = {}>(
+        kwargs?: Params | null,
+        query?: Query | null,
+        requestConfig?: RequestConfig | null
+    ): Promise<R> | any;
 
     post<
-        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
+        R = any,
+        D extends ObjectMap = any,
+        Params extends Kwargs<Params> = {}
     >(
-        kwargs?: Params | null, data?: D | string | null, query?: Query | null,
-        attachments?: Attachments, requestConfig?: RequestConfig | null
+        kwargs?: Params | null,
+        data?: D | string | null,
+        query?: Query | null,
+        attachments?: Attachments,
+        requestConfig?: RequestConfig | null
     ): Promise<R> | any;
     patch<
-        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
+        R = any,
+        D extends ObjectMap = any,
+        Params extends Kwargs<Params> = {}
     >(
-        kwargs?: Params | null, data?: D | string | null, query?: Query | null,
-        attachments?: Attachments, requestConfig?: RequestConfig | null
+        kwargs?: Params | null,
+        data?: D | string | null,
+        query?: Query | null,
+        attachments?: Attachments,
+        requestConfig?: RequestConfig | null
     ): Promise<R> | any;
-    put<
-        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
-    >(
-        kwargs?: Params | null, data?: D | string | null, query?: Query | null,
-        attachments?: Attachments, requestConfig?: RequestConfig | null
+    put<R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
+        kwargs?: Params | null,
+        data?: D | string | null,
+        query?: Query | null,
+        attachments?: Attachments,
+        requestConfig?: RequestConfig | null
     ): Promise<R> | any;
-    del<
-        R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}
-    >(
-        kwargs?: Params | null, data?: D | string | null, query?: Query | null,
-        attachments?: Attachments, requestConfig?: RequestConfig | null
+    del<R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
+        kwargs?: Params | null,
+        data?: D | string | null,
+        query?: Query | null,
+        attachments?: Attachments,
+        requestConfig?: RequestConfig | null
     ): Promise<R> | any;
 
-    renderPath<
-        Params extends Kwargs<Params> = {}
-    >(urlParams?: Params | null, requestConfig?: RequestConfig | null): string;
+    renderPath<Params extends Kwargs<Params> = {}>(
+        urlParams?: Params | null,
+        requestConfig?: RequestConfig | null
+    ): string;
 
     [key: string]: any;
 }
-
 
 export abstract class ResourceErrorInterface {
     protected readonly _message: string;
@@ -343,7 +379,11 @@ export abstract class ResourceErrorInterface {
 
 export abstract class ResponseInterface {
     // istanbul ignore next: Tested in package that implement Resource
-    public constructor(response: Optional<any>, error: Optional<any> = null, request: Optional<any> = null) {
+    public constructor(
+        response: Optional<any>,
+        error: Optional<any> = null,
+        request: Optional<any> = null
+    ) {
         this._response = response;
         this._error = error;
         this._request = request;

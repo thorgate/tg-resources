@@ -11,9 +11,7 @@ import {
     isStringArray,
 } from '../src';
 
-
 const mockFn = jest.fn(<T>(value: T) => value);
-
 
 beforeEach(() => {
     mockFn.mockReset();
@@ -22,7 +20,7 @@ beforeEach(() => {
 describe('typeChecks api', () => {
     test('isArray works', () => {
         const testArgs = [[], {}, true, null];
-        testArgs.forEach((t) => {
+        testArgs.forEach(t => {
             if (isArray(t)) {
                 mockFn(t);
             }
@@ -43,8 +41,13 @@ describe('typeChecks api', () => {
 
     test('hasValue works', () => {
         // Testing type limiting
-        const testArgs: Array<string | number | boolean | null> = [1, 'a - b', true, null];
-        testArgs.forEach((t) => {
+        const testArgs: Array<string | number | boolean | null> = [
+            1,
+            'a - b',
+            true,
+            null,
+        ];
+        testArgs.forEach(t => {
             if (hasValue(t)) {
                 mockFn(t);
             }
@@ -66,13 +69,9 @@ describe('typeChecks api', () => {
 
     test('isFunction works', () => {
         // Testing type limiting
-        const testArgs = [
-            () => {},
-            () => null,
-            null,
-        ];
+        const testArgs = [() => {}, () => null, null];
 
-        testArgs.forEach((t) => {
+        testArgs.forEach(t => {
             if (isFunction(t)) {
                 mockFn(t());
             }
@@ -97,7 +96,7 @@ describe('typeChecks api', () => {
 
     test('isObject works', () => {
         const testArgs = [{}, 'a', true, null, Object()];
-        testArgs.forEach((t) => {
+        testArgs.forEach(t => {
             if (isObject(t)) {
                 mockFn(t);
             }
@@ -209,10 +208,10 @@ describe('typeChecks api', () => {
 
         expect(isAbortSignal(new AbortController().signal)).toEqual(true);
 
-        class AbortSignal {
-
-        }
+        class AbortSignal {}
         expect(isAbortSignal(new AbortSignal())).toEqual(true);
-        expect(isAbortSignal({ aborted: false, onabort: null, listeners: {} })).toEqual(true);
+        expect(
+            isAbortSignal({ aborted: false, onabort: null, listeners: {} })
+        ).toEqual(true);
     });
 });

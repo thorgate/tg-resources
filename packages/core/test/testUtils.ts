@@ -1,7 +1,9 @@
 import 'jest-extended';
 
-import { ParentValidationErrorInterface, ValidationErrorInterface } from '../src';
-
+import {
+    ParentValidationErrorInterface,
+    ValidationErrorInterface,
+} from '../src';
 
 interface ExpectValidationError {
     fieldName?: string | number;
@@ -19,7 +21,10 @@ interface ExpectParentValidationError extends ExpectValidationError {
  * @param type If null error must be null, else error must be instance of type
  * @param fieldName Field name to check for error
  */
-export const expectValidationError = (error: ValidationErrorInterface | null, { strVal, type, fieldName }: ExpectValidationError) => {
+export const expectValidationError = (
+    error: ValidationErrorInterface | null,
+    { strVal, type, fieldName }: ExpectValidationError
+) => {
     if (type !== undefined) {
         if (type === null) {
             expect(error).toBeNull();
@@ -41,11 +46,16 @@ export const expectValidationError = (error: ValidationErrorInterface | null, { 
 type FieldName = string | number | undefined;
 
 export const expectParentValidationError = (
-    parent: ValidationErrorInterface | null, fieldName: FieldName, { strVal, type, allowNonField }: ExpectParentValidationError
+    parent: ValidationErrorInterface | null,
+    fieldName: FieldName,
+    { strVal, type, allowNonField }: ExpectParentValidationError
 ) => {
     if (parent instanceof ParentValidationErrorInterface) {
         expect(parent.getError).toBeFunction();
-        expectValidationError(parent.getError(fieldName, allowNonField || false), { strVal, type });
+        expectValidationError(
+            parent.getError(fieldName, allowNonField || false),
+            { strVal, type }
+        );
     } else {
         expectValidationError(parent, { strVal, type });
     }
