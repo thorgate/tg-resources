@@ -1,0 +1,20 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        ".template/package.json",
+        "examples/example-usage/package.json",
+        "package.json",
+        "packages/core/package.json",
+        "packages/fetch-runtime/package.json",
+        "packages/is/package.json",
+        "packages/saga-router/package.json",
+        "packages/test-resource/package.json",
+        "packages/test-server/package.json",
+        "packages/tg-resource/package.json",
+        "packages/tg-resources-fetch/package.json",
+        "packages/tg-resources-superagent/package.json"
+      ]
+    }
+  }
+}
