@@ -7,7 +7,6 @@ import {
     RouterInterface,
 } from './types';
 
-
 export abstract class Route implements RouteInterface {
     protected _customConfig: RouteConfig = null;
     protected _routeName: string = '';
@@ -78,7 +77,7 @@ export abstract class Route implements RouteInterface {
         // Update _customConfig
         this._customConfig = {
             ...this._customConfig,
-            ...config || {},
+            ...(config || {}),
         };
 
         // Reset _config so it is recreated in the next call to .config

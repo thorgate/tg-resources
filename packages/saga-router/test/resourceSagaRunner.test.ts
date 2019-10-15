@@ -3,17 +3,25 @@ import { SagaIterator } from 'redux-saga';
 import { put } from 'redux-saga/effects';
 import { NetworkError, ResourceInterface } from 'tg-resources';
 
-import { ErrorType, OnRequestError, resourceSagaRunner, ResourceSagaRunnerConfig, SagaResource } from '../src';
+import {
+    ErrorType,
+    OnRequestError,
+    resourceSagaRunner,
+    ResourceSagaRunnerConfig,
+    SagaResource,
+} from '../src';
 import { configureStore, RunnerWithError, setError } from './reduxStore';
 import { addRequestConfig } from './utils';
 
-
 let onRequestError: OnRequestError;
 
-onRequestError = function* onError(error: ErrorType, resource: ResourceInterface, options: ResourceSagaRunnerConfig): SagaIterator {
+onRequestError = function* onError(
+    error: ErrorType,
+    resource: ResourceInterface,
+    options: ResourceSagaRunnerConfig
+): SagaIterator {
     yield put(setError(error, resource.apiEndpoint, options));
 };
-
 
 const config = {
     apiRoot: '/api',
@@ -36,20 +44,23 @@ const createSagaResource = (data?: any, error?: any) => {
     return resource;
 };
 
-
 let store: ReturnType<typeof configureStore>;
 
 beforeEach(() => {
     store = configureStore();
 });
 
-
 const expectResponse = async (data: any, sagaIter: any) => {
     await store.sagaMiddleware.run(RunnerWithError, sagaIter).toPromise();
     expect(store.getState()).toEqual(data);
 };
 
-const expectError = async (apiEndpoint: string, error: any, sagaIter: any, options: any = {}) => {
+const expectError = async (
+    apiEndpoint: string,
+    error: any,
+    sagaIter: any,
+    options: any = {}
+) => {
     await store.sagaMiddleware.run(RunnerWithError, sagaIter).toPromise();
 
     expect(store.getState()).toEqual({
@@ -59,7 +70,6 @@ const expectError = async (apiEndpoint: string, error: any, sagaIter: any, optio
         options,
     });
 };
-
 
 describe('resourceSagaRunner unit :: Resource', () => {
     test('unknown method', async (done: any) => {
@@ -104,7 +114,6 @@ describe('resourceSagaRunner unit :: Resource', () => {
         await expectError(resource.apiEndpoint, error, sagaIter);
     });
 });
-
 
 describe('resourceSagaRunner unit :: SagaResource', () => {
     test('fetch :: mutateRequestConfig', async () => {

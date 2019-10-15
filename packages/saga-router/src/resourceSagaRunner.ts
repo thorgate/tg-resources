@@ -1,22 +1,24 @@
-import { isFunction } from '@tg-resources/is';
-import { SagaIterator } from 'redux-saga';
-import { call, cancelled } from 'redux-saga/effects';
-
 import {
     isFetchMethod,
     isPostMethod,
     Kwargs,
     ObjectMap,
     ResourceInterface,
-} from 'tg-resources';
+} from '@tg-resources/core';
+import { isFunction } from '@tg-resources/is';
+import { SagaIterator } from 'redux-saga';
+import { call, cancelled } from 'redux-saga/effects';
 
 import { ResourceSagaRunnerConfig, SagaConfigType } from './types';
-
 
 export function* resourceSagaRunner<
     Params extends Kwargs<Params> = {},
     D extends ObjectMap = any
->(resource: ResourceInterface, method: string, options: ResourceSagaRunnerConfig<Params, D> = {}): SagaIterator {
+>(
+    resource: ResourceInterface,
+    method: string,
+    options: ResourceSagaRunnerConfig<Params, D> = {}
+): SagaIterator {
     const {
         kwargs = null,
         query = null,
@@ -29,7 +31,12 @@ export function* resourceSagaRunner<
     const config = resource.config(requestConfig) as SagaConfigType;
 
     if (isFunction(config.mutateRequestConfig)) {
-        requestConfig = yield call(config.mutateRequestConfig, requestConfig, resource, options);
+        requestConfig = yield call(
+            config.mutateRequestConfig,
+            requestConfig,
+            resource,
+            options
+        );
     }
 
     let controller: AbortController | null = null;
@@ -37,7 +44,7 @@ export function* resourceSagaRunner<
         controller = new AbortController();
 
         requestConfig = {
-            ...requestConfig || {},
+            ...(requestConfig || {}),
 
             signal: controller.signal,
         };
@@ -46,12 +53,7 @@ export function* resourceSagaRunner<
     let callEffect;
 
     if (isFetchMethod(method)) {
-        callEffect = call(
-            [resource, method],
-            kwargs,
-            query,
-            requestConfig,
-        );
+        callEffect = call([resource, method], kwargs, query, requestConfig);
     } else if (isPostMethod(method)) {
         callEffect = call(
             [resource, method],
@@ -59,7 +61,7 @@ export function* resourceSagaRunner<
             data,
             query,
             attachments,
-            requestConfig,
+            requestConfig
         );
     } else {
         throw new Error('Unknown resource method used.');

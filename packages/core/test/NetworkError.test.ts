@@ -1,6 +1,5 @@
 import { NetworkError } from '../src';
 
-
 let instance: NetworkError;
 const errObject = {
     text: 'im an error, for real!',
@@ -9,7 +8,6 @@ const errObject = {
 beforeEach(() => {
     instance = new NetworkError(errObject);
 });
-
 
 describe('NetworkError api', () => {
     test('instance.error is correct', () => {

@@ -4,36 +4,46 @@ import { createRouter } from '../src';
 import DEFAULTS from '../src/constants';
 import { DummyResource } from './DummyResource';
 
-
 describe('createRouter :: invalid type used', () => {
     test('invalid type :: top level', () => {
         expect(() => {
-            createRouter({
-                test: 1,
-            }, null, DummyResource);
+            createRouter(
+                {
+                    test: 1,
+                },
+                null,
+                DummyResource
+            );
         }).toThrow(/Unknown type used "test"/);
     });
 
     test('invalid type :: nested', () => {
         expect(() => {
-            createRouter({
-                test: {
-                    alsoTest: false,
+            createRouter(
+                {
+                    test: {
+                        alsoTest: false,
+                    },
                 },
-            }, null, DummyResource);
+                null,
+                DummyResource
+            );
         }).toThrow(/Unknown type used "alsoTest"/);
     });
 });
 
-
 describe('createRouter :: string map', () => {
-    const api = createRouter({
-        test: '/a/',
-        test2: {
-            test: '/a/b/',
-            test2: '/a/c/',
-        }
-    }, { root: true }, DummyResource);
+    const api = createRouter(
+        {
+            test: '/a/',
+            test2: {
+                test: '/a/b/',
+                test2: '/a/c/',
+            },
+        },
+        { root: true },
+        DummyResource
+    );
 
     test('nested route name works correctly', () => {
         expect(api.routeName).toEqual('');
@@ -147,13 +157,17 @@ describe('createRouter :: string map', () => {
 });
 
 describe('createRouter :: resource tuple', () => {
-    const api = createRouter({
-        test: ['/a/', { tuple1: true }],
-        test2: {
-            test: ['/a/b/', { tuple2: true }],
-            test2: ['/a/c/', { tuple2: true }],
-        }
-    }, null, DummyResource);
+    const api = createRouter(
+        {
+            test: ['/a/', { tuple1: true }],
+            test2: {
+                test: ['/a/b/', { tuple2: true }],
+                test2: ['/a/c/', { tuple2: true }],
+            },
+        },
+        null,
+        DummyResource
+    );
 
     test('nested route name works correctly', () => {
         expect(api.routeName).toEqual('');
@@ -186,13 +200,17 @@ describe('createRouter :: resource tuple', () => {
 });
 
 describe('createRouter :: resource constructor', () => {
-    const api = createRouter({
-        test: { apiEndpoint: '/a/', level: 1 },
-        test2: {
-            test: { apiEndpoint: '/a/b/', level: 2 },
-            test2: { apiEndpoint: '/a/c/', level: 2 },
-        }
-    }, { level: 0 }, DummyResource);
+    const api = createRouter(
+        {
+            test: { apiEndpoint: '/a/', level: 1 },
+            test2: {
+                test: { apiEndpoint: '/a/b/', level: 2 },
+                test2: { apiEndpoint: '/a/c/', level: 2 },
+            },
+        },
+        { level: 0 },
+        DummyResource
+    );
 
     test('nested route name works correctly', () => {
         expect(api.routeName).toEqual('');
@@ -227,20 +245,28 @@ describe('createRouter :: resource constructor', () => {
 });
 
 describe('createRouter :: mixed', () => {
-    const api = createRouter({
-        test: { apiEndpoint: '/a/', level: 1 },
-        test2: {
-            test: { apiEndpoint: '/a/b/', level: 2 },
-            test2: { apiEndpoint: '/a/c/', level: 2 },
-        },
-        alternative: createRouter({
+    const api = createRouter(
+        {
             test: { apiEndpoint: '/a/', level: 1 },
             test2: {
                 test: { apiEndpoint: '/a/b/', level: 2 },
                 test2: { apiEndpoint: '/a/c/', level: 2 },
-            }
-        }, { level: 0, apiRoot: 'https://server2.example.com' }, DummyResource),
-    }, { level: 0, apiRoot: 'https://server1.example.com' }, DummyResource);
+            },
+            alternative: createRouter(
+                {
+                    test: { apiEndpoint: '/a/', level: 1 },
+                    test2: {
+                        test: { apiEndpoint: '/a/b/', level: 2 },
+                        test2: { apiEndpoint: '/a/c/', level: 2 },
+                    },
+                },
+                { level: 0, apiRoot: 'https://server2.example.com' },
+                DummyResource
+            ),
+        },
+        { level: 0, apiRoot: 'https://server1.example.com' },
+        DummyResource
+    );
 
     test('nested route name works correctly', () => {
         expect(api.routeName).toEqual('');
@@ -251,8 +277,12 @@ describe('createRouter :: mixed', () => {
         expect(api.alternative.routeName).toEqual('alternative');
         expect(api.alternative.test.routeName).toEqual('alternative.test');
         expect(api.alternative.test2.routeName).toEqual('alternative.test2');
-        expect(api.alternative.test2.test.routeName).toEqual('alternative.test2.test');
-        expect(api.alternative.test2.test2.routeName).toEqual('alternative.test2.test2');
+        expect(api.alternative.test2.test.routeName).toEqual(
+            'alternative.test2.test'
+        );
+        expect(api.alternative.test2.test2.routeName).toEqual(
+            'alternative.test2.test2'
+        );
     });
 
     test('config flows correctly', () => {

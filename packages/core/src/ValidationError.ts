@@ -1,16 +1,24 @@
-import { hasValue, isArray, isObject, isString, isStringArray } from '@tg-resources/is';
+import {
+    hasValue,
+    isArray,
+    isObject,
+    isString,
+    isStringArray,
+} from '@tg-resources/is';
 
 import { ConfigType, ObjectMap, ValidationErrorInterface } from './types';
 
-
-export type ValidationErrorType = SingleValidationError | ListValidationError | ValidationError | null;
+export type ValidationErrorType =
+    | SingleValidationError
+    | ListValidationError
+    | ValidationError
+    | null;
 
 export interface ValidationErrorObject {
     [key: string]: ValidationErrorType;
 }
 
 export type ListValidationErrorTypes = ValidationErrorType[];
-
 
 const bindAndCoerce = (error: any, fieldName: string | number) => {
     const res = error || null;
@@ -22,13 +30,17 @@ const bindAndCoerce = (error: any, fieldName: string | number) => {
     return res;
 };
 
-
 export class SingleValidationError extends ValidationErrorInterface {
     constructor(errors: string[]) {
         // istanbul ignore next: never false in tests
         if (process.env.NODE_ENV !== 'production') {
-            if (!isArray(errors) || errors.filter((x) => !isString(x)).length > 0) {
-                console.error('SingleValidationError: `errors` argument must be an array of strings');
+            if (
+                !isArray(errors) ||
+                errors.filter(x => !isString(x)).length > 0
+            ) {
+                console.error(
+                    'SingleValidationError: `errors` argument must be an array of strings'
+                );
             }
         }
 
@@ -44,7 +56,6 @@ export class SingleValidationError extends ValidationErrorInterface {
     }
 }
 
-
 export abstract class ParentValidationErrorInterface extends ValidationErrorInterface {
     // If null, there are no nonFieldErrors
     //
@@ -53,7 +64,10 @@ export abstract class ParentValidationErrorInterface extends ValidationErrorInte
     //  of getError & firstError won't change if nonFieldErrors is always null.
     public nonFieldErrors: ValidationErrorType = null;
 
-    public getError(fieldName?: number | string | Array<string | number>, allowNonFields: boolean = false): ValidationErrorType {
+    public getError(
+        fieldName?: number | string | Array<string | number>,
+        allowNonFields: boolean = false
+    ): ValidationErrorType {
         if (isArray(fieldName)) {
             let error: ValidationErrorInterface | null = null;
 
@@ -69,8 +83,15 @@ export abstract class ParentValidationErrorInterface extends ValidationErrorInte
             return error;
         }
 
-        if ((hasValue(fieldName) && this.errors[fieldName]) || (allowNonFields && this.nonFieldErrors)) {
-            return (hasValue(fieldName) ? this.errors[fieldName] : null) || this.nonFieldErrors || null;
+        if (
+            (hasValue(fieldName) && this.errors[fieldName]) ||
+            (allowNonFields && this.nonFieldErrors)
+        ) {
+            return (
+                (hasValue(fieldName) ? this.errors[fieldName] : null) ||
+                this.nonFieldErrors ||
+                null
+            );
         }
 
         return null;
@@ -85,9 +106,11 @@ export abstract class ParentValidationErrorInterface extends ValidationErrorInte
     }
 }
 
-
 export class ListValidationError extends ParentValidationErrorInterface {
-    constructor(errors: ListValidationErrorTypes, nonFieldErrors: ValidationErrorType = null) {
+    constructor(
+        errors: ListValidationErrorTypes,
+        nonFieldErrors: ValidationErrorType = null
+    ) {
         // istanbul ignore else: never false in tests
         if (process.env.NODE_ENV !== 'production') {
             // Takes: anything thats not a ValidationError (besides null)
@@ -102,8 +125,12 @@ export class ListValidationError extends ParentValidationErrorInterface {
             if (errors) {
                 // istanbul ignore next: safeguard
                 if (!isArray(errors) || errors.filter(filterFn).length > 0) {
-                    console.error('ListValidationError: `errors argument` must be an array of ValidationErrorInterface? instances');
-                    console.error('    Supported Builtins: null/SingleValidationError/ListValidationError/ValidationError');
+                    console.error(
+                        'ListValidationError: `errors argument` must be an array of ValidationErrorInterface? instances'
+                    );
+                    console.error(
+                        '    Supported Builtins: null/SingleValidationError/ListValidationError/ValidationError'
+                    );
                 }
             }
         }
@@ -118,23 +145,29 @@ export class ListValidationError extends ParentValidationErrorInterface {
     }
 
     public hasError() {
-        return this._errors.filter((x: any) => (
-            x && x.hasError && x.hasError()
-        )).length > 0;
+        return (
+            this._errors.filter((x: any) => x && x.hasError && x.hasError())
+                .length > 0
+        );
     }
 
     public asString(glue: string = '; ') {
-        return this._errors.map((value: ValidationErrorType, key: number) => (
-            `${key}: ${value ? value.asString() : null}`
-        )).join(glue);
+        return this._errors
+            .map(
+                (value: ValidationErrorType, key: number) =>
+                    `${key}: ${value ? value.asString() : null}`
+            )
+            .join(glue);
     }
 }
-
 
 export class ValidationError extends ParentValidationErrorInterface {
     public nonFieldErrors: ValidationErrorType;
 
-    constructor(errors: ValidationErrorObject | null = null, nonFieldErrors: ValidationErrorType = null) {
+    constructor(
+        errors: ValidationErrorObject | null = null,
+        nonFieldErrors: ValidationErrorType = null
+    ) {
         // istanbul ignore else: never false in tests
         if (process.env.NODE_ENV !== 'production') {
             // Takes: anything thats not a ValidationError (besides null)
@@ -143,14 +176,24 @@ export class ValidationError extends ParentValidationErrorInterface {
                     return false;
                 }
 
-                return !errors[key] || !(errors[key] instanceof ValidationErrorInterface);
+                return (
+                    !errors[key] ||
+                    !(errors[key] instanceof ValidationErrorInterface)
+                );
             };
 
             if (errors) {
-                if (!isObject(errors) || Object.keys(errors).filter(filterFn).length > 0) {
+                if (
+                    !isObject(errors) ||
+                    Object.keys(errors).filter(filterFn).length > 0
+                ) {
                     /* eslint-disable no-console */
-                    console.error('ListValidationError: `errors argument` must be an object of ValidationErrorInterface? instances');
-                    console.error('    Supported Builtins: null/SingleValidationError/ListValidationError/ValidationError');
+                    console.error(
+                        'ListValidationError: `errors argument` must be an object of ValidationErrorInterface? instances'
+                    );
+                    console.error(
+                        '    Supported Builtins: null/SingleValidationError/ListValidationError/ValidationError'
+                    );
                     /* eslint-enable no-console */
                 }
             }
@@ -159,8 +202,11 @@ export class ValidationError extends ParentValidationErrorInterface {
         // MAP: falsy to null, bind all errors w/ their fieldName
         const mutErrors: ValidationErrorObject = {};
         if (errors) {
-            Object.keys(errors).forEach((fieldName) => {
-                mutErrors[fieldName] = bindAndCoerce(errors[fieldName], fieldName);
+            Object.keys(errors).forEach(fieldName => {
+                mutErrors[fieldName] = bindAndCoerce(
+                    errors[fieldName],
+                    fieldName
+                );
             });
         }
 
@@ -186,16 +232,21 @@ export class ValidationError extends ParentValidationErrorInterface {
         let prefix = '';
 
         if (this.nonFieldErrors) {
-            prefix = `${this.nonFieldErrors}${this._errKeys.length ? glue : ''}`;
+            prefix = `${this.nonFieldErrors}${
+                this._errKeys.length ? glue : ''
+            }`;
         }
 
-        return prefix + this._errKeys
-            .map((k) => `${k}: ${this._errors[k].asString()}`)
-            .join(glue);
+        return (
+            prefix +
+            this._errKeys
+                .map(k => `${k}: ${this._errors[k].asString()}`)
+                .join(glue)
+        );
     }
 
     public _iter() {
-        return Object.keys(this._errors).map((x) => this.errors[x]);
+        return Object.keys(this._errors).map(x => this.errors[x]);
     }
 
     public errorByIndex(index: number) {
@@ -209,7 +260,10 @@ export class ValidationError extends ParentValidationErrorInterface {
  * @param {*} errorText
  * @param {Object} parentConfig
  */
-export function parseErrors(errorText: any, parentConfig: ConfigType): ValidationErrorInterface | null {
+export function parseErrors(
+    errorText: any,
+    parentConfig: ConfigType
+): ValidationErrorInterface | null {
     let error = null;
 
     if (isString(errorText)) {
@@ -253,7 +307,6 @@ export interface GenericError {
     [key: string]: any;
 }
 
-
 /**
  * Convert an error into a subclass of ValidationErrorInterface
  *
@@ -273,9 +326,7 @@ export function prepareError(err: any, parentConfig: ConfigType) {
         }
 
         // Parse children of the error and continue
-        const errors = err.map((x) => (
-            parentConfig.prepareError(x, parentConfig)
-        ));
+        const errors = err.map(x => parentConfig.prepareError(x, parentConfig));
 
         // Should be a nested error, turn it into ListValidationError
         return new ListValidationError(errors);
@@ -291,7 +342,7 @@ export function prepareError(err: any, parentConfig: ConfigType) {
         let resNonField = null;
         const resErrors: ObjectMap = {};
 
-        Object.keys(errors).forEach((key) => {
+        Object.keys(errors).forEach(key => {
             const error = parentConfig.prepareError(errors[key], parentConfig);
 
             if (key === 'non_field_errors') {
@@ -312,7 +363,9 @@ export function prepareError(err: any, parentConfig: ConfigType) {
             }
 
             // istanbul ignore next: Should only happen with custom error parsers
-            resNonField = new SingleValidationError([hasValue(err) ? JSON.stringify(err) : '#$empty-message$#']);
+            resNonField = new SingleValidationError([
+                hasValue(err) ? JSON.stringify(err) : '#$empty-message$#',
+            ]);
         }
 
         return new ValidationError(resErrors, resNonField);

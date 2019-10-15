@@ -8,35 +8,48 @@ import {
     ResourceTuple,
     RouteConfig,
     Router,
-} from 'tg-resources';
+} from '@tg-resources/core';
 
 import { SagaResource } from './SagaResource';
 import { SagaRouteConfig } from './types';
 
-
 // Was required to copy this here as well - Type matching did not work correctly otherwise
 export type ResourceOrExtendedRouter<T, Klass extends Resource> = {
-    [P in keyof T]:
-        T[P] extends string ? SagaResource<Klass> : // If string, map as Resource
-        T[P] extends ResourceTuple ? SagaResource<Klass> : // If Resource tuple, map as Resource
-        T[P] extends ResourceConstructorObject ? SagaResource<Klass> : // If Resource constructor object, map as Resource
-        T[P] extends Router ? Router :  // If Router type, map router info to top level
-        Router & ResourceOrExtendedRouter<T[P], SagaResource<Klass>> // Default to recursive mapping
+    [P in keyof T]: T[P] extends string
+        ? SagaResource<Klass> // If string, map as Resource
+        : T[P] extends ResourceTuple
+        ? SagaResource<Klass> // If Resource tuple, map as Resource
+        : T[P] extends ResourceConstructorObject
+        ? SagaResource<Klass> // If Resource constructor object, map as Resource
+        : T[P] extends Router
+        ? Router // If Router type, map router info to top level
+        : Router & ResourceOrExtendedRouter<T[P], SagaResource<Klass>>; // Default to recursive mapping
 };
 
-
-export const createSagaResource: CreateResourceFactory = <Klass extends Resource>(
-    resourceKlass: ResourceClassConstructor<Klass>, apiEndpoint: string, config?: RouteConfig
+export const createSagaResource: CreateResourceFactory = <
+    Klass extends Resource
+>(
+    resourceKlass: ResourceClassConstructor<Klass>,
+    apiEndpoint: string,
+    config?: RouteConfig
 ) => {
     return new SagaResource<Klass>(apiEndpoint, config, resourceKlass);
 };
 
 export function createSagaRouter<
-    Klass extends Resource, T extends ObjectMap = {}
+    Klass extends Resource,
+    T extends ObjectMap = {}
 >(
-    routes: T, config: SagaRouteConfig | null, resourceKlass: ResourceClassConstructor<Klass>
+    routes: T,
+    config: SagaRouteConfig | null,
+    resourceKlass: ResourceClassConstructor<Klass>
 ) {
-    const router = createRouter(routes, config, resourceKlass, createSagaResource) as any;
+    const router = createRouter(
+        routes,
+        config,
+        resourceKlass,
+        createSagaResource
+    ) as any;
 
     // Return correct typing for SagaResource
     return router as Router & ResourceOrExtendedRouter<T, Klass>;

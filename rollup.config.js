@@ -22,8 +22,7 @@ const createConfig = (input, output, tsconfigOverride) => ({
     plugins: [
         json(),
         resolve({
-            jsnext: true,
-            main: true,
+            mainFields: ['module', 'main', 'jsnext:main'],
             preferBuiltins: true,
         }),
         replace({

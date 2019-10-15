@@ -3,26 +3,23 @@ import {
     ParentValidationErrorInterface,
     parseErrors,
     SingleValidationError,
-    ValidationError
+    ValidationError,
 } from '../src';
 import DEFAULTS from '../src/constants';
 
-import { expectParentValidationError, expectValidationError } from './testUtils';
-
+import {
+    expectParentValidationError,
+    expectValidationError,
+} from './testUtils';
 
 let instance: ParentValidationErrorInterface;
 
 beforeEach(() => {
     const text = JSON.stringify({
         errors: {
-            non_field_errors: [
-                'Something is generally broken',
-            ],
+            non_field_errors: ['Something is generally broken'],
 
-            password: [
-                'too short',
-                'missing numbers.',
-            ],
+            password: ['too short', 'missing numbers.'],
 
             remember: false,
 
@@ -33,16 +30,12 @@ beforeEach(() => {
 
             deliveryAddress: [
                 {
-                    non_field_errors: [
-                        'Provided address is not supported',
-                    ],
+                    non_field_errors: ['Provided address is not supported'],
                 },
                 null, // kept as null
                 '', // Replaced w/ special #$empty-message$#
                 {
-                    zip: [
-                        'Please enter a valid address',
-                    ],
+                    zip: ['Please enter a valid address'],
                     country: [
                         'This field is required.',
                         'Please select a valid country.',
@@ -130,11 +123,13 @@ describe('parseErrors api -', () => {
         });
 
         expectParentValidationError(instance.getError('deliveryAddress'), 3, {
-            strVal: 'zip: Please enter a valid address; country: This field is required. Please select a valid country.',
+            strVal:
+                'zip: Please enter a valid address; country: This field is required. Please select a valid country.',
             type: ValidationError,
         });
         expectValidationError(instance.getError('deliveryAddress'), {
-            strVal: '0: Provided address is not supported; 1: null; 2: #$empty-message$#; ' +
+            strVal:
+                '0: Provided address is not supported; 1: null; 2: #$empty-message$#; ' +
                 '3: zip: Please enter a valid address; country: This field is required. Please select a valid country.',
             type: ListValidationError,
         });

@@ -1,6 +1,5 @@
 import { InvalidResponseCode } from '../src';
 
-
 let instance: InvalidResponseCode;
 
 beforeEach(() => {
@@ -17,7 +16,9 @@ describe('InvalidResponseCode api', () => {
     });
 
     test('toString works', () => {
-        expect(instance.toString()).toEqual('InvalidResponseCode 500: Internal Server Error');
+        expect(instance.toString()).toEqual(
+            'InvalidResponseCode 500: Internal Server Error'
+        );
     });
 
     test('isAbortError is false', () => {

@@ -13,7 +13,6 @@ import {
 
 import { FetchResource as Resource, FetchResponse as Response } from '../src';
 
-
 const port = 3002;
 
 const hostUrl = getHostUrl(port);
@@ -27,7 +26,6 @@ async function expectResponse(prom: Promise<any>, expectedData: any) {
     }
 }
 
-
 interface ErrorInfo {
     errorCls?: any;
     statusCode?: number;
@@ -37,8 +35,17 @@ interface ErrorInfo {
     exactError?: any[];
 }
 
-
-async function expectError(prom: Promise<any>, { errorCls, statusCode, responseText, exactError, errorString, hasError }: ErrorInfo) {
+async function expectError(
+    prom: Promise<any>,
+    {
+        errorCls,
+        statusCode,
+        responseText,
+        exactError,
+        errorString,
+        hasError,
+    }: ErrorInfo
+) {
     let errorHandled = true;
     let error = null;
 
@@ -52,9 +59,10 @@ async function expectError(prom: Promise<any>, { errorCls, statusCode, responseT
             }
 
             if (errorCls) {
-                expect(`${err} is not a subclass of ${errorCls}: ${err instanceof errorCls}`).toEqual(
-                    `${err} is not a subclass of ${errorCls}: true`,
-                );
+                expect(
+                    `${err} is not a subclass of ${errorCls}: ${err instanceof
+                        errorCls}`
+                ).toEqual(`${err} is not a subclass of ${errorCls}: true`);
             }
 
             if (typeof hasError !== 'undefined') {
@@ -78,7 +86,13 @@ async function expectError(prom: Promise<any>, { errorCls, statusCode, responseT
     }
 
     if (!errorHandled) {
-        throw new Error(`Expected request to fail with ${{ errorCls, statusCode, responseText }}`);
+        throw new Error(
+            `Expected request to fail with ${{
+                errorCls,
+                statusCode,
+                responseText,
+            }}`
+        );
     }
 
     if (error) {
@@ -86,9 +100,7 @@ async function expectError(prom: Promise<any>, { errorCls, statusCode, responseT
     }
 }
 
-
 let server: Server;
-
 
 beforeEach(() => {
     server = listen(port);
@@ -97,7 +109,6 @@ beforeEach(() => {
 afterEach(() => {
     server.close();
 });
-
 
 describe('Resource basic requests work', () => {
     test('Network error is triggered', async () => {
@@ -122,7 +133,9 @@ describe('Resource basic requests work', () => {
             apiRoot: hostUrl,
         });
 
-        await expectResponse(res.fetch(null, { test: '1' }), { data: { test: '1' } });
+        await expectResponse(res.fetch(null, { test: '1' }), {
+            data: { test: '1' },
+        });
     });
 
     test('fetch `/` works w/ manual Accept header', async () => {
@@ -163,12 +176,17 @@ describe('Resource basic requests work', () => {
             mutateResponse(data: any, raw?: Response) {
                 return {
                     data,
-                    poweredBy: isObject(raw) ? raw.headers['x-powered-by'] : null,
+                    poweredBy: isObject(raw)
+                        ? raw.headers['x-powered-by']
+                        : null,
                 };
             },
         });
 
-        await expectResponse(res.fetch(), { data: { message: 'world' }, poweredBy: 'Express' });
+        await expectResponse(res.fetch(), {
+            data: { message: 'world' },
+            poweredBy: 'Express',
+        });
     });
 
     test('cfg.mutateError is called during fetch', async () => {
@@ -192,7 +210,11 @@ describe('Resource basic requests work', () => {
     test('mutateError functionally works', async () => {
         const res = new Resource('/error500', {
             apiRoot: hostUrl,
-            mutateError(error: ResourceErrorInterface, rawResponse?: ResponseInterface, resource?: ResourceInterface) {
+            mutateError(
+                error: ResourceErrorInterface,
+                rawResponse?: ResponseInterface,
+                resource?: ResourceInterface
+            ) {
                 if (!rawResponse) {
                     return [];
                 }
@@ -223,20 +245,23 @@ describe('Resource basic requests work', () => {
 
     test('cfg.mutateRawResponse is called during fetch', async () => {
         // Why would anyone do this... :(
-        const spyFn = jest.fn(() => new Response({
-            body: {
-                im: 'fake',
-            },
-            text: JSON.stringify({
-                im: 'fake',
-            }),
-            status: 200,
-            statusType: 'ok',
-            type: 'application/json',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }));
+        const spyFn = jest.fn(
+            () =>
+                new Response({
+                    body: {
+                        im: 'fake',
+                    },
+                    text: JSON.stringify({
+                        im: 'fake',
+                    }),
+                    status: 200,
+                    statusType: 'ok',
+                    type: 'application/json',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+        );
 
         const res = new Resource('/hello', {
             apiRoot: hostUrl,
@@ -298,15 +323,21 @@ describe('Resource basic requests work', () => {
             apiRoot: hostUrl,
         });
 
-        await expectResponse(res.fetch({ pk: '26fe9717-e494-43eb-b6d0-0c77422948a2' }), {
-            pk: '26fe9717-e494-43eb-b6d0-0c77422948a2',
-            name: 'Lassie',
-        });
+        await expectResponse(
+            res.fetch({ pk: '26fe9717-e494-43eb-b6d0-0c77422948a2' }),
+            {
+                pk: '26fe9717-e494-43eb-b6d0-0c77422948a2',
+                name: 'Lassie',
+            }
+        );
 
-        await expectResponse(res.fetch({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }), {
-            pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815',
-            name: 'Cody',
-        });
+        await expectResponse(
+            res.fetch({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }),
+            {
+                pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815',
+                name: 'Cody',
+            }
+        );
     });
 
     test('head request works', async () => {
@@ -330,8 +361,14 @@ describe('Resource basic requests work', () => {
             apiRoot: hostUrl,
         });
 
-        await expectResponse(res.del({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }), null);
-        await expectError(res.fetch({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }), { statusCode: 404 });
+        await expectResponse(
+            res.del({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }),
+            null
+        );
+        await expectError(
+            res.fetch({ pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' }),
+            { statusCode: 404 }
+        );
     });
 
     test('put request works', async () => {
@@ -356,7 +393,9 @@ describe('Resource basic requests work', () => {
                 name: 'Rex',
             });
         } catch (err) {
-            throw new Error(`Put works :: fetch request failed: ${err.toString()}`);
+            throw new Error(
+                `Put works :: fetch request failed: ${err.toString()}`
+            );
         }
     });
 
@@ -387,14 +426,17 @@ describe('Resource basic requests work', () => {
             apiRoot: hostUrl,
         });
 
-        await expectError(res.post(null, { name: '' }, undefined, undefined, {
-            statusValidationError: [400, 413],
-        }), {
-            errorCls: RequestValidationError,
-            statusCode: 413,
-            hasError: true,
-            errorString: 'name: This field is required.',
-        });
+        await expectError(
+            res.post(null, { name: '' }, undefined, undefined, {
+                statusValidationError: [400, 413],
+            }),
+            {
+                errorCls: RequestValidationError,
+                statusCode: 413,
+                hasError: true,
+                errorString: 'name: This field is required.',
+            }
+        );
     });
 
     test('statusValidationError is handled properly - nonField only', async () => {
@@ -444,10 +486,7 @@ describe('Resource basic requests work', () => {
             ignored1: undefined,
             bool0: false,
             bool1: true,
-            array: [
-                'first!',
-                'first! E: missed it',
-            ],
+            array: ['first!', 'first! E: missed it'],
             object: {
                 foo: 1,
                 bar: 0,
@@ -506,8 +545,12 @@ describe('Resource basic requests work', () => {
             });
         };
 
-        await expect(checkResource).toThrow(/AbortSignal is not supported at top-level/);
-        await expect(checkRequest()).rejects.toThrow(/Expected signal to be an instanceof AbortSignal/);
+        await expect(checkResource).toThrow(
+            /AbortSignal is not supported at top-level/
+        );
+        await expect(checkRequest()).rejects.toThrow(
+            /Expected signal to be an instanceof AbortSignal/
+        );
     });
 
     test('fetch global should support request cancellation with signal', async (done: any) => {

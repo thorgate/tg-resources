@@ -5,7 +5,7 @@
     "examples/*",
     "packages/*"
   ],
-  "version": "2.0.0",
+  "version": "3.3.0",
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
   "scripts": {
     "lerna": "lerna",
@@ -13,10 +13,13 @@
     "bootstrap": "check-engines && lerna bootstrap",
     "build": "lerna --ignore=examples/* exec yarn build",
     "run-examples": "lerna exec --scope=run-examples yarn start",
-    "lint": "lerna --ignore=examples/* exec yarn lint",
+    "check-formatting": "prettier --check 'packages/**/src/**/*.{ts,tsx}' 'packages/**/test/**/*.{ts,tsx}'",
+    "show-formatting": "prettier 'packages/**/src/**/*.{ts,tsx}' 'packages/**/test/**/*.{ts,tsx}'",
+    "code-format": "prettier --write 'packages/**/src/**/*.{ts,tsx}' 'packages/**/test/**/*.{ts,tsx}'",
+    "lint": "yarn check-formatting && lerna --ignore=examples/* exec yarn lint",
     "test": "jest",
-    "test:coverage": "yarn test --maxWorkers 20 --coverage",
-    "precoveralls": "yarn test:coverage --no-cache --maxWorkers 20",
+    "test:coverage": "yarn test --coverage",
+    "precoveralls": "yarn test:coverage --no-cache",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "check-packages": "yarn clean && yarn build && yarn test && yarn lint",
     "bump-version": "lerna --ignore=examples/* version --no-push --exact",
@@ -50,7 +53,7 @@
     "url": "https://github.com/thorgate/tg-resources/issues"
   },
   "homepage": "https://github.com/thorgate/tg-resources#readme",
-  "dependencies": {
+  "devDependencies": {
     "@babel/core": "7.6.4",
     "@babel/plugin-transform-async-to-generator": "7.5.0",
     "@babel/preset-env": "^7.1.5",
@@ -82,8 +85,9 @@
     "lerna": "3.18.0",
     "lodash.template": "*",
     "multiparty": "*",
-    "redux": "^4.0.1",
-    "redux-saga": "^1.0.0-rc.0",
+    "prettier": "1.18.2",
+    "redux": "^4.0.4",
+    "redux-saga": "^1.1.1",
     "regenerator-runtime": "0.13.3",
     "rimraf": "*",
     "rollup": "1.24.0",
@@ -99,11 +103,12 @@
     "tslib": "1.10.0",
     "tslint": "5.20.0",
     "tslint-config-standard": "8.0.1",
+    "tslint-plugin-prettier": "2.0.1",
     "typescript": "3.6.4",
     "uuid": "*",
     "watch": "*"
   },
   "engines": {
-    "node": ">=6.10.0"
+    "node": ">=8.10.0"
   }
 }

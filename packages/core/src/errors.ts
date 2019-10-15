@@ -1,9 +1,13 @@
 import { hasValue } from '@tg-resources/is';
 
-import { ConfigType, RequestConfig, ResourceErrorInterface, ValidationErrorInterface } from './types';
+import {
+    ConfigType,
+    RequestConfig,
+    ResourceErrorInterface,
+    ValidationErrorInterface,
+} from './types';
 import { truncate } from './util';
 import { parseErrors, prepareError } from './ValidationError';
-
 
 export type ResponseText = string | boolean | undefined | any;
 
@@ -41,12 +45,15 @@ export class NetworkError extends ResourceErrorInterface {
     }
 }
 
-
 export class InvalidResponseCode extends ResourceErrorInterface {
     public readonly statusCode: number | null;
     public readonly responseText: ResponseText;
 
-    constructor(statusCode: number | null = null, responseText?: ResponseText, type: string = 'InvalidResponseCode') {
+    constructor(
+        statusCode: number | null = null,
+        responseText?: ResponseText,
+        type: string = 'InvalidResponseCode'
+    ) {
         super(`${type} ${statusCode}: ${truncate(responseText, 256)}`);
 
         this.statusCode = statusCode;
@@ -58,24 +65,30 @@ export class InvalidResponseCode extends ResourceErrorInterface {
     }
 }
 
-
 export class RequestValidationError extends InvalidResponseCode {
     protected _customConfig: RequestConfig;
     protected readonly _errors: ValidationErrorInterface | null;
 
-    constructor(statusCode: number | null = null, responseText?: ResponseText, config: RequestConfig = null) {
+    constructor(
+        statusCode: number | null = null,
+        responseText?: ResponseText,
+        config: RequestConfig = null
+    ) {
         super(statusCode, responseText, 'RequestValidationError');
 
         // Set custom config
         this._customConfig = {
             parseErrors,
             prepareError,
-            ...config || {},
+            ...(config || {}),
         };
 
         // parse response body as a ValidationError
         // _customConfig has parseErrors so we just type cast to ensure this condition is fulfilled
-        this._errors = (this._customConfig as ConfigType).parseErrors(responseText, this._customConfig as ConfigType);
+        this._errors = (this._customConfig as ConfigType).parseErrors(
+            responseText,
+            this._customConfig as ConfigType
+        );
     }
 
     // public api

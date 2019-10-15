@@ -1,8 +1,7 @@
 {
   "groups": {
-    "default": {
+    "tg-resources": {
       "packages": [
-        ".template/package.json",
         "examples/example-usage/package.json",
         "package.json",
         "packages/core/package.json",

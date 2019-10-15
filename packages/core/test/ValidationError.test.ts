@@ -7,45 +7,48 @@ import {
     ValidationError,
 } from '../src';
 
-import { expectParentValidationError, expectValidationError } from './testUtils';
-
+import {
+    expectParentValidationError,
+    expectValidationError,
+} from './testUtils';
 
 let instance: ParentValidationErrorInterface;
 
-
 beforeEach(() => {
-    instance = new ValidationError({
-        password: new SingleValidationError([
-            'too short.',
-            'missing numbers.',
-        ]),
-        email: new ValidationError({
-            something: new SingleValidationError([
-                'be wrong yo',
+    instance = new ValidationError(
+        {
+            password: new SingleValidationError([
+                'too short.',
+                'missing numbers.',
             ]),
-        }),
-        remember: new SingleValidationError([
-            'false',
-        ]),
-        deliveryAddress: new ListValidationError([
-            new ValidationError(null, new SingleValidationError([
-                'Provided address is not supported',
-            ])),
-            null,
-            new ValidationError({
-                zip: new SingleValidationError([
-                    'Please enter a valid address',
-                ]),
-                country: new SingleValidationError([
-                    'This field is required.',
-                    'Please select a valid country.',
-                ]),
+            email: new ValidationError({
+                something: new SingleValidationError(['be wrong yo']),
             }),
-            null,
-            null,
-            null,
-        ]),
-    }, new SingleValidationError(['Something is generally broken']));
+            remember: new SingleValidationError(['false']),
+            deliveryAddress: new ListValidationError([
+                new ValidationError(
+                    null,
+                    new SingleValidationError([
+                        'Provided address is not supported',
+                    ])
+                ),
+                null,
+                new ValidationError({
+                    zip: new SingleValidationError([
+                        'Please enter a valid address',
+                    ]),
+                    country: new SingleValidationError([
+                        'This field is required.',
+                        'Please select a valid country.',
+                    ]),
+                }),
+                null,
+                null,
+                null,
+            ]),
+        },
+        new SingleValidationError(['Something is generally broken'])
+    );
 });
 
 describe('String conversion', () => {
@@ -68,10 +71,13 @@ describe('String conversion', () => {
     });
 
     test('ListValidationError - simple', () => {
-        const f = new ListValidationError([
-            new SingleValidationError(['bar']),
-            new SingleValidationError(['swag', 'ded']),
-        ], new SingleValidationError(['am nonField error']));
+        const f = new ListValidationError(
+            [
+                new SingleValidationError(['bar']),
+                new SingleValidationError(['swag', 'ded']),
+            ],
+            new SingleValidationError(['am nonField error'])
+        );
 
         expect(f.asString()).toEqual('0: bar; 1: swag ded');
         expect(f.toString()).toEqual(f.asString());
@@ -79,30 +85,41 @@ describe('String conversion', () => {
     });
 
     test('ListValidationError - asString glue', () => {
-        const f = new ListValidationError([
-            new SingleValidationError(['bar']),
-            new SingleValidationError(['swag', 'ded']),
-        ], new SingleValidationError(['am nonField error']));
+        const f = new ListValidationError(
+            [
+                new SingleValidationError(['bar']),
+                new SingleValidationError(['swag', 'ded']),
+            ],
+            new SingleValidationError(['am nonField error'])
+        );
 
         expect(f.asString('+')).toEqual('0: bar+1: swag ded');
     });
 
     test('ValidationError - simple', () => {
-        const f = new ValidationError({
-            foo: new SingleValidationError(['bar']),
-            yolo: new SingleValidationError(['swag', 'ded']),
-        }, new SingleValidationError(['am nonField error']));
+        const f = new ValidationError(
+            {
+                foo: new SingleValidationError(['bar']),
+                yolo: new SingleValidationError(['swag', 'ded']),
+            },
+            new SingleValidationError(['am nonField error'])
+        );
 
-        expect(f.asString()).toEqual('am nonField error; foo: bar; yolo: swag ded');
+        expect(f.asString()).toEqual(
+            'am nonField error; foo: bar; yolo: swag ded'
+        );
         expect(f.toString()).toEqual(f.asString());
         expect(`${f}`).toEqual(f.asString());
     });
 
     test('ValidationError - w/o nonFields', () => {
-        const f = new ValidationError({
-            foo: new SingleValidationError(['bar']),
-            yolo: new SingleValidationError(['swag', 'ded']),
-        }, null);
+        const f = new ValidationError(
+            {
+                foo: new SingleValidationError(['bar']),
+                yolo: new SingleValidationError(['swag', 'ded']),
+            },
+            null
+        );
 
         expect(f.asString()).toEqual('foo: bar; yolo: swag ded');
         expect(f.toString()).toEqual(f.asString());
@@ -110,12 +127,17 @@ describe('String conversion', () => {
     });
 
     test('ValidationError - asString glue', () => {
-        const f = new ValidationError({
-            foo: new SingleValidationError(['bar']),
-            yolo: new SingleValidationError(['swag', 'ded']),
-        }, new SingleValidationError(['am nonField error']));
+        const f = new ValidationError(
+            {
+                foo: new SingleValidationError(['bar']),
+                yolo: new SingleValidationError(['swag', 'ded']),
+            },
+            new SingleValidationError(['am nonField error'])
+        );
 
-        expect(f.asString('+')).toEqual('am nonField error+foo: bar+yolo: swag ded');
+        expect(f.asString('+')).toEqual(
+            'am nonField error+foo: bar+yolo: swag ded'
+        );
     });
 });
 
@@ -161,7 +183,8 @@ describe('ValidationError helper methods', () => {
             type: null,
         });
         expectParentValidationError(instance.getError('deliveryAddress'), 2, {
-            strVal: 'zip: Please enter a valid address; country: This field is required. Please select a valid country.',
+            strVal:
+                'zip: Please enter a valid address; country: This field is required. Please select a valid country.',
             type: ValidationError,
         });
         expectParentValidationError(instance.getError('deliveryAddress'), 3, {
@@ -234,11 +257,13 @@ describe('ValidationError helper methods', () => {
             type: ListValidationError,
         });
 
-        const dError = instance.getError('deliveryAddress') as ListValidationError;
+        const dError = instance.getError(
+            'deliveryAddress'
+        ) as ListValidationError;
         expect(dError.firstError).toBeFunction();
 
         // Result must be the same for both
-        [true, false].forEach((allowNonField) => {
+        [true, false].forEach(allowNonField => {
             expectValidationError(dError.firstError(allowNonField), {
                 strVal: 'Provided address is not supported',
                 type: ValidationError,
@@ -258,15 +283,9 @@ describe('iteration api', () => {
         const err1 = new SingleValidationError(['bar']);
         const err2 = new SingleValidationError(['swag', 'ded']);
 
-        const f = new ListValidationError([
-            err1,
-            err2,
-        ]);
+        const f = new ListValidationError([err1, err2]);
 
-        expect([...f]).toIncludeSameMembers([
-            err1,
-            err2,
-        ]);
+        expect([...f]).toIncludeSameMembers([err1, err2]);
     });
 
     test('ListValidationError - for .. of', () => {
@@ -274,27 +293,23 @@ describe('iteration api', () => {
         const err2 = new SingleValidationError(['swag', 'ded']);
         const err3 = new SingleValidationError(['last']);
 
-        const f = new ListValidationError([
-            err1,
-            err2,
-            err3,
-        ]);
+        const f = new ListValidationError([err1, err2, err3]);
 
-        const expected = [
-            'bar',
-            'swag ded',
-            'last',
-        ];
+        const expected = ['bar', 'swag ded', 'last'];
 
         for (const error of f) {
             expect(error.fieldName).not.toEqual(undefined);
             expect(expected[error.fieldName]).not.toEqual(undefined);
 
             // access via f.errors
-            expect(`${f.errors[error.fieldName]}`).toEqual(expected[error.fieldName]);
+            expect(`${f.errors[error.fieldName]}`).toEqual(
+                expected[error.fieldName]
+            );
 
             // access via f.getError()
-            expect(`${f.getError(error.fieldName)}`).toEqual(expected[error.fieldName]);
+            expect(`${f.getError(error.fieldName)}`).toEqual(
+                expected[error.fieldName]
+            );
         }
 
         // Checks that we can break the for .. of loop
@@ -308,25 +323,28 @@ describe('iteration api', () => {
         const err1 = new SingleValidationError(['bar']);
         const err2 = new SingleValidationError(['swag', 'ded']);
 
-        const f = new ValidationError({
-            err1,
-            err2,
-        }, new SingleValidationError(['am nonField error']));
+        const f = new ValidationError(
+            {
+                err1,
+                err2,
+            },
+            new SingleValidationError(['am nonField error'])
+        );
 
-        expect([...f]).toIncludeSameMembers([
-            err1,
-            err2,
-        ]);
+        expect([...f]).toIncludeSameMembers([err1, err2]);
     });
 
     test('ValidationError - for .. of', () => {
         const err1 = new SingleValidationError(['bar']);
         const err2 = new SingleValidationError(['swag', 'ded']);
 
-        const f = new ValidationError({
-            foo: err1,
-            yolo: err2,
-        }, new SingleValidationError(['am nonField error']));
+        const f = new ValidationError(
+            {
+                foo: err1,
+                yolo: err2,
+            },
+            new SingleValidationError(['am nonField error'])
+        );
 
         const expected: {
             [key: string]: string;
@@ -343,10 +361,14 @@ describe('iteration api', () => {
             expect(`${error}`).toEqual(expected[error.fieldName]);
 
             // access via f.errors
-            expect(`${f.errors[error.fieldName]}`).toEqual(expected[error.fieldName]);
+            expect(`${f.errors[error.fieldName]}`).toEqual(
+                expected[error.fieldName]
+            );
 
             // access via f.getError()
-            expect(`${f.getError(error.fieldName)}`).toEqual(expected[error.fieldName]);
+            expect(`${f.getError(error.fieldName)}`).toEqual(
+                expected[error.fieldName]
+            );
         }
 
         // Checks that we can break the for .. of loop
@@ -433,7 +455,7 @@ describe('iteration api', () => {
     test('SingleValidationError - filter', () => {
         const f = new SingleValidationError(['bar', 'baz']);
 
-        const spyFn = jest.fn(() => false);
+        const spyFn = jest.fn((__: string) => false);
         const res = f.filter(spyFn);
 
         expect(spyFn.mock.calls[0][0]).toEqual('bar');
@@ -447,7 +469,7 @@ describe('iteration api', () => {
 
         const f = new ListValidationError([err1, err2]);
 
-        const spyFn = jest.fn(() => false);
+        const spyFn = jest.fn((__: string) => false);
         const res = f.filter(spyFn);
 
         expect(spyFn.mock.calls[0][0]).toEqual(err1);
@@ -462,7 +484,7 @@ describe('iteration api', () => {
 
         const f = new ValidationError({ err1, err2 }, nonFieldErr);
 
-        const spyFn = jest.fn(() => false);
+        const spyFn = jest.fn((__: string) => false);
         const res = f.filter(spyFn);
 
         expect(spyFn.mock.calls[0][0]).toEqual(err1);

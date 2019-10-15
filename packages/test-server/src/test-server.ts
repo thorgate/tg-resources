@@ -6,7 +6,6 @@ import express, { Request } from 'express';
 import multiparty from 'multiparty';
 import uuid from 'uuid';
 
-
 export const port = 3001;
 export const hostUrl = `http://127.0.0.1:${port}`;
 
@@ -127,7 +126,7 @@ function configureServer(logger: boolean = false) {
 
     app.patch('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
+        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
 
         if (dogIndex !== -1) {
             if (req.body.name) {
@@ -150,7 +149,7 @@ function configureServer(logger: boolean = false) {
 
     app.get('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
+        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
 
         if (dogIndex !== -1) {
             res.status(200).json(allDogs[dogIndex]);
@@ -163,7 +162,7 @@ function configureServer(logger: boolean = false) {
 
     app.delete('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
+        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
 
         if (dogIndex !== -1) {
             allDogs.splice(dogIndex, 1);
@@ -178,14 +177,14 @@ function configureServer(logger: boolean = false) {
 
     app.post('/url-encoded', (req, res) => {
         const { test } = req.body;
-        res.set('Content-Type', 'application/x-www-form-urlencoded').status(200).send(`data%5Btest%5D=${test}`);
+        res.set('Content-Type', 'application/x-www-form-urlencoded')
+            .status(200)
+            .send(`data%5Btest%5D=${test}`);
     });
 
     app.post('/error413', (_0, res) => {
         res.status(413).json({
-            name: [
-                'This field is required.',
-            ],
+            name: ['This field is required.'],
         });
     });
 
@@ -200,7 +199,7 @@ function configureServer(logger: boolean = false) {
             a_number: ['A valid integer is required.'],
             list_of_things: [{}, { foo: ['A valid integer is required.'] }],
             nested: {
-                bar: ['This field is required.']
+                bar: ['This field is required.'],
             },
         });
     });
@@ -241,7 +240,10 @@ function configureServer(logger: boolean = false) {
                 return;
             }
 
-            if (fields.ignored0 !== undefined || fields.ignored1 !== undefined) {
+            if (
+                fields.ignored0 !== undefined ||
+                fields.ignored1 !== undefined
+            ) {
                 res.status(400).json({
                     errors: {
                         ignored0: 'this field must be undefined',
@@ -262,7 +264,11 @@ function configureServer(logger: boolean = false) {
                 return;
             }
 
-            if (postedArray.length !== 2 || postedArray[0] !== 'first!' || postedArray[1] !== 'first! E: missed it') {
+            if (
+                postedArray.length !== 2 ||
+                postedArray[0] !== 'first!' ||
+                postedArray[1] !== 'first! E: missed it'
+            ) {
                 res.status(400).json({
                     errors: {
                         array: 'invalid array contents',
@@ -340,6 +346,7 @@ function configureServer(logger: boolean = false) {
     return app;
 }
 
-export const listen = (p: number = port, logger: boolean = false) => configureServer(logger).listen(p);
+export const listen = (p: number = port, logger: boolean = false) =>
+    configureServer(logger).listen(p);
 
 export const getHostUrl = (p: number = port) => `http://127.0.0.1:${p}`;
