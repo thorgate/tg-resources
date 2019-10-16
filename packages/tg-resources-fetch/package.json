@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/fetch",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -37,7 +37,7 @@
   ],
   "dependencies": {
     "qs": "^6.5.2",
-    "tg-resources": "^3.1.2"
+    "tg-resources": "^3.1.3"
   },
   "devDependencies": {
     "@tg-resources/fetch-runtime": "^3.1.1"
