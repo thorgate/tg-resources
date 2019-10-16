@@ -32,20 +32,3 @@ after_success:
 
 notifications:
     email: false
-
-deploy:
-  provider: npm
-  email: hi@thorgate.eu
-  skip_cleanup: true
-  api_key:
-    secure: >
-      Vuq+EMYEDURceqTp1CzUNCS4pr9sfp7NcZEv/YDOLQNe8sT67UyLFWYhzBGY/FHLaIkP4R4fkZrCqXkF29M6hH0OFug31j+EEpZSio/IaPZXA
-      yPJ07zZmM5nMnUAlqOMyp9F2Hksv4VQfaJk65YtdJFTcdxx+QOoJRS/xJWi9EcR+EKApH3Xv1cCRfj4E9riiv1hBpkasnLepnQaCcmU07LZcZ
-      X8VnSWJugR9ikhgR9XeDLOHAKuRKW7OnIniz003lxzTyjWvCs+d1PaRHkZHPdXB9FOVwD5ETT3XQquCrAV7vOSWgdJF5JzwRiOG55V4k+1B7c
-      2fKaNxTAB4N9Y5bK1WrUD7+DA0E7JDy1/X5tYo+CXAzByqmaweeWVNBGwB9yBl3Tw6xgLnB2kua8LctaGBB4yFL5Wrvw4iUk6Pm2PfLenQV89
-      ZeAf1NxuNOioar72THCStviTb0nh2LD4skvnmIILYOmQEW+HEjUkc0WEzYsGBd3LNsnspeiWJmnbviJ+0FWL9S8EKvXmZ/OpbWpWtY6r5WjRn
-      RZDa1lg2aSdk7kCNWAXhx1waAZl2G5Ji/hc8/wxeGhDsZCSFVoDdpMTDKkdMMtbcQzpAhUiqrasBa1DiJ/p/L8KFSE/EHhZHyVYYTuowFpqul
-      vUNJWfkubry4nI4LdThJsxrWNtiYM=
-  on:
-    tags: true
-    node: "8"
