@@ -85,7 +85,7 @@
     "lerna": "3.18.2",
     "lodash.template": "*",
     "multiparty": "*",
-    "prettier": "1.18.2",
+    "prettier": "1.19.0",
     "redux": "^4.0.4",
     "redux-saga": "^1.1.1",
     "regenerator-runtime": "0.13.3",
