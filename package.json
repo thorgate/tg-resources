@@ -88,7 +88,7 @@
     "isparta": "*",
     "jest": "24.9.0",
     "jest-cli": "24.9.0",
-    "jest-extended": "0.11.2",
+    "jest-extended": "0.11.5",
     "lerna": "3.18.4",
     "lodash.template": "*",
     "multiparty": "*",
