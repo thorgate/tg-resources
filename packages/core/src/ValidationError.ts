@@ -38,6 +38,7 @@ export class SingleValidationError extends ValidationErrorInterface {
                 !isArray(errors) ||
                 errors.filter(x => !isString(x)).length > 0
             ) {
+                // eslint-disable-next-line no-console
                 console.error(
                     'SingleValidationError: `errors` argument must be an array of strings'
                 );
@@ -51,7 +52,7 @@ export class SingleValidationError extends ValidationErrorInterface {
         return this._errors.length > 0;
     }
 
-    public asString(glue: string = ' ') {
+    public asString(glue = ' ') {
         return this._errors.join(glue);
     }
 }
@@ -66,7 +67,7 @@ export abstract class ParentValidationErrorInterface extends ValidationErrorInte
 
     public getError(
         fieldName?: number | string | Array<string | number>,
-        allowNonFields: boolean = false
+        allowNonFields = false
     ): ValidationErrorType {
         if (isArray(fieldName)) {
             let error: ValidationErrorInterface | null = null;
@@ -97,7 +98,7 @@ export abstract class ParentValidationErrorInterface extends ValidationErrorInte
         return null;
     }
 
-    public firstError(allowNonField: boolean = false) {
+    public firstError(allowNonField = false) {
         if (allowNonField && this.nonFieldErrors) {
             return this.nonFieldErrors;
         }
@@ -123,6 +124,7 @@ export class ListValidationError extends ParentValidationErrorInterface {
             };
 
             if (errors) {
+                /* eslint-disable no-console */
                 // istanbul ignore next: safeguard
                 if (!isArray(errors) || errors.filter(filterFn).length > 0) {
                     console.error(
@@ -151,7 +153,7 @@ export class ListValidationError extends ParentValidationErrorInterface {
         );
     }
 
-    public asString(glue: string = '; ') {
+    public asString(glue = '; ') {
         return this._errors
             .map(
                 (value: ValidationErrorType, key: number) =>
@@ -228,7 +230,7 @@ export class ValidationError extends ParentValidationErrorInterface {
         return this.nonFieldErrors !== null || this._errKeys.length > 0;
     }
 
-    public asString(glue: string = '; ') {
+    public asString(glue = '; ') {
         let prefix = '';
 
         if (this.nonFieldErrors) {
@@ -264,7 +266,7 @@ export function parseErrors(
     errorText: any,
     parentConfig: ConfigType
 ): ValidationErrorInterface | null {
-    let error = null;
+    let error;
 
     if (isString(errorText)) {
         if (errorText) {
@@ -326,7 +328,9 @@ export function prepareError(err: any, parentConfig: ConfigType) {
         }
 
         // Parse children of the error and continue
-        const errors = err.map(x => parentConfig.prepareError(x, parentConfig));
+        const errors = err.map((x: any) =>
+            parentConfig.prepareError(x, parentConfig)
+        );
 
         // Should be a nested error, turn it into ListValidationError
         return new ListValidationError(errors);

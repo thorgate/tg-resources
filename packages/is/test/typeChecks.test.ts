@@ -1,4 +1,4 @@
-/* tslint:disable no-empty */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
     hasValue,
     isAbortSignal,

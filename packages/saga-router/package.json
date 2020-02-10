@@ -49,7 +49,7 @@
   },
   "scripts": {
     "clean": "rimraf ./lib",
-    "lint": "tslint -p tsconfig.lint.json",
+    "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
     "build": "rollup -c=../../rollup.config.js",
     "prebuild": "yarn clean && yarn lint"
   }

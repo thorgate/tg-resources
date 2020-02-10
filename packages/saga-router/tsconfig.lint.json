@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    // https://github.com/palantir/tslint/issues/4148
-    "composite": false,
-  }
-}

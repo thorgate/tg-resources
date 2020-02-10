@@ -9,7 +9,7 @@ import {
 
 export abstract class Route implements RouteInterface {
     protected _customConfig: RouteConfig = null;
-    protected _routeName: string = '';
+    protected _routeName = '';
     protected _parent: RouterInterface | null = null;
     protected _config: RequestConfig = null;
 

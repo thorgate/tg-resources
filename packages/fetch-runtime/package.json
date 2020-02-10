@@ -6,9 +6,12 @@
     "access": "public"
   },
   "description": "Fetch polyfill helper for `tg-resources`",
-  "main": "index.js",
+  "main": "src/index.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
+  "files": [
+    "src"
+  ],
   "contributors": [
     "Jürno Ader <jyrno42@gmail.com> (https://github.com/Jyrno42)",
     "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)",
@@ -38,7 +41,7 @@
   },
   "scripts": {
     "clean": "rimraf ./lib",
-    "lint": "echo Nothing to lint",
+    "lint": "eslint src -c ../../.eslintrc.js --ext js",
     "build": "echo Nothing to build"
   }
 }

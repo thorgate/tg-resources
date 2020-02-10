@@ -39,7 +39,6 @@ export class FetchResponse extends ResponseInterface {
 
     public get statusType() {
         if (this.status) {
-            /* tslint:disable-next-line:no-bitwise */
             return (this.status / 100) | 0;
         }
 

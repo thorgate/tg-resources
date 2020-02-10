@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // Jest config defaults
 const { defaults } = require('jest-config');
 

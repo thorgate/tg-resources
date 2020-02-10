@@ -1,6 +1,6 @@
-/* tslint:disable no-empty */
-/* tslint:disable member-access */
-/* tslint:disable no-unused-expression */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-function */
 import 'jest-extended';
 
 import {

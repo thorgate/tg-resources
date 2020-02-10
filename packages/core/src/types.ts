@@ -133,6 +133,7 @@ export abstract class ValidationErrorInterface {
 
     // Support for .. of loops
     public [Symbol.iterator](): Iterator<any> {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const instance = this;
 
         let curKey = 0;
@@ -176,6 +177,7 @@ export abstract class ValidationErrorInterface {
         // istanbul ignore next: Only happens w/ custom error handlers
         if (process.env.NODE_ENV !== 'production') {
             if (this.fieldName && this.fieldName !== fieldName) {
+                // eslint-disable-next-line no-console
                 console.error(
                     `ValidationErrorInterface: Unexpected rebind of ${this} as ${fieldName} (was ${this.fieldName})`
                 );

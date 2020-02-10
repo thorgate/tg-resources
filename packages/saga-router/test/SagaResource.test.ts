@@ -1,13 +1,13 @@
+import {
+    AbortError,
+    InvalidResponseCode,
+    RequestValidationError,
+} from '@tg-resources/core';
 import { FetchResource as Resource } from '@tg-resources/fetch';
 import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
 import { Server } from 'http';
 import 'jest-extended';
 import { call, delay, race } from 'redux-saga/effects';
-import {
-    AbortError,
-    InvalidResponseCode,
-    RequestValidationError,
-} from 'tg-resources';
 
 import {
     createSagaRouter,

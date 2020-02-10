@@ -18,11 +18,10 @@ export function bindResources(routes: RouteMap, $this: RouterInterface) {
     const res: RouteMap = {};
 
     Object.keys(routes).forEach(routeName => {
-        // tslint:disable-next-line no-use-before-declare
         if (
             !routes[routeName] ||
             !(
-                routes[routeName] instanceof Router ||
+                routes[routeName] instanceof Router || // eslint-disable-line @typescript-eslint/no-use-before-define
                 routes[routeName] instanceof Resource
             )
         ) {

@@ -32,7 +32,7 @@ const allDogs: Dog[] = [
     },
 ];
 
-function configureServer(logger: boolean = false) {
+function configureServer(logger = false) {
     const app = express();
 
     app.use(bodyParser.json()); // support json encoded bodies
@@ -41,6 +41,7 @@ function configureServer(logger: boolean = false) {
 
     app.use((req: Request, _0, next) => {
         if (logger) {
+            // eslint-disable-next-line no-console
             console.log(`${req.method.toUpperCase()}: ${req.originalUrl}`);
         }
 
@@ -189,12 +190,14 @@ function configureServer(logger: boolean = false) {
     });
 
     app.get('/error400_nonField', (_0, res) => {
+        /* eslint-disable @typescript-eslint/camelcase */
         res.status(400).json({
             non_field_errors: ['Sup dog'],
         });
     });
 
     app.get('/errorNested', (_0, res) => {
+        /* eslint-disable @typescript-eslint/camelcase */
         res.status(400).json({
             a_number: ['A valid integer is required.'],
             list_of_things: [{}, { foo: ['A valid integer is required.'] }],
@@ -346,7 +349,7 @@ function configureServer(logger: boolean = false) {
     return app;
 }
 
-export const listen = (p: number = port, logger: boolean = false) =>
+export const listen = (p: number = port, logger = false) =>
     configureServer(logger).listen(p);
 
 export const getHostUrl = (p: number = port) => `http://127.0.0.1:${p}`;

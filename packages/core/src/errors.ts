@@ -52,7 +52,7 @@ export class InvalidResponseCode extends ResourceErrorInterface {
     constructor(
         statusCode: number | null = null,
         responseText?: ResponseText,
-        type: string = 'InvalidResponseCode'
+        type = 'InvalidResponseCode'
     ) {
         super(`${type} ${statusCode}: ${truncate(responseText, 256)}`);
 

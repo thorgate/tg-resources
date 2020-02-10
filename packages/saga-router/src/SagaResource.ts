@@ -48,10 +48,10 @@ export class SagaResource<Klass extends Resource> extends Resource {
         ) => Klass
     ) {
         super(apiEndpoint, config as Pick<typeof config, keyof RequestConfig>);
-        this._resource = new resourceKlass(apiEndpoint, config as Pick<
-            typeof config,
-            keyof RequestConfig
-        >);
+        this._resource = new resourceKlass(
+            apiEndpoint,
+            config as Pick<typeof config, keyof RequestConfig>
+        );
     }
 
     private readonly _resource: Klass;
