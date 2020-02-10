@@ -103,7 +103,6 @@
     "rollup-plugin-node-resolve": "5.2.0",
     "rollup-plugin-replace": "2.2.0",
     "rollup-plugin-typescript2": "0.25.3",
-    "semver": "^6.3.0",
     "superagent": "^5.1.0",
     "temp-dir": "2.0.0",
     "ts-jest": "24.2.0",
