@@ -54,9 +54,9 @@
   },
   "homepage": "https://github.com/thorgate/tg-resources#readme",
   "dependencies": {
-    "@babel/core": "7.6.4",
-    "@babel/plugin-transform-async-to-generator": "7.5.0",
-    "@babel/preset-env": "^7.1.5",
+    "@babel/core": "7.7.0",
+    "@babel/plugin-transform-async-to-generator": "7.7.0",
+    "@babel/preset-env": "^7.7.0",
     "@types/body-parser": "^1.17.0",
     "@types/cookie": "^0.3.1",
     "@types/cookie-parser": "^1.4.1",
