@@ -1,4 +1,5 @@
 import { hasValue, isFunction, isObject, isStatusCode } from '@tg-resources/is';
+import { Attachments, Kwargs, ObjectMap, Query } from '@tg-resources/types';
 import renderTemplate from 'lodash.template';
 
 import DEFAULTS from './constants';
@@ -8,22 +9,30 @@ import {
     NetworkError,
     RequestValidationError,
 } from './errors';
+import { ResourceErrorInterface, ResponseInterface } from './interfaces';
 import { Route } from './route';
 import {
-    AllowedFetchMethods,
-    AllowedPostMethods,
-    Attachments,
     ConfigType,
-    Kwargs,
-    ObjectMap,
-    Query,
+    FetchOptions,
+    PostOptions,
     RequestConfig,
-    ResourceErrorInterface,
     ResourceInterface,
-    ResponseInterface,
     RouteConfig,
 } from './types';
 import { mergeConfig, serializeCookies } from './util';
+
+/**
+ * Check if obj is wrapper resource.
+ * @param obj
+ */
+export function isWrapperResource(obj: any): boolean {
+    return (
+        obj instanceof Resource &&
+        'resource' in obj &&
+        typeof (obj as any).resource !== 'undefined' &&
+        typeof (obj as any).resource === 'object'
+    );
+}
 
 export abstract class Resource extends Route implements ResourceInterface {
     /**
@@ -92,118 +101,133 @@ export abstract class Resource extends Route implements ResourceInterface {
         };
     }
 
-    public fetch = <R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
+    public fetch = <TResult = any, TKwargs extends Kwargs<TKwargs> = {}>(
+        kwargs?: TKwargs | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._fetch<R, Params>(kwargs, query, requestConfig, 'get');
+    ): Promise<TResult> | any => {
+        return this._fetch<TResult, TKwargs>({
+            method: 'get',
+            kwargs,
+            query,
+            requestConfig,
+        });
     };
 
-    public head = <R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
+    public head = <TResult = any, TKwargs extends Kwargs<TKwargs> = {}>(
+        kwargs?: TKwargs | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
+    ): Promise<TResult> | any => {
         // istanbul ignore next: Tested in package that implement Resource
-        return this._fetch<R, Params>(kwargs, query, requestConfig, 'head');
+        return this._fetch<TResult, TKwargs>({
+            method: 'head',
+            kwargs,
+            query,
+            requestConfig,
+        });
     };
 
-    public options = <R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
+    public options = <TResult = any, TKwargs extends Kwargs<TKwargs> = {}>(
+        kwargs?: TKwargs | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
+    ): Promise<TResult> | any => {
         // istanbul ignore next: Tested in package that implement Resource
-        return this._fetch<R, Params>(kwargs, query, requestConfig, 'options');
+        return this._fetch<TResult, TKwargs>({
+            method: 'options',
+            kwargs,
+            query,
+            requestConfig,
+        });
     };
 
     public post = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TKwargs | null,
+        data?: TData | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._post<R, D, Params>(
+    ): Promise<TResult> | any => {
+        return this._post<TResult, TData, TKwargs>({
+            method: 'post',
             kwargs,
             data,
             query,
             attachments,
             requestConfig,
-            'post'
-        );
+        });
     };
 
     public patch = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TKwargs | null,
+        data?: TData | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._post<R, D, Params>(
+    ): Promise<TResult> | any => {
+        return this._post<TResult, TData, TKwargs>({
+            method: 'patch',
             kwargs,
             data,
             query,
             attachments,
             requestConfig,
-            'patch'
-        );
+        });
     };
 
     public put = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TKwargs | null,
+        data?: TData | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._post<R, D, Params>(
+    ): Promise<TResult> | any => {
+        return this._post<TResult, TData, TKwargs>({
+            method: 'put',
             kwargs,
             data,
             query,
             attachments,
             requestConfig,
-            'put'
-        );
+        });
     };
 
     public del = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TKwargs | null,
+        data?: TData | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._post<R, D, Params>(
+    ): Promise<TResult> | any => {
+        return this._post<TResult, TData, TKwargs>({
+            method: 'del',
             kwargs,
             data,
             query,
             attachments,
             requestConfig,
-            'del'
-        );
+        });
     };
 
-    public renderPath<Params extends Kwargs<Params> = {}>(
-        urlParams: Params | null = null,
+    public renderPath<TKwargs extends Kwargs<TKwargs> = {}>(
+        urlParams: TKwargs | null = null,
         requestConfig: RequestConfig = null
     ): string {
         let thePath = this.apiEndpoint;
@@ -229,11 +253,11 @@ export abstract class Resource extends Route implements ResourceInterface {
         key: string,
         value: string | null
     ): any;
-    protected abstract createRequest<D extends ObjectMap = any>(
+    protected abstract createRequest<TData extends ObjectMap = any>(
         method: string,
         url: string,
         query: Query,
-        data: D | null,
+        data: TData | null,
         attachments: Attachments,
         requestConfig: RequestConfig
     ): any;
@@ -242,12 +266,12 @@ export abstract class Resource extends Route implements ResourceInterface {
         resolve: (response: any, error: any) => void
     ): void;
 
-    protected _fetch<R = any, Params extends Kwargs<Params> = {}>(
-        kwargs: Params | null = null,
-        query: Query | null = null,
-        requestConfig: RequestConfig | null = null,
-        method: AllowedFetchMethods
-    ): Promise<R> {
+    protected _fetch<TResult = any, TKwargs extends Kwargs<TKwargs> = {}>({
+        method,
+        kwargs = null,
+        query = null,
+        requestConfig = null,
+    }: FetchOptions<TKwargs>): Promise<TResult> {
         const thePath = this.renderPath(kwargs, requestConfig);
         return this.handleRequest(
             this.createRequest(
@@ -263,17 +287,17 @@ export abstract class Resource extends Route implements ResourceInterface {
     }
 
     protected _post<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
-    >(
-        kwargs: Params | null = null,
-        data: D | string | null = null,
-        query: Query = null,
-        attachments: Attachments = null,
-        requestConfig: RequestConfig = null,
-        method: AllowedPostMethods
-    ): Promise<R> {
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
+    >({
+        method,
+        kwargs = null,
+        data = null,
+        query = null,
+        attachments = null,
+        requestConfig = null,
+    }: PostOptions<TData, TKwargs>): Promise<TResult> {
         const config = this.config(requestConfig);
 
         // istanbul ignore next: Tested in package that implement Resource
@@ -312,8 +336,8 @@ export abstract class Resource extends Route implements ResourceInterface {
         return rawResponse as T;
     }
 
-    protected mutateResponse<R, T extends R = any>(
-        responseData: R,
+    protected mutateResponse<TResult, T extends TResult = any>(
+        responseData: TResult,
         rawResponse: ResponseInterface,
         requestConfig: RequestConfig
     ): T {
@@ -349,11 +373,11 @@ export abstract class Resource extends Route implements ResourceInterface {
         return error as T;
     }
 
-    protected handleRequest<R>(
+    protected handleRequest<TResult>(
         req: any,
         requestConfig: RequestConfig
-    ): Promise<R> {
-        return this.ensureStatusAndJson<R>(
+    ): Promise<TResult> {
+        return this.ensureStatusAndJson<TResult>(
             new Promise(resolve => {
                 const headers = this.getHeaders(requestConfig);
 
@@ -373,10 +397,10 @@ export abstract class Resource extends Route implements ResourceInterface {
         );
     }
 
-    protected ensureStatusAndJson<R>(
+    protected ensureStatusAndJson<TResult>(
         prom: Promise<ResponseInterface>,
         requestConfig: RequestConfig
-    ): Promise<R> {
+    ): Promise<TResult> {
         const config = this.config(requestConfig);
         return prom.then((origRes: ResponseInterface) => {
             const res = this.mutateRawResponse(origRes, requestConfig);
@@ -386,7 +410,11 @@ export abstract class Resource extends Route implements ResourceInterface {
             if (res && !res.hasError) {
                 if (isStatusCode(config.statusSuccess, res.status)) {
                     // Got statusSuccess response code, lets resolve this promise
-                    return this.mutateResponse<R>(res.data, res, requestConfig);
+                    return this.mutateResponse<TResult>(
+                        res.data,
+                        res,
+                        requestConfig
+                    );
                 }
 
                 if (isStatusCode(config.statusValidationError, res.status)) {

@@ -1,16 +1,17 @@
 import { SagaIterator } from '@redux-saga/types';
 import {
-    Attachments,
     ConfigType,
-    Kwargs,
-    ObjectMap,
-    Optional,
-    OptionalMap,
-    Query,
     ResourceErrorInterface,
     ResourceInterface,
     RouteConfigType,
 } from '@tg-resources/core';
+import {
+    Attachments,
+    Kwargs,
+    ObjectMap,
+    Optional,
+    Query,
+} from '@tg-resources/types';
 
 export interface SagaConfigTypeBase {
     initializeSaga: boolean;
@@ -26,8 +27,8 @@ export interface SagaRouteConfigType
 
 export interface SagaConfigType extends SagaConfigTypeBase, ConfigType {}
 
-export type SagaRouteConfig = Optional<OptionalMap<SagaRouteConfigType>>;
-export type SagaRequestConfig = Optional<OptionalMap<SagaConfigType>>;
+export type SagaRouteConfig = Optional<Partial<SagaRouteConfigType>>;
+export type SagaRequestConfig = Optional<Partial<SagaConfigType>>;
 
 export interface ResourceSagaRunnerConfig<
     Params extends Kwargs<Params> = {},

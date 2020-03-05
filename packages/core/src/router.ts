@@ -1,10 +1,10 @@
 import { isFunction } from '@tg-resources/is';
+import { Optional } from '@tg-resources/types';
 
 import DEFAULTS from './constants';
 import { Resource } from './resource';
 import { Route } from './route';
 import {
-    Optional,
     ResourceInterface,
     RouteConfig,
     RouteConfigType,

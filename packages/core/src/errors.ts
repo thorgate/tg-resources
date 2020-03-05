@@ -1,11 +1,7 @@
 import { hasValue } from '@tg-resources/is';
 
-import {
-    ConfigType,
-    RequestConfig,
-    ResourceErrorInterface,
-    ValidationErrorInterface,
-} from './types';
+import { ResourceErrorInterface, ValidationErrorInterface } from './interfaces';
+import { ConfigType, RequestConfig } from './types';
 import { truncate } from './util';
 import { parseErrors, prepareError } from './ValidationError';
 

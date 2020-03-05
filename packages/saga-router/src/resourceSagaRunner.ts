@@ -1,11 +1,10 @@
 import {
     isFetchMethod,
     isPostMethod,
-    Kwargs,
-    ObjectMap,
     ResourceInterface,
 } from '@tg-resources/core';
 import { isFunction } from '@tg-resources/is';
+import { Kwargs, ObjectMap } from '@tg-resources/types';
 import { SagaIterator } from 'redux-saga';
 import { call, cancelled } from 'redux-saga/effects';
 

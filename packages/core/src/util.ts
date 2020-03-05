@@ -6,15 +6,14 @@ import {
     isObject,
     isString,
 } from '@tg-resources/is';
-import cookie from 'cookie';
-
 import {
-    ConfigType,
     ObjectMap,
-    RequestConfig,
     ResourceFetchMethods,
     ResourcePostMethods,
-} from './types';
+} from '@tg-resources/types';
+import cookie from 'cookie';
+
+import { ConfigType, RequestConfig } from './types';
 
 export const isFetchMethod = (method: string): method is ResourceFetchMethods =>
     ['fetch', 'head', 'options'].includes(method);

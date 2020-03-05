@@ -5,8 +5,10 @@ import {
     isString,
     isStringArray,
 } from '@tg-resources/is';
+import { ObjectMap } from '@tg-resources/types';
 
-import { ConfigType, ObjectMap, ValidationErrorInterface } from './types';
+import { ValidationErrorInterface } from './interfaces';
+import { ConfigType } from './types';
 
 export type ValidationErrorType =
     | SingleValidationError

@@ -1,51 +1,45 @@
 {
-  "name": "@tg-resources/fetch",
+  "name": "@tg-resources/react",
   "version": "3.1.3",
   "private": false,
   "publishConfig": {
     "access": "public"
   },
-  "description": "Fetch backend for `tg-resources`",
+  "description": "",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
-  "react-native": "lib/index.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
     "Jürno Ader <jyrno42@gmail.com> (https://github.com/Jyrno42)",
-    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)",
-    "Simon Schmidt (https://github.com/simonschmidt)",
-    "Romet Tagobert (https://github.com/amPerl)",
-    "Jaak Erisalu (https://github.com/jaakerisalu)"
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
   ],
-  "homepage": "https://github.com/thorgate/tg-resources/tree/master/packages/fetch#readme",
+  "homepage": "https://github.com/thorgate/tg-resources/tree/master/packages/react-integration#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thorgate/tg-resources.git"
   },
   "bugs": "https://github.com/thorgate/tg-resources/issues",
   "keywords": [
-    "api",
-    "request",
-    "http",
-    "ajax",
-    "fetch"
   ],
   "files": [
     "lib"
   ],
-  "dependencies": {
-    "@tg-resources/types": "^3.1.3",
-    "qs": "^6.5.2",
-    "tg-resources": "^3.1.3"
+  "peerDependencies": {
+    "react": "^16.8.4"
   },
-  "devDependencies": {
-    "@tg-resources/fetch-runtime": "^3.1.1"
+  "dependencies": {
+    "@tg-resources/core": "^3.1.3",
+    "@tg-resources/is": "^3.1.3",
+    "@tg-resources/types": "^3.1.3",
+    "lru-cache": "^5.1.1",
+    "invariant": "^2.2.2",
+    "react-async": "^9.0.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",
-    "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
+    "lint": "tslint -p tsconfig.lint.json",
     "build": "rollup -c=../../rollup.config.js",
     "prebuild": "yarn clean && yarn lint"
   }

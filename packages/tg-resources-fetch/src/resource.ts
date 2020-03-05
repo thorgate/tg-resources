@@ -1,15 +1,13 @@
 import { hasValue, isArray, isObject, isString } from '@tg-resources/is';
-import qs from 'qs';
 import {
     AllowedMethods,
     Attachments,
     ObjectMap,
     Optional,
     Query,
-    RequestConfig,
-    Resource,
-    ResponseInterface,
-} from 'tg-resources';
+} from '@tg-resources/types';
+import qs from 'qs';
+import { RequestConfig, Resource, ResponseInterface } from 'tg-resources';
 
 interface HeadersObject {
     [key: string]: any;

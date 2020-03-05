@@ -40,5 +40,3 @@ export const isAbortSignal = (signal: any): signal is AbortSignal => {
         !!(proto && proto.constructor.name === 'AbortSignal') || isCompatible
     );
 };
-
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;

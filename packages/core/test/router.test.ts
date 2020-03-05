@@ -3,13 +3,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import 'jest-extended';
 
-import {
-    ConfigType,
-    OptionalMap,
-    Resource,
-    ResourceErrorInterface,
-    Router,
-} from '../src';
+import { ConfigType, Resource, ResourceErrorInterface, Router } from '../src';
 import DEFAULTS from '../src/constants';
 import { DummyResource } from './DummyResource';
 
@@ -25,7 +19,7 @@ const mockParseErrors = (errorText: any, config: ConfigType) =>
 
 const expectConfig = (
     instance: Router | Resource,
-    expectedConfig: OptionalMap<ConfigType>
+    expectedConfig: Partial<ConfigType>
 ) => {
     const cfg = instance.config();
 
@@ -264,7 +258,7 @@ describe('router config merge -', () => {
             }
         );
 
-        const routerLevelConfig: OptionalMap<ConfigType> = {
+        const routerLevelConfig: Partial<ConfigType> = {
             apiRoot: 'http://foo.localhost/baz/',
             mutateResponse: null,
             mutateError: null,

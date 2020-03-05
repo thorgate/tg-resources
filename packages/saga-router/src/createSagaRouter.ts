@@ -1,7 +1,6 @@
 import {
     CreateResourceFactory,
     createRouter,
-    ObjectMap,
     Resource,
     ResourceClassConstructor,
     ResourceConstructorObject,
@@ -9,6 +8,7 @@ import {
     RouteConfig,
     Router,
 } from '@tg-resources/core';
+import { ObjectMap } from '@tg-resources/types';
 
 import { SagaResource } from './SagaResource';
 import { SagaRouteConfig } from './types';

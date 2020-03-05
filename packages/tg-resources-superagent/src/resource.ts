@@ -1,19 +1,17 @@
 import { hasValue, isArray, isObject } from '@tg-resources/is';
-import request, {
-    Response,
-    ResponseError,
-    SuperAgentRequest,
-} from 'superagent';
 import {
     AllowedMethods,
     Attachments,
     ObjectMap,
     Optional,
     Query,
-    RequestConfig,
-    Resource,
-    ResponseInterface,
-} from 'tg-resources';
+} from '@tg-resources/types';
+import request, {
+    Response,
+    ResponseError,
+    SuperAgentRequest,
+} from 'superagent';
+import { RequestConfig, Resource, ResponseInterface } from 'tg-resources';
 
 export class SuperagentResponse extends ResponseInterface {
     public get response(): Optional<Response> {

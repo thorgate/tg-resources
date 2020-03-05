@@ -1,25 +1,26 @@
-export type Optional<T> = T | null;
+import {
+    AllowedFetchMethods,
+    AllowedPostMethods,
+    Attachments,
+    Kwargs,
+    ObjectMap,
+    ObjectMapFn,
+    Optional,
+    Query,
+} from '@tg-resources/types';
 
-export type OptionalMap<T> = {
-    [K in keyof T]?: T[K];
-};
-
-export type Kwargs<KW> = { [K in keyof KW]?: string | undefined };
-
-export interface ObjectMap<T = any> {
-    [key: string]: T;
-}
-
-export type ObjectMapFn<T = any> = () => ObjectMap<T>;
+import {
+    ResourceErrorInterface,
+    ResponseInterface,
+    ValidationErrorInterface,
+} from './interfaces';
 
 export type ConfigObjectFn =
     | ObjectMap<string | null>
     | ObjectMapFn<string | null>;
 
-export type Query = ObjectMap<string> | null;
-
-export type MutateResponseFn = <R>(
-    responseData: R,
+export type MutateResponseFn = <TResult>(
+    responseData: TResult,
     rawResponse?: ResponseInterface,
     resource?: ResourceInterface,
     requestConfig?: RequestConfig
@@ -111,136 +112,28 @@ export interface ConfigType {
  */
 export type RouteConfigType = Omit<ConfigType, 'signal'>;
 
-export type RouteConfig = Optional<OptionalMap<RouteConfigType>>;
+export type RouteConfig = Optional<Partial<RouteConfigType>>;
 
-export type RequestConfig = Optional<OptionalMap<ConfigType>>;
+export type RequestConfig = Optional<Partial<ConfigType>>;
 
-export abstract class ValidationErrorInterface {
-    public fieldName: string | number | undefined;
-
-    protected constructor(errors: any) {
-        // Store errors
-        this._errors = errors;
-    }
-
-    // Losing type check but does not restrict types at first
-    // Can be changed to be more restrictive
-    protected readonly _errors: any;
-
-    public get errors() {
-        return this._errors;
-    }
-
-    // Support for .. of loops
-    public [Symbol.iterator](): Iterator<any> {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const instance = this;
-
-        let curKey = 0;
-        let done = false;
-
-        return {
-            next() {
-                const nextVal = instance.errorByIndex(curKey);
-
-                // Note: If a custom error handler does not coerce undefined to null,
-                //  the iterator will stop too early
-                //
-                // Feel free to submit a PR if this annoys you!
-                if (nextVal === undefined) {
-                    done = true;
-                } else {
-                    curKey += 1;
-                }
-
-                return {
-                    done,
-                    value: nextVal,
-                };
-            },
-        };
-    }
-
-    /**
-     * Used by firstError and iteration protocol
-     */
-    public errorByIndex(index: number) {
-        return this._errors[index];
-    }
-
-    /* istanbul ignore next: just an interface */
-    public hasError() {
-        return this._errors.length > 0;
-    }
-
-    public bindToField(fieldName: string | number) {
-        // istanbul ignore next: Only happens w/ custom error handlers
-        if (process.env.NODE_ENV !== 'production') {
-            if (this.fieldName && this.fieldName !== fieldName) {
-                // eslint-disable-next-line no-console
-                console.error(
-                    `ValidationErrorInterface: Unexpected rebind of ${this} as ${fieldName} (was ${this.fieldName})`
-                );
-            }
-        }
-
-        this.fieldName = fieldName;
-    }
-
-    public abstract asString(glue?: string): string;
-
-    public toString() {
-        return this.asString();
-    }
-
-    public map<U>(
-        callbackfn: (value: any, index?: number, array?: any[]) => U,
-        thisArg?: any
-    ): U[] {
-        return this._iter().map(callbackfn, thisArg);
-    }
-
-    public forEach(
-        callbackfn: (value: any, index?: number, array?: any[]) => void,
-        thisArg?: any
-    ): void {
-        this._iter().forEach(callbackfn, thisArg);
-    }
-
-    public filter(
-        callbackfn: (value: any, index?: number, array?: any[]) => boolean,
-        thisArg?: any
-    ) {
-        return this._iter().filter(callbackfn, thisArg);
-    }
-
-    /**
-     * Iterator used for .forEach/.filter/.map
-     */
-    protected _iter() {
-        return this._errors;
-    }
+export interface FetchOptions<TKwargs extends Kwargs<TKwargs> = {}> {
+    method: AllowedFetchMethods;
+    kwargs?: TKwargs | null;
+    query?: Query | null;
+    requestConfig?: RequestConfig | null;
 }
 
-export interface Attachment {
-    field: string;
-    name: string;
-    file: Blob | Buffer;
+export interface PostOptions<
+    TData extends ObjectMap = any,
+    TKwargs extends Kwargs<TKwargs> = {}
+> {
+    method: AllowedPostMethods;
+    kwargs?: TKwargs | null;
+    data?: TData | string | null;
+    query?: Query;
+    attachments?: Attachments;
+    requestConfig?: RequestConfig;
 }
-
-export type Attachments = null | Attachment[];
-
-export type ResourceFetchMethods = 'fetch' | 'head' | 'options';
-
-export type ResourcePostMethods = 'post' | 'patch' | 'put' | 'del';
-
-export type ResourceMethods = ResourceFetchMethods | ResourcePostMethods;
-
-export type AllowedFetchMethods = 'get' | 'head' | 'options';
-
-export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del';
-
-export type AllowedMethods = AllowedFetchMethods | AllowedPostMethods;
 
 export interface RouteMap {
     [key: string]: ResourceInterface | RouterInterface;
@@ -266,164 +159,97 @@ export interface RouterInterface extends RouteInterface {
     [key: string]: ResourceInterface | RouterInterface | any;
 }
 
-export type ResourceFetchMethod<R = any, Params extends Kwargs<Params> = {}> = (
-    kwargs?: Params | null,
+export type ResourceFetchMethod<
+    TResult = any,
+    TKwargs extends Kwargs<TKwargs> = {}
+> = (
+    kwargs?: TKwargs | null,
     query?: Query | null,
     requestConfig?: RequestConfig | null
-) => Promise<R> | any;
+) => Promise<TResult> | any;
 
 export type ResourcePostMethod<
-    R = any,
-    D extends ObjectMap = any,
-    Params extends Kwargs<Params> = {}
+    TResult = any,
+    TData extends ObjectMap = any,
+    TKwargs extends Kwargs<TKwargs> = {}
 > = (
-    kwargs?: Params | null,
-    data?: D | string | null,
+    kwargs?: TKwargs | null,
+    data?: TData | string | null,
     query?: Query | null,
     attachments?: Attachments,
     requestConfig?: RequestConfig | null
-) => Promise<R> | any;
+) => Promise<TResult> | any;
 
 export interface ResourceInterface extends RouteInterface {
     readonly apiEndpoint: string;
 
     config(requestConfig?: RequestConfig): ConfigType;
 
-    fetch<R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
+    fetch<TResult = any, TKwargs extends Kwargs<TKwargs> = {}>(
+        kwargs?: TKwargs | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
-    head<R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
+    ): Promise<TResult> | any;
+    head<TResult = any, TKwargs extends Kwargs<TKwargs> = {}>(
+        kwargs?: TKwargs | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
-    options<R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
+    ): Promise<TResult> | any;
+    options<TResult = any, TKwargs extends Kwargs<TKwargs> = {}>(
+        kwargs?: TKwargs | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
+    ): Promise<TResult> | any;
 
     post<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TKwargs | null,
+        data?: TData | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
+    ): Promise<TResult> | any;
     patch<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TKwargs | null,
+        data?: TData | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
-    put<R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
-        data?: D | string | null,
+    ): Promise<TResult> | any;
+    put<
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
+    >(
+        kwargs?: TKwargs | null,
+        data?: TData | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
-    del<R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
-        data?: D | string | null,
+    ): Promise<TResult> | any;
+    del<
+        TResult = any,
+        TData extends ObjectMap = any,
+        TKwargs extends Kwargs<TKwargs> = {}
+    >(
+        kwargs?: TKwargs | null,
+        data?: TData | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
+    ): Promise<TResult> | any;
 
-    renderPath<Params extends Kwargs<Params> = {}>(
-        urlParams?: Params | null,
+    renderPath<TKwargs extends Kwargs<TKwargs> = {}>(
+        urlParams?: TKwargs | null,
         requestConfig?: RequestConfig | null
     ): string;
 
     [key: string]: any;
-}
-
-export abstract class ResourceErrorInterface {
-    protected readonly _message: string;
-
-    protected constructor(message: string) {
-        this._message = message;
-    }
-
-    public toString() {
-        return this._message;
-    }
-
-    public get isNetworkError() {
-        return false;
-    }
-
-    // istanbul ignore next: Tested in packages that implement Resource
-    public get isInvalidResponseCode() {
-        return false;
-    }
-
-    public get isValidationError() {
-        return false;
-    }
-
-    public get isAbortError() {
-        return false;
-    }
-}
-
-export abstract class ResponseInterface {
-    // istanbul ignore next: Tested in package that implement Resource
-    public constructor(
-        response: Optional<any>,
-        error: Optional<any> = null,
-        request: Optional<any> = null
-    ) {
-        this._response = response;
-        this._error = error;
-        this._request = request;
-    }
-
-    public get response(): Optional<any> {
-        // istanbul ignore next: Tested in package that implement Resource
-        return this._response;
-    }
-
-    public get error(): Optional<any> {
-        return this._error;
-    }
-
-    public get hasError() {
-        return !!this.error;
-    }
-
-    public abstract get status(): Optional<number>;
-
-    public get statusCode() {
-        // istanbul ignore next: Tested in package that implement Resource
-        return this.status;
-    }
-
-    public abstract get statusType(): Optional<number>;
-
-    public abstract get text(): Optional<string>;
-
-    public abstract get data(): Optional<any>;
-
-    public abstract get headers(): Optional<any>;
-
-    public abstract get contentType(): Optional<string>;
-
-    public abstract get wasAborted(): boolean;
-
-    protected readonly _response: Optional<any>;
-    protected readonly _error: Optional<any>;
-    protected readonly _request: Optional<any>;
 }

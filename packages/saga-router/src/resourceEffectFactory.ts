@@ -1,11 +1,10 @@
 import {
     isFetchMethod,
     isPostMethod,
-    Kwargs,
-    ObjectMap,
     RequestConfig,
     Resource,
 } from '@tg-resources/core';
+import { Kwargs, ObjectMap } from '@tg-resources/types';
 import { call } from 'redux-saga/effects';
 
 import { resourceSagaRunner } from './resourceSagaRunner';

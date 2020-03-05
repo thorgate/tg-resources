@@ -1,5 +1,6 @@
+import { ObjectMap } from '@tg-resources/types';
+
 import {
-    ObjectMap,
     RequestConfig,
     RouteConfig,
     RouteConfigType,

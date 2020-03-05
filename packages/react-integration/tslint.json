@@ -1,0 +1,9 @@
+{
+  "extends": "../../tslint.json",
+  "rules": {
+    "prettier": [
+      true,
+      "../../prettier.config.js"
+    ]
+  }
+}

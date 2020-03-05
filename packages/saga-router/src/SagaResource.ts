@@ -1,14 +1,17 @@
 import {
+    isWrapperResource,
+    RequestConfig,
+    Resource,
+    RouterInterface,
+} from '@tg-resources/core';
+import {
     Attachments,
     Kwargs,
     ObjectMap,
     Query,
-    RequestConfig,
-    Resource,
     ResourceFetchMethods,
     ResourcePostMethods,
-    RouterInterface,
-} from '@tg-resources/core';
+} from '@tg-resources/types';
 import { call } from 'redux-saga/effects';
 
 import { DEFAULT_CONFIG } from './constants';
@@ -23,12 +26,7 @@ import {
 export function isSagaResource<Klass extends Resource>(
     obj: any
 ): obj is SagaResource<Klass> {
-    return (
-        obj instanceof Resource &&
-        'resource' in obj &&
-        typeof (obj as any).resource !== 'undefined' &&
-        typeof (obj as any).resource === 'object'
-    );
+    return isWrapperResource(obj);
 }
 
 export function isSagaResourceInitialized(

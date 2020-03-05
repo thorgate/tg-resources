@@ -1,16 +1,11 @@
 import { isArray, isObject, isString } from '@tg-resources/is';
+import { ObjectMap } from '@tg-resources/types';
 
 import { Resource } from './resource';
 import { Router } from './router';
-import {
-    ConfigType,
-    ObjectMap,
-    OptionalMap,
-    RouteConfig,
-    RouteConfigType,
-} from './types';
+import { ConfigType, RouteConfig, RouteConfigType } from './types';
 
-export type ResourceTuple<Config = OptionalMap<ConfigType>> = [string, Config];
+export type ResourceTuple<Config = Partial<ConfigType>> = [string, Config];
 
 export const isResourceTuple = (value: any): value is ResourceTuple =>
     isArray(value) &&
@@ -18,8 +13,7 @@ export const isResourceTuple = (value: any): value is ResourceTuple =>
     typeof value[0] === 'string' &&
     isObject(value[1]);
 
-export interface ResourceConstructorObject
-    extends OptionalMap<RouteConfigType> {
+export interface ResourceConstructorObject extends Partial<RouteConfigType> {
     apiEndpoint: string;
 }
 

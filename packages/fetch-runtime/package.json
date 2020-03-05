@@ -14,10 +14,7 @@
   ],
   "contributors": [
     "Jürno Ader <jyrno42@gmail.com> (https://github.com/Jyrno42)",
-    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)",
-    "Simon Schmidt (https://github.com/simonschmidt)",
-    "Romet Tagobert (https://github.com/amPerl)",
-    "Jaak Erisalu (https://github.com/jaakerisalu)"
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
   ],
   "homepage": "https://github.com/thorgate/tg-resources/tree/master/packages/fetch-runtime#readme",
   "repository": {

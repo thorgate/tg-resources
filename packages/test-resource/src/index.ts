@@ -1,12 +1,5 @@
-import {
-    Attachments,
-    ObjectMap,
-    Optional,
-    Query,
-    RequestConfig,
-    Resource,
-    ResponseInterface,
-} from 'tg-resources';
+import { Attachments, ObjectMap, Optional, Query } from '@tg-resources/types';
+import { RequestConfig, Resource, ResponseInterface } from 'tg-resources';
 
 export class DummyResponse extends ResponseInterface {
     public constructor(
