@@ -102,7 +102,7 @@
     "redux-saga": "^1.1.1",
     "regenerator-runtime": "0.13.5",
     "rimraf": "^3.0.2",
-    "rollup": "^1.31.0",
+    "rollup": "^2.0.0",
     "rollup-plugin-typescript2": "0.26.0",
     "superagent": "^5.2.1",
     "temp-dir": "2.0.0",
