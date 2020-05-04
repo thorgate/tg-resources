@@ -8868,13 +8868,6 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-tg-resources@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/tg-resources/-/tg-resources-3.1.4.tgz#c16949265506b77e8f47ddc17ec95420734cfccf"
-  integrity sha512-bAUpAoBwrFELBmq5szRwG1jAJ1mEpDtrEPRHsm+7GJq20N7PhfX1BnQDTIc+r0UXrnyQQ7Oi0ZIoVbxQejzhJw==
-  dependencies:
-    "@tg-resources/core" "^3.1.4"
-
 thenify-all@^1.0.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/thenify-all/-/thenify-all-1.6.0.tgz#1a1918d402d8fc3f98fbf234db0bcc8cc10e9726"
