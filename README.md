@@ -260,15 +260,15 @@ Do a `method` request to the resource endpoint with optional kwargs and query pa
 
 ### ``Resource.patch``
 
-Alias for `Resource.post(kwargs, data, query, requestConfig)` with `options` method.
+Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `patch` method.
 
 ### ``Resource.put``
 
-Alias for `Resource.post(kwargs, data, query, requestConfig)` with `put` method.
+Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `put` method.
 
 ### ``Resource.del``
 
-Alias for `Resource.post(kwargs, data, query, requestConfig)` with `del` method.
+Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `del` method.
 
 ### ``ResourceErrorInterface``
 
