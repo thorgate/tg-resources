@@ -1,7 +1,6 @@
 import '@tg-resources/fetch-runtime'
 import { isObject } from '@tg-resources/is';
-import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
-import { Server } from 'http';
+import * as testServer from '@tg-resources/test-server';
 import 'jest-extended';
 import {
     AbortError,
@@ -98,11 +97,11 @@ async function expectError(
     }
 }
 
-let server: Server;
-const hostUrl = getHostUrl(3002);
+let server: ReturnType<typeof testServer.listen>;
+const hostUrl = testServer.getHostUrl(3002);
 
 beforeEach(() => {
-    server = listen(3002);
+    server = testServer.listen(3002);
 });
 
 afterEach(() => {
@@ -112,7 +111,7 @@ afterEach(() => {
 describe('Resource basic requests work', () => {
     test('Network error is triggered', async () => {
         const res = new Resource('/', {
-            apiRoot: getHostUrl(2999),
+            apiRoot: testServer.getHostUrl(2999),
         });
 
         await expectError(res.fetch(), { errorCls: NetworkError });
@@ -459,7 +458,7 @@ describe('Resource basic requests work', () => {
         const attachments = [
             {
                 field: 'text',
-                file: expectedBuffer,
+                file: testServer.expectedBuffer,
                 name: 'dummy.txt',
             },
         ];
@@ -495,25 +494,30 @@ describe('Resource basic requests work', () => {
         const attachments = [
             {
                 field: 'text',
-                file: expectedBuffer,
+                file: testServer.expectedBuffer,
                 name: 'dummy.txt',
             },
         ];
 
-        const response = await res.post(null, postData, null, attachments);
+        try {
+            const response = await res.post(null, postData, null, attachments);
 
-        expect(response).toEqual({
-            ack: 'attachments',
-            name: 'foo',
-            text: {
-                name: 'dummy.txt',
-                size: expectedBuffer.length,
-            },
-            bool0: 'false',
-            bool1: 'true',
-            array: postData.array,
-            object: JSON.stringify(postData.object),
-        });
+            expect(response).toEqual({
+                ack: 'attachments',
+                name: 'foo',
+                text: {
+                    name: 'dummy.txt',
+                    size: testServer.expectedBuffer.length,
+                },
+                bool0: 'false',
+                bool1: 'true',
+                array: postData.array,
+                object: JSON.stringify(postData.object),
+            });
+        } catch (e) {
+            console.log('Failed with error:', e);
+            fail(e);
+        }
     });
 
     test('abort signal type is validated', async () => {

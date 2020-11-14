@@ -3,6 +3,7 @@
 const { defaults } = require('jest-config');
 
 const config = {
+    verbose: true,
     cache: false,
 
     collectCoverageFrom: ['src/**/*.{ts,tsx}', '!**/node_modules/**'],
