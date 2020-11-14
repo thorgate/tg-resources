@@ -27,7 +27,7 @@ jobs:
       - name: Build package
         run: yarn build
       - name: Run tests
-        run: yarn test
+        run: yarn test:coverage
       - name: Check examples
         run: yarn run-examples
       - name: Coveralls

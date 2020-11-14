@@ -19,7 +19,6 @@
     "lint": "yarn check-formatting && lerna --ignore=examples/* exec yarn lint",
     "test": "jest",
     "test:coverage": "yarn test --coverage",
-    "precoveralls": "yarn test:coverage --no-cache",
     "check-packages": "yarn clean && yarn build && yarn test && yarn lint",
     "bump-version": "lerna --ignore=examples/* version --no-push --exact",
     "prerun-publish": "yarn build",
