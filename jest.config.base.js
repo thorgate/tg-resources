@@ -7,7 +7,10 @@ const config = {
 
     collectCoverageFrom: ['src/**/*.{ts,tsx}', '!**/node_modules/**'],
 
-    transform: { '.(ts|tsx)': 'ts-jest' },
+    transform: {
+        '\.tsx?$': 'ts-jest',
+        '\.jsx?$': 'babel-jest',
+    },
 
     moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],
 

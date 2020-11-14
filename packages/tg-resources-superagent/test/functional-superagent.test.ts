@@ -1,10 +1,5 @@
 import { isObject } from '@tg-resources/is';
-import {
-    expectedBuffer,
-    getHostUrl,
-    hostUrl,
-    listen,
-} from '@tg-resources/test-server';
+import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
 import { Server } from 'http';
 import 'jest-extended';
 import {
@@ -64,8 +59,9 @@ async function expectError(
 
             if (errorCls) {
                 expect(
-                    `${err} is not a subclass of ${errorCls}: ${err instanceof
-                        errorCls}`
+                    `${err} is not a subclass of ${errorCls}: ${
+                        err instanceof errorCls
+                    }`
                 ).toEqual(`${err} is not a subclass of ${errorCls}: true`);
             }
 
@@ -105,9 +101,10 @@ async function expectError(
 }
 
 let server: Server;
+const hostUrl = getHostUrl(3001);
 
 beforeEach(() => {
-    server = listen();
+    server = listen(3001);
 });
 
 afterEach(() => {

@@ -32,4 +32,6 @@ jobs:
         run: yarn run-examples
       - name: Coveralls
         if: matrix.node == '10'
-        run: yarn run-examples
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

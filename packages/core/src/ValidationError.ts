@@ -36,7 +36,7 @@ export class SingleValidationError extends ValidationErrorInterface {
         if (process.env.NODE_ENV !== 'production') {
             if (
                 !isArray(errors) ||
-                errors.filter(x => !isString(x)).length > 0
+                errors.filter((x) => !isString(x)).length > 0
             ) {
                 // eslint-disable-next-line no-console
                 console.error(
@@ -204,7 +204,7 @@ export class ValidationError extends ParentValidationErrorInterface {
         // MAP: falsy to null, bind all errors w/ their fieldName
         const mutErrors: ValidationErrorObject = {};
         if (errors) {
-            Object.keys(errors).forEach(fieldName => {
+            Object.keys(errors).forEach((fieldName) => {
                 mutErrors[fieldName] = bindAndCoerce(
                     errors[fieldName],
                     fieldName
@@ -242,13 +242,13 @@ export class ValidationError extends ParentValidationErrorInterface {
         return (
             prefix +
             this._errKeys
-                .map(k => `${k}: ${this._errors[k].asString()}`)
+                .map((k) => `${k}: ${this._errors[k].asString()}`)
                 .join(glue)
         );
     }
 
     public _iter() {
-        return Object.keys(this._errors).map(x => this.errors[x]);
+        return Object.keys(this._errors).map((x) => this.errors[x]);
     }
 
     public errorByIndex(index: number) {
@@ -346,7 +346,7 @@ export function prepareError(err: any, parentConfig: ConfigType) {
         let resNonField = null;
         const resErrors: ObjectMap = {};
 
-        Object.keys(errors).forEach(key => {
+        Object.keys(errors).forEach((key) => {
             const error = parentConfig.prepareError(errors[key], parentConfig);
 
             if (key === 'non_field_errors') {

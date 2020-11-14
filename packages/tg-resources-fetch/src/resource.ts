@@ -191,7 +191,7 @@ export class FetchResource extends Resource {
             } else if (attachments) {
                 const form = new FormData();
 
-                attachments.forEach(attachment => {
+                attachments.forEach((attachment) => {
                     form.append(
                         attachment.field,
                         attachment.file as any,
@@ -200,14 +200,14 @@ export class FetchResource extends Resource {
                 });
 
                 // Set all the fields
-                Object.keys(data).forEach(fieldKey => {
+                Object.keys(data).forEach((fieldKey) => {
                     const value = data[fieldKey];
 
                     // Future: Make this logic configurable
                     if (hasValue(value)) {
                         if (isArray(value)) {
                             // Send arrays as multipart arrays
-                            value.forEach(fValue => {
+                            value.forEach((fValue) => {
                                 form.append(`${fieldKey}[]`, fValue);
                             });
                         } else if (isObject(value)) {
@@ -255,7 +255,7 @@ export class FetchResource extends Resource {
         });
 
         if (hasValue(headers)) {
-            Object.keys(headers).forEach(key => {
+            Object.keys(headers).forEach((key) => {
                 if (hasValue(headers)) {
                     req.headers.set(key, headers[key]);
                 }
@@ -274,11 +274,11 @@ export class FetchResource extends Resource {
         resolve: (response: any, error: any) => void
     ): void {
         fetch(req)
-            .then(res => parseFetchResponse(res, req))
-            .then(response => {
+            .then((res) => parseFetchResponse(res, req))
+            .then((response) => {
                 resolve(response, null);
             })
-            .catch(error => {
+            .catch((error) => {
                 resolve(null, error);
             });
     }

@@ -127,7 +127,7 @@ function configureServer(logger = false) {
 
     app.patch('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
+        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
 
         if (dogIndex !== -1) {
             if (req.body.name) {
@@ -150,7 +150,7 @@ function configureServer(logger = false) {
 
     app.get('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
+        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
 
         if (dogIndex !== -1) {
             res.status(200).json(allDogs[dogIndex]);
@@ -163,7 +163,7 @@ function configureServer(logger = false) {
 
     app.delete('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
+        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
 
         if (dogIndex !== -1) {
             allDogs.splice(dogIndex, 1);

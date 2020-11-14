@@ -354,11 +354,11 @@ export abstract class Resource extends Route implements ResourceInterface {
         requestConfig: RequestConfig
     ): Promise<R> {
         return this.ensureStatusAndJson<R>(
-            new Promise(resolve => {
+            new Promise((resolve) => {
                 const headers = this.getHeaders(requestConfig);
 
                 if (headers && isObject(headers)) {
-                    Object.keys(headers).forEach(key => {
+                    Object.keys(headers).forEach((key) => {
                         if (hasValue(headers[key])) {
                             req = this.setHeader(req, key, headers[key]);
                         }

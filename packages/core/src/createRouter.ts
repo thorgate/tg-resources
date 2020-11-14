@@ -69,7 +69,7 @@ export function createRouter<Klass extends Resource, T extends ObjectMap = {}>(
         [key: string]: Router | Resource;
     } = {};
 
-    Object.keys(routes).forEach(key => {
+    Object.keys(routes).forEach((key) => {
         if (routes[key] instanceof Router) {
             routeMap[key] = routes[key];
         } else if (isString(routes[key])) {

@@ -7,5 +7,5 @@ module.exports = Object.assign({}, defaultConfig, {
     displayName: pkg.name,
     rootDir: './',
 
-    setupFilesAfterEnv: ['@tg-resources/fetch-runtime', 'jest-extended'],
+    setupFilesAfterEnv: ['jest-extended'],
 });

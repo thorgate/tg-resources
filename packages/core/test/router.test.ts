@@ -32,7 +32,7 @@ const expectConfig = (
     // sort used so errors are deterministic
     Object.keys(expectedConfig)
         .sort()
-        .forEach(cfgKey => {
+        .forEach((cfgKey) => {
             let value: any = cfg[cfgKey];
             const expected: any = expectedConfig[cfgKey];
 

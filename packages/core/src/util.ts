@@ -25,7 +25,7 @@ export const isPostMethod = (method: string): method is ResourcePostMethods =>
 export function mergeConfig(...config: RequestConfig[]): ConfigType {
     const res: RequestConfig = {};
 
-    config.filter(x => !!x).forEach(opts => Object.assign(res, opts));
+    config.filter((x) => !!x).forEach((opts) => Object.assign(res, opts));
 
     if (res.statusSuccess) {
         if (

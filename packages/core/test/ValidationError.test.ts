@@ -263,7 +263,7 @@ describe('ValidationError helper methods', () => {
         expect(dError.firstError).toBeFunction();
 
         // Result must be the same for both
-        [true, false].forEach(allowNonField => {
+        [true, false].forEach((allowNonField) => {
             expectValidationError(dError.firstError(allowNonField), {
                 strVal: 'Provided address is not supported',
                 type: ValidationError,

@@ -125,7 +125,7 @@ export class SuperAgentResource extends Resource {
         if (hasValue(data)) {
             // If attachments are used construct a multipart request
             if (attachments) {
-                attachments.forEach(attachment => {
+                attachments.forEach((attachment) => {
                     req = req.attach(
                         attachment.field,
                         attachment.file,
@@ -134,14 +134,14 @@ export class SuperAgentResource extends Resource {
                 });
 
                 // Set all the fields
-                Object.keys(data).forEach(fieldKey => {
+                Object.keys(data).forEach((fieldKey) => {
                     const value = data[fieldKey];
 
                     // Future: Make this logic configurable
                     if (hasValue(value)) {
                         if (isArray(value)) {
                             // Send arrays as multipart arrays
-                            value.forEach(fValue => {
+                            value.forEach((fValue) => {
                                 req = req.field(`${fieldKey}[]`, fValue);
                             });
                         } else if (isObject(value)) {

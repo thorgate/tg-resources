@@ -15,7 +15,7 @@ export const isString = (value: any): value is string =>
     typeof value === 'string';
 
 export const isStringArray = (value: any): value is string[] =>
-    isArray(value) && value.length > 0 && value.every(x => isString(x));
+    isArray(value) && value.length > 0 && value.every((x) => isString(x));
 
 export const isNumber = (value: any): value is number =>
     typeof value === 'number';
