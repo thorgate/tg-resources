@@ -17,7 +17,7 @@ import { mergeConfig } from './util';
 export function bindResources(routes: RouteMap, $this: RouterInterface) {
     const res: RouteMap = {};
 
-    Object.keys(routes).forEach(routeName => {
+    Object.keys(routes).forEach((routeName) => {
         if (
             !routes[routeName] ||
             !(
@@ -142,7 +142,7 @@ export class Router extends Route implements RouterInterface {
     public clearConfigCache() {
         this._config = null;
 
-        this._childKeys.forEach(key => {
+        this._childKeys.forEach((key) => {
             (this[key] as RouteInterface).clearConfigCache();
         });
     }

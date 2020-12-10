@@ -40,6 +40,7 @@
     "tg-resources": "^3.1.4"
   },
   "devDependencies": {
+    "@tg-resources/fetch-runtime": "^3.1.4",
     "@tg-resources/test-server": "^3.1.4"
   },
   "scripts": {

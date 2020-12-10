@@ -91,7 +91,7 @@ describe('RequestValidationError api', () => {
             new RequestValidationError(400),
         ];
 
-        toTest.forEach(element => {
+        toTest.forEach((element) => {
             expect(element.hasError()).toEqual(true);
         });
     });

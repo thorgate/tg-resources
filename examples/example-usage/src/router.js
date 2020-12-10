@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars, no-console */
+import '@tg-resources/fetch-runtime';
 import { listen, getHostUrl } from '@tg-resources/test-server';
 import { Router, parseErrors, prepareError } from 'tg-resources';
-import { SuperAgentResource as Resource } from '@tg-resources/superagent';
+import { FetchResource as Resource } from '@tg-resources/fetch';
 
 const server = listen(3005);
 

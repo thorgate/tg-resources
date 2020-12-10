@@ -101,8 +101,9 @@ export async function expectError(
 
             if (errorCls) {
                 expect(
-                    `${err} is not a subclass of ${errorCls}: ${err instanceof
-                        errorCls}`
+                    `${err} is not a subclass of ${errorCls}: ${
+                        err instanceof errorCls
+                    }`
                 ).toEqual(`${err} is not a subclass of ${errorCls}: true`);
             }
 

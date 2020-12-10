@@ -20,7 +20,7 @@ beforeEach(() => {
 describe('typeChecks api', () => {
     test('isArray works', () => {
         const testArgs = [[], {}, true, null];
-        testArgs.forEach(t => {
+        testArgs.forEach((t) => {
             if (isArray(t)) {
                 mockFn(t);
             }
@@ -47,7 +47,7 @@ describe('typeChecks api', () => {
             true,
             null,
         ];
-        testArgs.forEach(t => {
+        testArgs.forEach((t) => {
             if (hasValue(t)) {
                 mockFn(t);
             }
@@ -71,7 +71,7 @@ describe('typeChecks api', () => {
         // Testing type limiting
         const testArgs = [() => {}, () => null, null];
 
-        testArgs.forEach(t => {
+        testArgs.forEach((t) => {
             if (isFunction(t)) {
                 mockFn(t());
             }
@@ -96,7 +96,7 @@ describe('typeChecks api', () => {
 
     test('isObject works', () => {
         const testArgs = [{}, 'a', true, null, Object()];
-        testArgs.forEach(t => {
+        testArgs.forEach((t) => {
             if (isObject(t)) {
                 mockFn(t);
             }

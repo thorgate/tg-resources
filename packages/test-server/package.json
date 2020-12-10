@@ -26,9 +26,8 @@
     "lib"
   ],
   "dependencies": {
-    "body-parser": "^1.17.2",
     "cookie-parser": "^1.4.3",
-    "express": "^4.15.3",
+    "express": "^4.17.1",
     "multiparty": "*",
     "uuid": ">=7.0.0"
   },

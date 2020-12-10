@@ -1,8 +1,7 @@
 import fs from 'fs';
 
-import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import express, { Request } from 'express';
+import express from 'express';
 import multiparty from 'multiparty';
 import uuid from 'uuid';
 
@@ -35,11 +34,13 @@ const allDogs: Dog[] = [
 function configureServer(logger = false) {
     const app = express();
 
-    app.use(bodyParser.json()); // support json encoded bodies
-    app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+    app.use(express.raw()); // support text
+    app.use(express.text()); // support text
+    app.use(express.json()); // support json encoded bodies
+    app.use(express.urlencoded({ extended: true })); // support encoded bodies
     app.use(cookieParser());
 
-    app.use((req: Request, _0, next) => {
+    app.use((req, _0, next) => {
         if (logger) {
             // eslint-disable-next-line no-console
             console.log(`${req.method.toUpperCase()}: ${req.originalUrl}`);
@@ -127,7 +128,7 @@ function configureServer(logger = false) {
 
     app.patch('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
+        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
 
         if (dogIndex !== -1) {
             if (req.body.name) {
@@ -150,7 +151,7 @@ function configureServer(logger = false) {
 
     app.get('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
+        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
 
         if (dogIndex !== -1) {
             res.status(200).json(allDogs[dogIndex]);
@@ -163,7 +164,7 @@ function configureServer(logger = false) {
 
     app.delete('/dogs/:id', (req, res) => {
         const dogId = req.params.id;
-        const dogIndex = allDogs.findIndex(x => x.pk === dogId);
+        const dogIndex = allDogs.findIndex((x) => x.pk === dogId);
 
         if (dogIndex !== -1) {
             allDogs.splice(dogIndex, 1);

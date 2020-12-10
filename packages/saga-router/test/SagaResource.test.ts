@@ -1,3 +1,4 @@
+import '@tg-resources/fetch-runtime';
 import {
     AbortError,
     InvalidResponseCode,
@@ -23,17 +24,13 @@ import {
     expectResponse,
 } from './utils';
 
-const port = 3003;
-
-const hostUrl = getHostUrl(port);
-
+const hostUrl = getHostUrl(3003);
 let server: Server;
-
 let store: ReturnType<typeof configureStore>;
 
 beforeEach(() => {
     store = configureStore();
-    server = listen(port);
+    server = listen(3003);
 });
 
 afterEach(() => {

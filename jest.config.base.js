@@ -3,11 +3,15 @@
 const { defaults } = require('jest-config');
 
 const config = {
+    verbose: true,
     cache: false,
 
     collectCoverageFrom: ['src/**/*.{ts,tsx}', '!**/node_modules/**'],
 
-    transform: { '.(ts|tsx)': 'ts-jest' },
+    transform: {
+        '\.tsx?$': 'ts-jest',
+        '\.jsx?$': 'babel-jest',
+    },
 
     moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],
 

@@ -36,7 +36,7 @@
     "lib"
   ],
   "dependencies": {
-    "qs": "^6.5.2",
+    "qs": "^6.9.4",
     "tg-resources": "^3.1.4"
   },
   "devDependencies": {

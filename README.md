@@ -1,11 +1,10 @@
 # tg-resources
 
 [![NPM version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
+[![Build Status][ci-image]][ci-url]
 [![Dependency Status][depstat-image]][depstat-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Downloads][download-badge]][npm-url]
-[![Greenkeeper badge][greenkeeper-badge]][greenkeeper-url]
 
 > Abstractions on-top of `superagent` and `fetch` (or other Ajax libaries) for communication with REST.
 > Targeted mostly against `Django Rest Framework (DRF)` running on `Django` so some logic might not be applicable for
@@ -260,15 +259,15 @@ Do a `method` request to the resource endpoint with optional kwargs and query pa
 
 ### ``Resource.patch``
 
-Alias for `Resource.post(kwargs, data, query, requestConfig)` with `options` method.
+Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `patch` method.
 
 ### ``Resource.put``
 
-Alias for `Resource.post(kwargs, data, query, requestConfig)` with `put` method.
+Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `put` method.
 
 ### ``Resource.del``
 
-Alias for `Resource.post(kwargs, data, query, requestConfig)` with `del` method.
+Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `del` method.
 
 ### ``ResourceErrorInterface``
 
@@ -395,8 +394,8 @@ MIT © [Thorgate](http://github.com/thorgate)
 [npm-url]: https://npmjs.org/package/tg-resources
 [npm-image]: https://img.shields.io/npm/v/tg-resources.svg?style=flat-square
 
-[travis-url]: https://travis-ci.com/thorgate/tg-resources
-[travis-image]: https://img.shields.io/travis/thorgate/tg-resources.svg?style=flat-square
+[ci-url]: https://github.com/thorgate/tg-resources/actions
+[ci-image]: https://github.com/thorgate/tg-resources/workflows/.github/workflows/run-tests.yml/badge.svg?branch=master
 
 [depstat-url]: https://david-dm.org/thorgate/tg-resources
 [depstat-image]: https://david-dm.org/thorgate/tg-resources.svg?style=flat-square
@@ -405,6 +404,3 @@ MIT © [Thorgate](http://github.com/thorgate)
 [coveralls-image]: https://coveralls.io/repos/github/thorgate/tg-resources/badge.svg?branch=master
 
 [download-badge]: http://img.shields.io/npm/dm/tg-resources.svg?style=flat-square
-
-[greenkeeper-badge]: https://badges.greenkeeper.io/thorgate/tg-resources.svg
-[greenkeeper-url]: https://badges.greenkeeper.io/thorgate/tg-resources.svg
