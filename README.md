@@ -6,7 +6,7 @@
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Downloads][download-badge]][npm-url]
 
-> Abstractions on-top of `superagent` and `fetch` (or other Ajax libaries) for communication with REST.
+> Abstractions on-top of `superagent` and `fetch` (or other Ajax libraries) for communication with REST.
 > Targeted mostly against `Django Rest Framework (DRF)` running on `Django` so some logic might not be applicable for
 > other frameworks.
 
