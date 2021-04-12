@@ -2,13 +2,15 @@
   "name": "@tg-resources/is",
   "version": "3.1.4",
   "private": false,
+  "prettier": "@thorgate/prettier-config",
   "publishConfig": {
     "access": "public"
   },
   "description": "`tg-resources` internal type validation library",
-  "main": "lib/index.js",
-  "module": "lib/index.esm.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/is.esm.js",
+  "typings": "dist/index.d.ts",
+  "react-native": "dist/is.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -25,12 +27,15 @@
   },
   "bugs": "https://github.com/thorgate/tg-resources/issues",
   "files": [
-    "lib"
+    "dist",
+    "src"
   ],
   "scripts": {
-    "clean": "rimraf ./lib",
+    "clean": "rimraf ./dist",
+    "lint-show": "eslint --print-config ../../.eslintrc.js",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "build": "rollup -c=../../rollup.config.js",
+    "type-check": "dtslint --localTs ../../node_modules/typescript/lib --expectOnly type-checks",
+    "build": "tsdx build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

@@ -26,6 +26,8 @@ jobs:
           yarn bootstrap
       - name: Build package
         run: yarn build
+      - name: Run type-check
+        run: yarn type-check
       - name: Run tests
         run: yarn test:coverage
       - name: Check examples

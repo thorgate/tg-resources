@@ -1,4 +1,4 @@
-import '@tg-resources/fetch-runtime'
+import '@tg-resources/fetch-runtime';
 import { isObject } from '@tg-resources/is';
 import * as testServer from '@tg-resources/test-server';
 import 'jest-extended';

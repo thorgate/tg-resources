@@ -11,10 +11,13 @@ import { parseErrors, prepareError } from './ValidationError';
 
 export type ResponseText = string | boolean | undefined | any;
 
+export type ErrorType = ResourceErrorInterface | Error;
+
 export class AbortError extends ResourceErrorInterface {
     public readonly error: any;
 
     public readonly name: string;
+
     public readonly type: string;
 
     constructor(error: any) {
@@ -47,6 +50,7 @@ export class NetworkError extends ResourceErrorInterface {
 
 export class InvalidResponseCode extends ResourceErrorInterface {
     public readonly statusCode: number | null;
+
     public readonly responseText: ResponseText;
 
     constructor(
@@ -67,6 +71,7 @@ export class InvalidResponseCode extends ResourceErrorInterface {
 
 export class RequestValidationError extends InvalidResponseCode {
     protected _customConfig: RequestConfig;
+
     protected readonly _errors: ValidationErrorInterface | null;
 
     constructor(

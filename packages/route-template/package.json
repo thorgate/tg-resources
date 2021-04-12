@@ -1,0 +1,43 @@
+{
+  "name": "@tg-resources/route-template",
+  "version": "3.1.4",
+  "private": true,
+  "prettier": "@thorgate/prettier-config",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "",
+  "main": "dist/index.js",
+  "module": "dist/route-template.esm.js",
+  "typings": "dist/index.d.ts",
+  "react-native": "dist/route-template.esm.js",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jürno Ader <jyrno42@gmail.com> (https://github.com/Jyrno42)",
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-resources/tree/master/packages/template#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorgate/tg-resources.git"
+  },
+  "bugs": "https://github.com/thorgate/tg-resources/issues",
+  "keywords": [
+  ],
+  "files": [
+    "dist",
+    "src"
+  ],
+  "peerDependencies": {
+    "@tg-resources/is": "^3.1.4",
+    "lodash.template": "*"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
+    "type-check": "dtslint --localTs ../../node_modules/typescript/lib --expectOnly type-checks",
+    "build": "tsdx build",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}

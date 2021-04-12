@@ -2,14 +2,15 @@
   "name": "@tg-resources/fetch",
   "version": "3.1.4",
   "private": false,
+  "prettier": "@thorgate/prettier-config",
   "publishConfig": {
     "access": "public"
   },
   "description": "Fetch backend for `tg-resources`",
-  "main": "lib/index.js",
-  "module": "lib/index.esm.js",
-  "typings": "lib/index.d.ts",
-  "react-native": "lib/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/fetch.esm.js",
+  "typings": "dist/index.d.ts",
+  "react-native": "dist/fetch.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -33,19 +34,21 @@
     "fetch"
   ],
   "files": [
-    "lib"
+    "dist",
+    "src"
   ],
   "dependencies": {
     "qs": "^6.9.4",
-    "tg-resources": "^3.1.4"
+    "@tg-resources/core": "^3.1.4",
+    "@tg-resources/is": "^3.1.4"
   },
   "devDependencies": {
     "@tg-resources/fetch-runtime": "^3.1.4"
   },
   "scripts": {
-    "clean": "rimraf ./lib",
+    "clean": "rimraf ./dist",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "build": "rollup -c=../../rollup.config.js",
+    "build": "tsdx build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { listen } = require('../lib/index');
+const { listen } = require('../dist/index');
 
 const args = process.argv.slice(2);
 

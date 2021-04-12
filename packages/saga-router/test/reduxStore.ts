@@ -77,9 +77,9 @@ export function* SagaInitialized(saga: any): SagaIterator {
     yield putResolve(setResponse(response));
 }
 
-export function* RunnerWithError(saga: any) {
+export function* RunnerWithError(saga: Effect): SagaIterator {
     try {
-        const response = yield* saga;
+        const response = yield saga;
         yield putResolve(setResponse(response));
     } catch (err) {
         yield putResolve({ type: 'FAILED_API_RESPONSE', error: err });

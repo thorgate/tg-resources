@@ -22,14 +22,6 @@ const createPostEffect = (options: any = {}) =>
     call(resourceSagaRunner, resource, 'post', options);
 
 describe('resourceEffectFactory works', () => {
-    test('resourceEffectFactory :: initializeSaga=true', () => {
-        expect(() => {
-            resourceEffectFactory(sagaResource, 'fetch', {
-                requestConfig: { initializeSaga: true },
-            });
-        }).toThrow(/InitializeSaga is not supported/);
-    });
-
     test('resourceEffectFactory :: method=unknown', () => {
         expect(() => {
             resourceEffectFactory(sagaResource, 'unknown');

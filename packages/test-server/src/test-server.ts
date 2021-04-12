@@ -191,14 +191,12 @@ function configureServer(logger = false) {
     });
 
     app.get('/error400_nonField', (_0, res) => {
-        /* eslint-disable @typescript-eslint/camelcase */
         res.status(400).json({
             non_field_errors: ['Sup dog'],
         });
     });
 
     app.get('/errorNested', (_0, res) => {
-        /* eslint-disable @typescript-eslint/camelcase */
         res.status(400).json({
             a_number: ['A valid integer is required.'],
             list_of_things: [{}, { foo: ['A valid integer is required.'] }],

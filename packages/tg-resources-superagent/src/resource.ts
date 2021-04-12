@@ -1,9 +1,3 @@
-import { hasValue, isArray, isObject } from '@tg-resources/is';
-import request, {
-    Response,
-    ResponseError,
-    SuperAgentRequest,
-} from 'superagent';
 import {
     AllowedMethods,
     Attachments,
@@ -13,7 +7,13 @@ import {
     RequestConfig,
     Resource,
     ResponseInterface,
-} from 'tg-resources';
+} from '@tg-resources/core';
+import { hasValue, isArray, isObject } from '@tg-resources/is';
+import request, {
+    Response,
+    ResponseError,
+    SuperAgentRequest,
+} from 'superagent';
 
 export class SuperagentResponse extends ResponseInterface {
     public get response(): Optional<Response> {
@@ -159,7 +159,7 @@ export class SuperAgentResource extends Resource {
             }
         }
 
-        const signal = this.config(requestConfig).signal;
+        const { signal } = this.config(requestConfig);
         if (signal) {
             // This is not pretty, but it avoids the need to keep a memory of requests
             //  in the resource. Once the request ends the listener is cleaned up.

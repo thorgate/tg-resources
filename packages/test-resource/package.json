@@ -2,10 +2,11 @@
   "name": "@tg-resources/test-resource",
   "version": "3.1.4",
   "private": true,
+  "prettier": "@thorgate/prettier-config",
   "description": "",
-  "main": "lib/index.js",
-  "module": "lib/index.esm.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/test-resource.esm.js",
+  "typings": "dist/index.d.ts",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -19,15 +20,16 @@
   "bugs": "https://github.com/thorgate/tg-resources/issues",
   "keywords": [],
   "files": [
-    "lib"
+    "dist",
+    "src"
   ],
   "dependencies": {
     "tg-resources": "^3.1.4"
   },
   "scripts": {
-    "clean": "rimraf ./lib",
+    "clean": "rimraf ./dist",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "build": "rollup -c=../../rollup.config.js",
+    "build": "tsdx build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

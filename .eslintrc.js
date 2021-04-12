@@ -1,21 +1,10 @@
 // @ts-check
 
 module.exports = {
+    extends: ['@thorgate/eslint-config-typescript'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
-        project: './packages/**/tsconfig.eslint.json'
-    },
-    extends: [
-        'eslint:recommended',
-        'plugin:prettier/recommended',
-        'plugin:@typescript-eslint/recommended',
-        'plugin:react/recommended',
-    ],
-    plugins: ['prettier', '@typescript-eslint', 'react', 'react-hooks'],
-    settings: {
-        react: {
-            version: '16.12',
-        },
+        project: ['./tsconfig.eslint.json', './packages/**/tsconfig.json'],
     },
     env: {
         es6: true,
@@ -24,16 +13,12 @@ module.exports = {
         jest: true,
     },
     rules: {
-        'no-console': 'warn',
-
         'prettier/prettier': 'error',
 
+        'no-underscore-dangle': 'off',
+        'max-classes-per-file': 'off',
         '@typescript-eslint/no-explicit-any': 'off', // warn
         '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/camelcase': [
-            'error',
-            { allow: ['non_field_errors'] },
-        ],
         '@typescript-eslint/no-unused-vars': [
             'error',
             { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
