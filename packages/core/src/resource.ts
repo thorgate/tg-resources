@@ -1,5 +1,5 @@
 import { hasValue, isFunction, isObject, isStatusCode } from '@tg-resources/is';
-import renderTemplate from 'lodash.template';
+import lodashTemplate from 'lodash.template';
 
 import DEFAULTS from './constants';
 import {
@@ -32,10 +32,15 @@ export abstract class Resource extends Route implements ResourceInterface {
      */
     public constructor(apiEndpoint: string, config: RouteConfig = null) {
         super(config);
+        const interpolate = /\$?{([\s\S]+?)}/g;
+
         this._apiEndpoint = apiEndpoint;
+        this._routeTemplate = lodashTemplate(apiEndpoint, { interpolate });
     }
 
     private readonly _apiEndpoint: string;
+
+    private readonly _routeTemplate: ReturnType<typeof lodashTemplate>;
 
     public get apiEndpoint() {
         return this._apiEndpoint;
@@ -92,44 +97,40 @@ export abstract class Resource extends Route implements ResourceInterface {
         };
     }
 
-    public fetch = <R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
-        query?: Query | null,
-        requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._fetch<R, Params>(kwargs, query, requestConfig, 'get');
-    };
+    public fetch = <R = any, Params extends Kwargs | null = Kwargs>(
+        kwargs: Params | null = null,
+        query: Query | null = null,
+        requestConfig: RequestConfig | null = null
+    ): Promise<R> | any => this._fetch(kwargs, query, requestConfig, 'get');
 
-    public head = <R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
-        query?: Query | null,
-        requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
+    public head = <R = any, Params extends Kwargs | null = Kwargs>(
+        kwargs: Params | null = null,
+        query: Query | null = null,
+        requestConfig: RequestConfig | null = null
+    ): Promise<R> | any =>
         // istanbul ignore next: Tested in package that implement Resource
-        return this._fetch<R, Params>(kwargs, query, requestConfig, 'head');
-    };
+        this._fetch<R, Params>(kwargs, query, requestConfig, 'head');
 
-    public options = <R = any, Params extends Kwargs<Params> = {}>(
-        kwargs?: Params | null,
-        query?: Query | null,
-        requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
+    public options = <R = any, Params extends Kwargs | null = Kwargs>(
+        kwargs: Params | null = null,
+        query: Query | null = null,
+        requestConfig: RequestConfig | null = null
+    ): Promise<R> | any =>
         // istanbul ignore next: Tested in package that implement Resource
-        return this._fetch<R, Params>(kwargs, query, requestConfig, 'options');
-    };
+        this._fetch<R, Params>(kwargs, query, requestConfig, 'options');
 
     public post = <
         R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
-        query?: Query | null,
-        attachments?: Attachments | null,
-        requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._post<R, D, Params>(
+        kwargs: Params | null = null,
+        data: D | string | null = null,
+        query: Query | null = null,
+        attachments: Attachments | null = null,
+        requestConfig: RequestConfig | null = null
+    ): Promise<R> | any =>
+        this._post<R, D, Params>(
             kwargs,
             data,
             query,
@@ -137,20 +138,19 @@ export abstract class Resource extends Route implements ResourceInterface {
             requestConfig,
             'post'
         );
-    };
 
     public patch = <
         R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
-        query?: Query | null,
-        attachments?: Attachments | null,
-        requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._post<R, D, Params>(
+        kwargs: Params | null = null,
+        data: D | string | null = null,
+        query: Query | null = null,
+        attachments: Attachments | null = null,
+        requestConfig: RequestConfig | null = null
+    ): Promise<R> | any =>
+        this._post<R, D, Params>(
             kwargs,
             data,
             query,
@@ -158,20 +158,19 @@ export abstract class Resource extends Route implements ResourceInterface {
             requestConfig,
             'patch'
         );
-    };
 
     public put = <
         R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
-        query?: Query | null,
-        attachments?: Attachments | null,
-        requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._post<R, D, Params>(
+        kwargs: Params | null = null,
+        data: D | string | null = null,
+        query: Query | null = null,
+        attachments: Attachments | null = null,
+        requestConfig: RequestConfig | null = null
+    ): Promise<R> | any =>
+        this._post<R, D, Params>(
             kwargs,
             data,
             query,
@@ -179,20 +178,19 @@ export abstract class Resource extends Route implements ResourceInterface {
             requestConfig,
             'put'
         );
-    };
 
     public del = <
         R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
-        query?: Query | null,
-        attachments?: Attachments | null,
-        requestConfig?: RequestConfig | null
-    ): Promise<R> | any => {
-        return this._post<R, D, Params>(
+        kwargs: Params | null = null,
+        data: D | string | null = null,
+        query: Query | null = null,
+        attachments: Attachments | null = null,
+        requestConfig: RequestConfig | null = null
+    ): Promise<R> | any =>
+        this._post<R, D, Params>(
             kwargs,
             data,
             query,
@@ -200,9 +198,8 @@ export abstract class Resource extends Route implements ResourceInterface {
             requestConfig,
             'del'
         );
-    };
 
-    public renderPath<Params extends Kwargs<Params> = {}>(
+    public renderPath<Params extends Kwargs | null = Kwargs>(
         urlParams: Params | null = null,
         requestConfig: RequestConfig = null
     ): string {
@@ -211,7 +208,7 @@ export abstract class Resource extends Route implements ResourceInterface {
 
         // istanbul ignore next: Tested in package that implement Resource
         if (isObject(urlParams)) {
-            thePath = renderTemplate(this.apiEndpoint)(urlParams);
+            thePath = this._routeTemplate(urlParams);
         }
 
         return `${config.apiRoot}${thePath}`;
@@ -224,11 +221,13 @@ export abstract class Resource extends Route implements ResourceInterface {
         error: any,
         req?: any
     ): ResponseInterface;
+
     protected abstract setHeader(
         req: any,
         key: string,
         value: string | null
     ): any;
+
     protected abstract createRequest<D extends ObjectMap = any>(
         method: string,
         url: string,
@@ -237,12 +236,13 @@ export abstract class Resource extends Route implements ResourceInterface {
         attachments: Attachments,
         requestConfig: RequestConfig
     ): any;
+
     protected abstract doRequest(
         req: any,
         resolve: (response: any, error: any) => void
     ): void;
 
-    protected _fetch<R = any, Params extends Kwargs<Params> = {}>(
+    protected _fetch<R = any, Params extends Kwargs | null = Kwargs>(
         kwargs: Params | null = null,
         query: Query | null = null,
         requestConfig: RequestConfig | null = null,
@@ -265,7 +265,7 @@ export abstract class Resource extends Route implements ResourceInterface {
     protected _post<
         R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
         kwargs: Params | null = null,
         data: D | string | null = null,
@@ -360,6 +360,7 @@ export abstract class Resource extends Route implements ResourceInterface {
                 if (headers && isObject(headers)) {
                     Object.keys(headers).forEach((key) => {
                         if (hasValue(headers[key])) {
+                            // eslint-disable-next-line no-param-reassign
                             req = this.setHeader(req, key, headers[key]);
                         }
                     });
@@ -391,6 +392,7 @@ export abstract class Resource extends Route implements ResourceInterface {
 
                 if (isStatusCode(config.statusValidationError, res.status)) {
                     // Got statusValidationError response code, lets throw RequestValidationError
+                    // eslint-disable-next-line @typescript-eslint/no-throw-literal
                     throw this.mutateError(
                         new RequestValidationError(
                             res.status,
@@ -402,6 +404,7 @@ export abstract class Resource extends Route implements ResourceInterface {
                     );
                 } else {
                     // Throw a InvalidResponseCode error
+                    // eslint-disable-next-line @typescript-eslint/no-throw-literal
                     throw this.mutateError(
                         new InvalidResponseCode(res.status, res.text),
                         res,
@@ -423,6 +426,7 @@ export abstract class Resource extends Route implements ResourceInterface {
                     );
                 }
 
+                // eslint-disable-next-line @typescript-eslint/no-throw-literal
                 throw this.mutateError(error, res, requestConfig);
             }
         });

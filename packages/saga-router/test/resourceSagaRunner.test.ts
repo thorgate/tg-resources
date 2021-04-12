@@ -1,10 +1,9 @@
 import { DummyResource as Resource } from '@tg-resources/test-resource';
 import { SagaIterator } from 'redux-saga';
 import { put } from 'redux-saga/effects';
-import { NetworkError, ResourceInterface } from 'tg-resources';
+import { ErrorType, NetworkError, ResourceInterface } from 'tg-resources';
 
 import {
-    ErrorType,
     OnRequestError,
     resourceSagaRunner,
     ResourceSagaRunnerConfig,
@@ -25,7 +24,6 @@ onRequestError = function* onError(
 
 const config = {
     apiRoot: '/api',
-    initializeSaga: true,
     mutateRequestConfig: addRequestConfig,
     onRequestError,
 };

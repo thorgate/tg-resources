@@ -2,13 +2,15 @@
   "name": "<%PACKAGE_NAME%>",
   "version": "<%VERSION%>",
   "private": false,
+  "prettier": "@thorgate/prettier-config",
   "publishConfig": {
     "access": "public"
   },
   "description": "",
-  "main": "lib/index.js",
-  "module": "lib/index.esm.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/<%PACKAGE_NAME_SAFE%>.esm.js",
+  "typings": "dist/index.d.ts",
+  "react-native": "dist/<%PACKAGE_NAME_SAFE%>.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -27,12 +29,13 @@
   "keywords": [
   ],
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "scripts": {
-    "clean": "rimraf ./lib",
+    "clean": "rimraf ./dist",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "build": "rollup -c=../../rollup.config.js",
+    "build": "tsdx build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

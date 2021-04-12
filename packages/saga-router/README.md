@@ -175,7 +175,6 @@ This package adds extra configuration methods for `Router` and `Resource`.
                                    This is useful for setting authentication token to the api request. 
 - ``onRequestError`` *(Function)*: Optional function with signature `(error: ErrorType, resource: Resource, options: ResourceSagaRunnerConfig) => void | SagaIterator`.
                                    This can be used to handle Sentry missing error handling.
-- ``initializeSaga`` *(bool)*: **Advanced usage:** Initialize Saga iterator. This option disables usage of ``call`` effect.
 - ``signal`` *(AbortSignal|null)*: **Advanced usage:** Manually provide signal to abort request. If it is not provided then AbortController is created internally and triggered when task is cancelled.
 
 For additional configuration, see [Configuration](https://github.com/thorgate/tg-resources/tree/master/README.md#configuration).
@@ -192,8 +191,6 @@ Construct a new resource for loading data from a single (or dynamic) endpoint
 1. `apiEndpoint` *(string)*: Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
 2. `config` *(Object)*: Object containing config for this resource. see [Configuration](#configuration)
 3. `resourceKlass` *(Object)*: Resource backend class used for providing [resource API](https://github.com/thorgate/tg-resources/tree/master/README.md#resource-api) for this endpoint.
-
-All methods return `call` effect or `Iterator` (on `initializeSaga=true`) which yields api response or throw error if anything went wrong with api call.
 
 
 For additional information, see [resource api](https://github.com/thorgate/tg-resources/tree/master/README.md#resource-api).

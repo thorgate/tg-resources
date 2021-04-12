@@ -53,13 +53,16 @@ export type CreateResourceFactory = <Klass extends Resource>(
 ) => any;
 
 export const createResource: CreateResourceFactory = <Klass extends Resource>(
-    resourceKlass: ResourceClassConstructor<Klass>,
+    ResourceKlass: ResourceClassConstructor<Klass>,
     apiEndpoint: string,
     config?: RouteConfig,
     _0?: ObjectMap
-): Klass => new resourceKlass(apiEndpoint, config);
+): Klass => new ResourceKlass(apiEndpoint, config);
 
-export function createRouter<Klass extends Resource, T extends ObjectMap = {}>(
+export function createRouter<
+    Klass extends Resource,
+    T extends ObjectMap = Record<string, unknown>
+>(
     routes: T,
     config: RouteConfig,
     resourceKlass: ResourceClassConstructor<Klass>,

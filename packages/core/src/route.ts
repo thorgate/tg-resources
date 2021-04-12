@@ -9,8 +9,11 @@ import {
 
 export abstract class Route implements RouteInterface {
     protected _customConfig: RouteConfig = null;
+
     protected _routeName = '';
+
     protected _parent: RouterInterface | null = null;
+
     protected _config: RequestConfig = null;
 
     protected constructor(config: RouteConfig = null) {
@@ -87,5 +90,6 @@ export abstract class Route implements RouteInterface {
     public abstract clearConfigCache(): void;
 
     public abstract getHeaders(): ObjectMap<string | null>;
+
     public abstract getCookies(): ObjectMap<string | null>;
 }

@@ -13,7 +13,7 @@ import { isSagaResource, SagaResource } from './SagaResource';
 import { ResourceSagaRunnerConfig, SagaRequestConfig } from './types';
 
 export interface EffectCreatorOptions<
-    Params extends Kwargs<Params> = {},
+    Params extends Kwargs | null = Kwargs,
     D extends ObjectMap = any
 > extends ResourceSagaRunnerConfig<Params, D> {
     requestConfig?: RequestConfig | SagaRequestConfig | null;
@@ -22,7 +22,6 @@ export interface EffectCreatorOptions<
 /**
  * Create Redux-Saga effect for Resource or SagaResource.
  *  This useful for library authors to simpler interface either of the resources.
- *  This does not work with {@link SagaConfigType.initializeSaga} enabled.
  *
  * @param resource SagaResource or Resource backend class
  * @param method Valid resource fetch or post like method name.
@@ -30,7 +29,7 @@ export interface EffectCreatorOptions<
  */
 export const resourceEffectFactory = <
     Klass extends Resource,
-    Params extends Kwargs<Params> = {},
+    Params extends Kwargs = Kwargs,
     D extends ObjectMap = any
 >(
     resource: Klass | SagaResource<Klass>,
@@ -38,19 +37,15 @@ export const resourceEffectFactory = <
     options: EffectCreatorOptions<Params, D> = {}
 ) => {
     if (isSagaResource(resource)) {
-        if (resource.config(options.requestConfig).initializeSaga) {
-            throw new Error(
-                'Misconfiguration: InitializeSaga is not supported'
-            );
-        }
-
         if (isFetchMethod(method)) {
             return resource[method](
                 options.kwargs,
                 options.query,
                 options.requestConfig
             );
-        } else if (isPostMethod(method)) {
+        }
+
+        if (isPostMethod(method)) {
             return resource[method](
                 options.kwargs,
                 options.data,

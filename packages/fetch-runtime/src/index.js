@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 require('cross-fetch/polyfill');
 require('abortcontroller-polyfill/dist/abortcontroller-polyfill-only');
 

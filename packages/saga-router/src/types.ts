@@ -2,22 +2,20 @@ import { SagaIterator } from '@redux-saga/types';
 import {
     Attachments,
     ConfigType,
+    ErrorType,
     Kwargs,
     ObjectMap,
     Optional,
     OptionalMap,
     Query,
-    ResourceErrorInterface,
     ResourceInterface,
     RouteConfigType,
 } from '@tg-resources/core';
 
 export interface SagaConfigTypeBase {
-    initializeSaga: boolean;
+    mutateRequestConfig?: MutatedRequestConfigFn<any> | null;
 
-    mutateRequestConfig?: MutatedRequestConfigFn | null;
-
-    onRequestError?: OnRequestError | null;
+    onRequestError?: OnRequestError<any> | null;
 }
 
 export interface SagaRouteConfigType
@@ -30,7 +28,7 @@ export type SagaRouteConfig = Optional<OptionalMap<SagaRouteConfigType>>;
 export type SagaRequestConfig = Optional<OptionalMap<SagaConfigType>>;
 
 export interface ResourceSagaRunnerConfig<
-    Params extends Kwargs<Params> = {},
+    Params extends Kwargs | null = Kwargs,
     D extends ObjectMap = any
 > {
     kwargs?: Params | null;
@@ -40,10 +38,8 @@ export interface ResourceSagaRunnerConfig<
     attachments?: Attachments | null;
 }
 
-export type ErrorType = ResourceErrorInterface | Error;
-
 export type OnRequestError<
-    Params extends Kwargs<Params> = {},
+    Params extends Kwargs | null = Kwargs,
     D extends ObjectMap = any
 > = (
     error: ErrorType,
@@ -52,7 +48,7 @@ export type OnRequestError<
 ) => void | SagaIterator;
 
 export type MutatedRequestConfigFn<
-    Params extends Kwargs<Params> = {},
+    Params extends Kwargs | null = Kwargs,
     D extends ObjectMap = any
 > = (
     requestConfig: SagaRequestConfig | undefined,

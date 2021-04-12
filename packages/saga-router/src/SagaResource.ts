@@ -9,7 +9,7 @@ import {
     ResourcePostMethods,
     RouterInterface,
 } from '@tg-resources/core';
-import { call } from 'redux-saga/effects';
+import { call, CallEffect } from 'redux-saga/effects';
 
 import { DEFAULT_CONFIG } from './constants';
 import { resourceSagaRunner } from './resourceSagaRunner';
@@ -31,24 +31,17 @@ export function isSagaResource<Klass extends Resource>(
     );
 }
 
-export function isSagaResourceInitialized(
-    obj: any,
-    config: SagaRequestConfig
-): boolean {
-    return isSagaResource(obj) && obj.config(config).initializeSaga;
-}
-
 export class SagaResource<Klass extends Resource> extends Resource {
     public constructor(
         apiEndpoint: string,
         config: SagaRouteConfig = null,
-        resourceKlass: new (
+        ResourceKlass: new (
             apiEndpoint: string,
             config?: RequestConfig
         ) => Klass
     ) {
         super(apiEndpoint, config as Pick<typeof config, keyof RequestConfig>);
-        this._resource = new resourceKlass(
+        this._resource = new ResourceKlass(
             apiEndpoint,
             config as Pick<typeof config, keyof RequestConfig>
         );
@@ -117,56 +110,37 @@ export class SagaResource<Klass extends Resource> extends Resource {
     }
 
     /* Public API */
-    public fetch = <Params extends Kwargs<Params> = {}>(
+    public fetch = <R = any, Params extends Kwargs | null = Kwargs>(
         kwargs?: Params | null,
         query?: Query | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => {
-        return this._sagaFetch<Params | null | undefined>(
-            'fetch',
-            kwargs,
-            query,
-            sagaRequestConfig
-        );
-    };
+    ) => this._sagaFetch<R, Params>('fetch', kwargs, query, sagaRequestConfig);
 
-    public head = <Params extends Kwargs<Params> = {}>(
+    public head = <R = any, Params extends Kwargs | null = Kwargs>(
         kwargs?: Params | null,
         query?: Query | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => {
-        return this._sagaFetch<Params | null | undefined>(
-            'head',
-            kwargs,
-            query,
-            sagaRequestConfig
-        );
-    };
+    ) => this._sagaFetch<R, Params>('head', kwargs, query, sagaRequestConfig);
 
-    public options = <Params extends Kwargs<Params> = {}>(
+    public options = <R = any, Params extends Kwargs | null = Kwargs>(
         kwargs?: Params | null,
         query?: Query | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => {
-        return this._sagaFetch<Params | null | undefined>(
-            'options',
-            kwargs,
-            query,
-            sagaRequestConfig
-        );
-    };
+    ) =>
+        this._sagaFetch<R, Params>('options', kwargs, query, sagaRequestConfig);
 
     public post = <
+        R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
         kwargs?: Params | null,
         data?: D | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => {
-        return this._sagaPost<D, Params>(
+    ) =>
+        this._sagaPost<R, D, Params>(
             'post',
             kwargs,
             data,
@@ -174,19 +148,19 @@ export class SagaResource<Klass extends Resource> extends Resource {
             attachments,
             sagaRequestConfig
         );
-    };
 
     public patch = <
+        R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
         kwargs?: Params | null,
         data?: D | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => {
-        return this._sagaPost<D, Params>(
+    ) =>
+        this._sagaPost<R, D, Params>(
             'patch',
             kwargs,
             data,
@@ -194,19 +168,19 @@ export class SagaResource<Klass extends Resource> extends Resource {
             attachments,
             sagaRequestConfig
         );
-    };
 
     public put = <
+        R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
         kwargs?: Params | null,
         data?: D | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => {
-        return this._sagaPost<D, Params>(
+    ) =>
+        this._sagaPost<R, D, Params>(
             'put',
             kwargs,
             data,
@@ -214,19 +188,19 @@ export class SagaResource<Klass extends Resource> extends Resource {
             attachments,
             sagaRequestConfig
         );
-    };
 
     public del = <
+        R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
         kwargs?: Params | null,
         data?: D | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => {
-        return this._sagaPost<D, Params>(
+    ) =>
+        this._sagaPost<R, D, Params>(
             'del',
             kwargs,
             data,
@@ -234,34 +208,26 @@ export class SagaResource<Klass extends Resource> extends Resource {
             attachments,
             sagaRequestConfig
         );
-    };
 
-    protected _sagaFetch<Params extends Kwargs<Params> = {}>(
+    protected _sagaFetch<R = any, Params extends Kwargs | null = Kwargs>(
         method: ResourceFetchMethods,
         kwargs: Params | null = null,
         query: Query | null = null,
         sagaRequestConfig: SagaRequestConfig | null = null
-    ) {
+    ): CallEffect<R> {
         const runnerOptions: ResourceSagaRunnerConfig<Params> = {
             kwargs,
             query,
             requestConfig: sagaRequestConfig,
         };
 
-        if (this.config(sagaRequestConfig).initializeSaga) {
-            return resourceSagaRunner<Params>(
-                this.resource,
-                method,
-                runnerOptions
-            );
-        }
-
         return call(resourceSagaRunner, this.resource, method, runnerOptions);
     }
 
     protected _sagaPost<
+        R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
         method: ResourcePostMethods,
         kwargs: Params | null = null,
@@ -269,7 +235,7 @@ export class SagaResource<Klass extends Resource> extends Resource {
         query: Query | null = null,
         attachments: Attachments | null = null,
         sagaRequestConfig: SagaRequestConfig | null = null
-    ) {
+    ): CallEffect<R> {
         const runnerOptions: ResourceSagaRunnerConfig<Params, D> = {
             kwargs,
             data,
@@ -277,14 +243,6 @@ export class SagaResource<Klass extends Resource> extends Resource {
             attachments,
             requestConfig: sagaRequestConfig,
         };
-
-        if (this.config(sagaRequestConfig).initializeSaga) {
-            return resourceSagaRunner<Params>(
-                this.resource,
-                method,
-                runnerOptions
-            );
-        }
 
         return call(resourceSagaRunner, this.resource, method, runnerOptions);
     }

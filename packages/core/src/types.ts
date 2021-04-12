@@ -4,7 +4,7 @@ export type OptionalMap<T> = {
     [K in keyof T]?: T[K];
 };
 
-export type Kwargs<KW> = { [K in keyof KW]?: string | undefined };
+export type Kwargs = Record<string, string | number | undefined>;
 
 export interface ObjectMap<T = any> {
     [key: string]: T;
@@ -266,7 +266,7 @@ export interface RouterInterface extends RouteInterface {
     [key: string]: ResourceInterface | RouterInterface | any;
 }
 
-export type ResourceFetchMethod<R = any, Params extends Kwargs<Params> = {}> = (
+export type ResourceFetchMethod<R = any, Params extends Kwargs = Kwargs> = (
     kwargs?: Params | null,
     query?: Query | null,
     requestConfig?: RequestConfig | null
@@ -275,7 +275,7 @@ export type ResourceFetchMethod<R = any, Params extends Kwargs<Params> = {}> = (
 export type ResourcePostMethod<
     R = any,
     D extends ObjectMap = any,
-    Params extends Kwargs<Params> = {}
+    Params extends Kwargs = Kwargs
 > = (
     kwargs?: Params | null,
     data?: D | string | null,
@@ -289,17 +289,17 @@ export interface ResourceInterface extends RouteInterface {
 
     config(requestConfig?: RequestConfig): ConfigType;
 
-    fetch<R = any, Params extends Kwargs<Params> = {}>(
+    fetch<R = any, Params extends Kwargs | null = Kwargs>(
         kwargs?: Params | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
     ): Promise<R> | any;
-    head<R = any, Params extends Kwargs<Params> = {}>(
+    head<R = any, Params extends Kwargs | null = Kwargs>(
         kwargs?: Params | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
     ): Promise<R> | any;
-    options<R = any, Params extends Kwargs<Params> = {}>(
+    options<R = any, Params extends Kwargs | null = Kwargs>(
         kwargs?: Params | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
@@ -308,7 +308,7 @@ export interface ResourceInterface extends RouteInterface {
     post<
         R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
         kwargs?: Params | null,
         data?: D | string | null,
@@ -319,7 +319,7 @@ export interface ResourceInterface extends RouteInterface {
     patch<
         R = any,
         D extends ObjectMap = any,
-        Params extends Kwargs<Params> = {}
+        Params extends Kwargs | null = Kwargs
     >(
         kwargs?: Params | null,
         data?: D | string | null,
@@ -327,14 +327,22 @@ export interface ResourceInterface extends RouteInterface {
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
     ): Promise<R> | any;
-    put<R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
+    put<
+        R = any,
+        D extends ObjectMap = any,
+        Params extends Kwargs | null = Kwargs
+    >(
         kwargs?: Params | null,
         data?: D | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
     ): Promise<R> | any;
-    del<R = any, D extends ObjectMap = any, Params extends Kwargs<Params> = {}>(
+    del<
+        R = any,
+        D extends ObjectMap = any,
+        Params extends Kwargs | null = Kwargs
+    >(
         kwargs?: Params | null,
         data?: D | string | null,
         query?: Query | null,
@@ -342,7 +350,7 @@ export interface ResourceInterface extends RouteInterface {
         requestConfig?: RequestConfig | null
     ): Promise<R> | any;
 
-    renderPath<Params extends Kwargs<Params> = {}>(
+    renderPath<Params extends Kwargs | null = Kwargs>(
         urlParams?: Params | null,
         requestConfig?: RequestConfig | null
     ): string;
@@ -424,6 +432,8 @@ export abstract class ResponseInterface {
     public abstract get wasAborted(): boolean;
 
     protected readonly _response: Optional<any>;
+
     protected readonly _error: Optional<any>;
+
     protected readonly _request: Optional<any>;
 }

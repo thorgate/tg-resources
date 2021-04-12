@@ -2,14 +2,15 @@
   "name": "@tg-resources/core",
   "version": "3.1.4",
   "private": false,
+  "prettier": "@thorgate/prettier-config",
   "publishConfig": {
     "access": "public"
   },
   "description": "Abstractions on-top of `superagent` (or other Ajax libaries) for communication with REST.",
-  "main": "lib/index.js",
-  "module": "lib/index.esm.js",
-  "typings": "lib/index.d.ts",
-  "react-native": "lib/index.esm.js",
+  "main": "dist/index.js",
+  "module": "dist/core.esm.js",
+  "typings": "dist/index.d.ts",
+  "react-native": "dist/core.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -32,7 +33,8 @@
     "ajax"
   ],
   "files": [
-    "lib"
+    "dist",
+    "src"
   ],
   "peerDependencies": {
     "lodash.template": "*"
@@ -42,9 +44,10 @@
     "cookie": ">=0.3.1"
   },
   "scripts": {
-    "clean": "rimraf ./lib",
+    "clean": "rimraf ./dist",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "build": "rollup -c=../../rollup.config.js",
+    "type-check": "dtslint --localTs ../../node_modules/typescript/lib --expectOnly type-checks",
+    "build": "tsdx build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

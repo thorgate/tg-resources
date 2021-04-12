@@ -2,13 +2,15 @@
   "name": "@tg-resources/redux-saga-router",
   "version": "3.1.4",
   "private": false,
+  "prettier": "@thorgate/prettier-config",
   "publishConfig": {
     "access": "public"
   },
   "description": "Redux-Saga `tg-resource` support backend",
-  "main": "lib/index.js",
-  "module": "lib/index.esm.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/redux-saga-router.esm.js",
+  "typings": "dist/index.d.ts",
+  "react-native": "dist/redux-saga-router.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -32,10 +34,11 @@
     "redux-saga"
   ],
   "files": [
-    "lib"
+    "dist",
+    "src"
   ],
   "peerDependencies": {
-    "redux-saga": "^1.1.1"
+    "redux-saga": "^1.1.3"
   },
   "dependencies": {
     "@tg-resources/core": "^3.1.4",
@@ -48,9 +51,9 @@
     "@tg-resources/test-server": "^3.1.4"
   },
   "scripts": {
-    "clean": "rimraf ./lib",
+    "clean": "rimraf ./dist",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "build": "rollup -c=../../rollup.config.js",
+    "build": "tsdx build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

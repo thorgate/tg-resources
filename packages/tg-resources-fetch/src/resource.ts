@@ -1,5 +1,3 @@
-import { hasValue, isArray, isObject, isString } from '@tg-resources/is';
-import qs from 'qs';
 import {
     AllowedMethods,
     Attachments,
@@ -9,7 +7,9 @@ import {
     RequestConfig,
     Resource,
     ResponseInterface,
-} from 'tg-resources';
+} from '@tg-resources/core';
+import { hasValue, isArray, isObject, isString } from '@tg-resources/is';
+import qs from 'qs';
 
 interface HeadersObject {
     [key: string]: any;
@@ -39,6 +39,7 @@ export class FetchResponse extends ResponseInterface {
 
     public get statusType() {
         if (this.status) {
+            // eslint-disable-next-line no-bitwise
             return (this.status / 100) | 0;
         }
 
@@ -233,6 +234,7 @@ export class FetchResource extends Resource {
 
         let theUrl = url;
         if (query) {
+            // eslint-disable-next-line prefer-destructuring
             const querySerializeOptions:
                 | qs.IStringifyOptions
                 | undefined = this.config(requestConfig).querySerializeOptions;
@@ -244,7 +246,7 @@ export class FetchResource extends Resource {
             credentials = 'include';
         }
 
-        const signal = this.config(requestConfig).signal;
+        const { signal } = this.config(requestConfig);
 
         const req = new Request(theUrl, {
             method: parseMethod(method),

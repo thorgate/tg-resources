@@ -31,12 +31,21 @@ function createFileFromTemplate(fileName, src, dest, values = null) {
     fs.writeFileSync(join(dest, fileName), data, { encoding: 'utf-8' });
 }
 
+function cleanPackageName(name) {
+    return name
+        .toLowerCase()
+        .replace(/(^@.*\/)|((^[^a-zA-Z]+)|[^\w.-])|([^a-zA-Z0-9]+$)/g, '');
+}
+
 console.log(`Creating "${packageName}" from template`);
 fs.mkdirSync(destDir);
+
+console.log(cleanPackageName(packageName));
 
 const values = {
     '<%VERSION%>': lernaCfg.version,
     '<%PACKAGE_NAME%>': packageName,
+    '<%PACKAGE_NAME_SAFE%>': cleanPackageName(packageName),
     '<%DIR_NAME%>': destinationDirName,
 };
 

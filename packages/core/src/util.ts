@@ -62,6 +62,7 @@ export function truncate(value: any, limit: number) {
 
     /* istanbul ignore else: safeguard */
     if (!isString(value)) {
+        // eslint-disable-next-line no-param-reassign
         value = `${value}`;
     }
 

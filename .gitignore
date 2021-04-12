@@ -3,6 +3,7 @@ logs
 *.log
 node_modules
 lib
+dist
 .release
 tmp
 coverage
@@ -10,3 +11,4 @@ npm-debug.log
 .vscode
 .idea/
 .nvmrc
+scripts/

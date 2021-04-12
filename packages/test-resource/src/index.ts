@@ -51,14 +51,21 @@ export class DummyResponse extends ResponseInterface {
 
 class DummyRequest {
     public readonly method: string;
+
     public readonly url: string;
+
     public readonly query: Query;
+
     public readonly data: any;
+
     public readonly attachments: Attachments;
+
     public readonly requestConfig: RequestConfig;
 
     public Data: any = null;
+
     public Error: any = null;
+
     public headers: ObjectMap;
 
     constructor(
@@ -91,6 +98,7 @@ class DummyRequest {
 
 export class DummyResource extends Resource {
     public Data: any = null;
+
     public Error: any = null;
 
     public wrapResponse<Req, Res, Err>(

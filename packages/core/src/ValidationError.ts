@@ -382,7 +382,7 @@ export function prepareError(err: any, parentConfig: ConfigType) {
 
     // Everything else gets turned into a string (bools, numbers, binary)
     // Note: Empty string means there is no error
-    err = `${err}`;
+    err = `${err}`; // eslint-disable-line no-param-reassign
 
     // istanbul ignore else: only custom classes w/ custom toString
     if (err) {

@@ -80,7 +80,9 @@ export function bindResources(routes: RouteMap, $this: RouterInterface) {
 
 export class Router extends Route implements RouterInterface {
     public static defaultRoutes: Optional<RouteMap> = null;
+
     public static defaultConfig: RouteConfig = null;
+
     public _childKeys: string[] = [];
 
     [key: string]: ResourceInterface | RouterInterface | any;
@@ -91,7 +93,7 @@ export class Router extends Route implements RouterInterface {
     ) {
         super(config);
 
-        const defaultRoutes = (this.constructor as typeof Router).defaultRoutes;
+        const { defaultRoutes } = this.constructor as typeof Router;
 
         this._childKeys = [];
 

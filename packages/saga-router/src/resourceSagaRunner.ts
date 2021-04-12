@@ -12,7 +12,7 @@ import { call, cancelled } from 'redux-saga/effects';
 import { ResourceSagaRunnerConfig, SagaConfigType } from './types';
 
 export function* resourceSagaRunner<
-    Params extends Kwargs<Params> = {},
+    Params extends Kwargs | null = Kwargs,
     D extends ObjectMap = any
 >(
     resource: ResourceInterface,
@@ -29,10 +29,11 @@ export function* resourceSagaRunner<
     let { requestConfig = null } = options;
 
     const config = resource.config(requestConfig) as SagaConfigType;
+    const { mutateRequestConfig, onRequestError } = config;
 
-    if (isFunction(config.mutateRequestConfig)) {
+    if (isFunction(mutateRequestConfig)) {
         requestConfig = yield call(
-            config.mutateRequestConfig,
+            mutateRequestConfig,
             requestConfig,
             resource,
             options
@@ -70,8 +71,8 @@ export function* resourceSagaRunner<
     try {
         return yield callEffect;
     } catch (err) {
-        if (isFunction(config.onRequestError)) {
-            yield call(config.onRequestError, err, resource, options);
+        if (isFunction(onRequestError)) {
+            yield call(onRequestError, err, resource, options);
         }
 
         throw err;

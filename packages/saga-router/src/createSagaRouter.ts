@@ -32,13 +32,11 @@ export const createSagaResource: CreateResourceFactory = <
     resourceKlass: ResourceClassConstructor<Klass>,
     apiEndpoint: string,
     config?: RouteConfig
-) => {
-    return new SagaResource<Klass>(apiEndpoint, config, resourceKlass);
-};
+) => new SagaResource<Klass>(apiEndpoint, config, resourceKlass);
 
 export function createSagaRouter<
     Klass extends Resource,
-    T extends ObjectMap = {}
+    T extends ObjectMap = Record<string, unknown>
 >(
     routes: T,
     config: SagaRouteConfig | null,
