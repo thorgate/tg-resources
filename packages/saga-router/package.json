@@ -53,6 +53,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
+    "type-check": "dtslint --localTs ../../node_modules/typescript/lib --expectOnly type-checks",
     "build": "tsdx build",
     "prebuild": "yarn clean && yarn lint"
   }
