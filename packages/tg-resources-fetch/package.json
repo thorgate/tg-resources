@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/fetch",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "private": false,
   "prettier": "@thorgate/prettier-config",
   "publishConfig": {
@@ -38,12 +38,12 @@
     "src"
   ],
   "dependencies": {
-    "qs": "^6.9.4",
-    "@tg-resources/core": "^3.1.4",
-    "@tg-resources/is": "^3.1.4"
+    "@tg-resources/core": "^3.2.0",
+    "@tg-resources/is": "^3.2.0",
+    "qs": "^6.9.4"
   },
   "devDependencies": {
-    "@tg-resources/fetch-runtime": "^3.1.4"
+    "@tg-resources/fetch-runtime": "^3.2.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",

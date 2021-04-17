@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/fetch-runtime",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "private": false,
   "prettier": "@thorgate/prettier-config",
   "publishConfig": {

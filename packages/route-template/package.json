@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/route-template",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "private": true,
   "prettier": "@thorgate/prettier-config",
   "publishConfig": {
@@ -23,8 +23,7 @@
     "url": "git+https://github.com/thorgate/tg-resources.git"
   },
   "bugs": "https://github.com/thorgate/tg-resources/issues",
-  "keywords": [
-  ],
+  "keywords": [],
   "files": [
     "dist",
     "src"

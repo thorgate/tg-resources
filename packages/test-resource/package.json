@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/test-resource",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "private": true,
   "prettier": "@thorgate/prettier-config",
   "description": "",
@@ -24,7 +24,7 @@
     "src"
   ],
   "dependencies": {
-    "tg-resources": "^3.1.4"
+    "tg-resources": "^3.2.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",

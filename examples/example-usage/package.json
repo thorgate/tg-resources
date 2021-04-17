@@ -1,17 +1,17 @@
 {
   "name": "run-examples",
-  "version": "3.1.4",
+  "version": "3.2.0",
   "private": true,
   "prettier": "@thorgate/prettier-config",
   "description": "",
   "main": "dist/index.js",
   "license": "MIT",
   "dependencies": {
-    "@tg-resources/fetch": "^3.1.4",
-    "@tg-resources/fetch-runtime": "^3.1.4",
-    "@tg-resources/superagent": "^3.1.4",
-    "@tg-resources/test-server": "^3.1.4",
-    "tg-resources": "^3.1.4"
+    "@tg-resources/fetch": "^3.2.0",
+    "@tg-resources/fetch-runtime": "^3.2.0",
+    "@tg-resources/superagent": "^3.2.0",
+    "@tg-resources/test-server": "^3.2.0",
+    "tg-resources": "^3.2.0"
   },
   "files": [
     "dist",
