@@ -29,7 +29,7 @@
   "keywords": [
   ],
   "files": [
-    "lib",
+    "dist",
     "src"
   ],
   "scripts": {

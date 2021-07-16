@@ -34,7 +34,7 @@
     "superagent"
   ],
   "files": [
-    "lib",
+    "dist",
     "src"
   ],
   "dependencies": {
