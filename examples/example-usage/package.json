@@ -1,6 +1,6 @@
 {
   "name": "run-examples",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "private": true,
   "prettier": "@thorgate/prettier-config",
   "description": "",
@@ -9,7 +9,7 @@
   "dependencies": {
     "@tg-resources/fetch": "^3.2.0",
     "@tg-resources/fetch-runtime": "^3.2.0",
-    "@tg-resources/superagent": "^3.2.0",
+    "@tg-resources/superagent": "^3.2.1",
     "@tg-resources/test-server": "^3.2.0",
     "tg-resources": "^3.2.0"
   },

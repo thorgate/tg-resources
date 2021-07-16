@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/superagent",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "private": false,
   "prettier": "@thorgate/prettier-config",
   "publishConfig": {
