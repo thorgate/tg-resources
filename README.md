@@ -17,10 +17,10 @@ Using NPM
 ```sh
 npm i tg-resources
 
-# Or
+# And add fetch backend
 npm i @tg-resources/fetch
 
-# And resource backend
+# Or use superagent backend
 npm i @tg-resources/superagent
 ```
 
@@ -29,10 +29,10 @@ Or using Yarn
 ```sh
 yarn add tg-resources
 
-# Or
+# And fetch backend
 yarn add @tg-resources/fetch
 
-# And resource backend
+# Or use superagent backend
 yarn add @tg-resources/superagent
 ```
 
