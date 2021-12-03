@@ -137,13 +137,10 @@ function parseFetchResponse(
             text: response.status === 204 ? null : '{}',
         });
     }
-    if (!response.headers.has('content-type')) {
-        // istanbul ignore next: Only happens w/ custom server that does not set Content-Type
-        throw new Error('Content type is missing from request');
-    }
 
     // Get content string to use correct parser
-    const contentType: string = response.headers.get('content-type') as string;
+    const contentType: string = (response.headers.get('content-type') ||
+        'text/plain') as string;
 
     if (contentType.includes('application/json')) {
         return response.json().then((body: any) => ({
