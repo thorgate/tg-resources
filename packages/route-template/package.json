@@ -2,7 +2,6 @@
   "name": "@tg-resources/route-template",
   "version": "3.2.0",
   "private": true,
-  "prettier": "@thorgate/prettier-config",
   "publishConfig": {
     "access": "public"
   },

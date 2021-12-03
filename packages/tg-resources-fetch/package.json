@@ -2,7 +2,6 @@
   "name": "@tg-resources/fetch",
   "version": "3.2.0",
   "private": false,
-  "prettier": "@thorgate/prettier-config",
   "publishConfig": {
     "access": "public"
   },

@@ -2,7 +2,6 @@
   "name": "@tg-resources/test-server",
   "version": "3.2.0",
   "private": true,
-  "prettier": "@thorgate/prettier-config",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/test-server.esm.js",
@@ -31,7 +30,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.17.1",
     "multiparty": "*",
-    "uuid": "^7.0.0"
+    "uuid": "^8.3.2"
   },
   "scripts": {
     "clean": "rimraf ./dist",

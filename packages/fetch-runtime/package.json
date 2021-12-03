@@ -2,7 +2,6 @@
   "name": "@tg-resources/fetch-runtime",
   "version": "3.2.0",
   "private": false,
-  "prettier": "@thorgate/prettier-config",
   "publishConfig": {
     "access": "public"
   },
@@ -37,8 +36,8 @@
   "dependencies": {
     "abortcontroller-polyfill": "^1.2.3",
     "cross-fetch": "^3.0.0",
-    "form-data": "^3.0.0",
-    "formdata-polyfill": "^3.0.12"
+    "form-data": "^4.0.0",
+    "formdata-polyfill": "^4.0.10"
   },
   "scripts": {
     "clean": "rimraf ./lib",
