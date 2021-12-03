@@ -17,11 +17,11 @@ Using NPM
 ```sh
 npm i tg-resources
 
-# And resource backend
-npm i @tg-resources/superagent
-
-# Or
+# And add fetch backend
 npm i @tg-resources/fetch
+
+# Or use superagent backend
+npm i @tg-resources/superagent
 ```
 
 Or using Yarn
@@ -29,11 +29,11 @@ Or using Yarn
 ```sh
 yarn add tg-resources
 
-# And resource backend
-yarn add @tg-resources/superagent
-
-# Or
+# And fetch backend
 yarn add @tg-resources/fetch
+
+# Or use superagent backend
+yarn add @tg-resources/superagent
 ```
 
 ### Does it work on react native?
@@ -52,7 +52,7 @@ import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 
 ```js
 import { Router } from "tg-resources"
-import { SuperAgentResource: Resource } from "@tg-resources/superagent"
+import { FetchResource: Resource } from "@tg-resources/fetch"
 
 const onLoad = result => console.log(result);
 const onError = result => console.error(result);
