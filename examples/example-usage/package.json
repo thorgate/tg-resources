@@ -1,13 +1,13 @@
 {
   "name": "run-examples",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "private": true,
   "prettier": "@thorgate/prettier-config",
   "description": "",
   "main": "dist/index.js",
   "license": "MIT",
   "dependencies": {
-    "@tg-resources/fetch": "^3.2.0",
+    "@tg-resources/fetch": "3.3.0",
     "@tg-resources/fetch-runtime": "^3.2.0",
     "@tg-resources/superagent": "^3.2.1",
     "@tg-resources/test-server": "^3.2.0",
