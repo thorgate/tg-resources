@@ -4,7 +4,7 @@ module.exports = {
     ...parent,
     overrides: [
         {
-            files: ['*.json', '**/*.json', '*/test-server/package.json'],
+            files: ['*.json', '**/*.json'],
             options: {
                 tabWidth: 2,
             },

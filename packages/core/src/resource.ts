@@ -243,9 +243,9 @@ export abstract class Resource extends Route implements ResourceInterface {
     ): void;
 
     protected _fetch<R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs: Params | null = null,
-        query: Query | null = null,
-        requestConfig: RequestConfig | null = null,
+        kwargs: Params | null,
+        query: Query | null,
+        requestConfig: RequestConfig | null,
         method: AllowedFetchMethods
     ): Promise<R> {
         const thePath = this.renderPath(kwargs, requestConfig);
@@ -267,11 +267,11 @@ export abstract class Resource extends Route implements ResourceInterface {
         D extends ObjectMap = any,
         Params extends Kwargs | null = Kwargs
     >(
-        kwargs: Params | null = null,
-        data: D | string | null = null,
-        query: Query = null,
-        attachments: Attachments = null,
-        requestConfig: RequestConfig = null,
+        kwargs: Params | null,
+        data: D | string | null,
+        query: Query,
+        attachments: Attachments,
+        requestConfig: RequestConfig,
         method: AllowedPostMethods
     ): Promise<R> {
         const config = this.config(requestConfig);
