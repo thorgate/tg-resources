@@ -34,7 +34,7 @@ export function isSagaResource<Klass extends Resource>(
 export class SagaResource<Klass extends Resource> extends Resource {
     public constructor(
         apiEndpoint: string,
-        config: SagaRouteConfig = null,
+        config: SagaRouteConfig,
         ResourceKlass: new (
             apiEndpoint: string,
             config?: RequestConfig

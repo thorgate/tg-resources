@@ -17,7 +17,7 @@ async function expectResponse(prom: Promise<any>, expectedData: any) {
     try {
         const data = await prom;
         expect(data).toEqual(expectedData);
-    } catch (err) {
+    } catch (err: any) {
         throw new Error(`Request failed: ${err.toString()}`);
     }
 }
@@ -48,7 +48,7 @@ async function expectError(
     try {
         await prom;
         errorHandled = false;
-    } catch (err) {
+    } catch (err: any) {
         try {
             if (exactError) {
                 expect(err).toEqual(exactError);
@@ -198,7 +198,7 @@ describe('Resource basic requests work', () => {
         try {
             const response = await res.fetch();
             expect(response).toBeFalsy();
-        } catch (err) {
+        } catch (err: any) {
             // spyFn does not return anything so we expect value to be empty
             expect(err).toBeFalsy();
             expect(spyFn.mock.calls.length).toBe(1);
@@ -390,7 +390,7 @@ describe('Resource basic requests work', () => {
                 pk: data.pk,
                 name: 'Rex',
             });
-        } catch (err) {
+        } catch (err: any) {
             throw new Error(
                 `Put works :: fetch request failed: ${err.toString()}`
             );
@@ -556,7 +556,7 @@ describe('Resource basic requests work', () => {
         );
     });
 
-    test('fetch global should support request cancellation with signal', async (done: any) => {
+    test('fetch global should support request cancellation with signal', async () => {
         const controller = new AbortController();
 
         const prom = fetch(`${hostUrl}/abort`, { signal: controller.signal });
@@ -567,8 +567,8 @@ describe('Resource basic requests work', () => {
 
         try {
             await prom;
-            done(new Error('Request should be aborted!'));
-        } catch (error) {
+            throw new Error('Request should be aborted!');
+        } catch (error: any) {
             // We are expecting the promise to reject with an AbortError
             expect(error).toBeInstanceOf(Error);
             expect(error).not.toBeInstanceOf(AbortError);
@@ -577,11 +577,10 @@ describe('Resource basic requests work', () => {
                 message: 'The user aborted a request.',
                 type: 'aborted',
             });
-            done();
         }
     });
 
-    test('aborting raises a wrapped AbortError', async (done: any) => {
+    test('aborting raises a wrapped AbortError', async () => {
         const controller = new AbortController();
 
         const res = new Resource('/abort', {
@@ -602,8 +601,8 @@ describe('Resource basic requests work', () => {
 
         try {
             await prom;
-            done(new Error('Request should be aborted!'));
-        } catch (error) {
+            throw new Error('Request should be aborted!');
+        } catch (error: any) {
             // We are expecting the promise to reject with an AbortError
             expect(error).toBeInstanceOf(AbortError);
             expect(error).toMatchObject({
@@ -611,11 +610,10 @@ describe('Resource basic requests work', () => {
                 type: 'aborted',
                 name: 'AbortError',
             });
-            done();
         }
     });
 
-    test('should reject immediately if signal has already been aborted', async (done: any) => {
+    test('should reject immediately if signal has already been aborted', async () => {
         const controller = new AbortController();
         controller.abort();
 
@@ -633,8 +631,8 @@ describe('Resource basic requests work', () => {
 
         try {
             await prom;
-            done(new Error('Request should be aborted!'));
-        } catch (error) {
+            throw new Error('Request should be aborted!');
+        } catch (error: any) {
             // We are expecting the promise to reject with an AbortError
             expect(error).toBeInstanceOf(AbortError);
             expect(error).toMatchObject({
@@ -642,7 +640,6 @@ describe('Resource basic requests work', () => {
                 type: 'aborted',
                 name: 'AbortError',
             });
-            done();
         }
     });
 });

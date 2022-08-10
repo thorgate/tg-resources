@@ -28,10 +28,10 @@ class TestResource extends Resource {
     protected setHeader(_0: any, _1: string, _2: string | null): any {}
 
     protected wrapResponse(_0: any, _1: any, _2: any): ResponseInterface {
-        return (undefined as any);
+        return undefined as any;
     }
 }
 
-const resource1 = new TestResource("/generic/route");
+const resource1 = new TestResource('/generic/route');
 
 resource1.fetch();

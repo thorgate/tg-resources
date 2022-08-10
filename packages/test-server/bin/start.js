@@ -6,7 +6,7 @@ const { listen } = require('../dist/index');
 const args = process.argv.slice(2);
 
 function getValue(key) {
-    const index = args.findIndex(v => v === key);
+    const index = args.findIndex((v) => v === key);
 
     if (index >= 0) {
         return args[index + 1];

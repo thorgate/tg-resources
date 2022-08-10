@@ -90,7 +90,7 @@ function configureServer(logger = false) {
     });
 
     app.get('/errorNetwork', (_0, res) => {
-        res.connection.destroy();
+        res.socket?.destroy();
     });
 
     app.get('/cookies', (req, res) => {

@@ -4,7 +4,7 @@ let testValue: string | string[] | number | number[] | Array<any> | null;
 
 // hasValue
 
-testValue = "asd";
+testValue = 'asd';
 if (is.hasValue(testValue)) {
     // $ExpectType string
     testValue;
@@ -17,7 +17,7 @@ if (is.hasValue(testValue)) {
 }
 
 // isFunction / isObject
-let fn: { id: number } | (() => void) = { id : 1 };
+let fn: { id: number } | (() => void) = { id: 1 };
 if (is.isFunction(fn)) {
     // $ExpectType never
     fn;
@@ -33,9 +33,8 @@ if (is.isFunction(fn)) {
     fn;
 }
 
-
 // isString / isStringArray
-testValue = "null";
+testValue = 'null';
 if (is.isString(testValue)) {
     // $ExpectType string
     testValue;
@@ -52,7 +51,6 @@ if (is.isStringArray(testValue)) {
     // $ExpectType string[]
     testValue;
 }
-
 
 testValue = ['a', 1];
 if (is.isStringArray(testValue)) {

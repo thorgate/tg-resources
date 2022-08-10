@@ -123,8 +123,7 @@ describe('parseErrors api -', () => {
         });
 
         expectParentValidationError(instance.getError('deliveryAddress'), 3, {
-            strVal:
-                'zip: Please enter a valid address; country: This field is required. Please select a valid country.',
+            strVal: 'zip: Please enter a valid address; country: This field is required. Please select a valid country.',
             type: ValidationError,
         });
         expectValidationError(instance.getError('deliveryAddress'), {

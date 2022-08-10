@@ -3,9 +3,9 @@ const pkg = require('./package.json');
 const defaultConfig = require('../../jest.config.base');
 
 module.exports = Object.assign({}, defaultConfig, {
-    name: pkg.name,
+    id: pkg.name,
     displayName: pkg.name,
     rootDir: './',
 
-    setupFilesAfterEnv: ['jest-extended'],
+    setupFilesAfterEnv: ['jest-extended/all'],
 });

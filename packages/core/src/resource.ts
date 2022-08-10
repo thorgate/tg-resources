@@ -246,7 +246,7 @@ export abstract class Resource extends Route implements ResourceInterface {
         kwargs: Params | null = null,
         query: Query | null = null,
         requestConfig: RequestConfig | null = null,
-        method: AllowedFetchMethods
+        method: AllowedFetchMethods = 'get'
     ): Promise<R> {
         const thePath = this.renderPath(kwargs, requestConfig);
         return this.handleRequest(
@@ -272,7 +272,7 @@ export abstract class Resource extends Route implements ResourceInterface {
         query: Query = null,
         attachments: Attachments = null,
         requestConfig: RequestConfig = null,
-        method: AllowedPostMethods
+        method: AllowedPostMethods = 'post'
     ): Promise<R> {
         const config = this.config(requestConfig);
 

@@ -62,10 +62,9 @@ function reducer(
 
 type RunSagaEffect = (sagaEffect: any) => Task;
 
-type ExtendedStore<S, T> = S &
-    {
-        [P in keyof T]: T[P];
-    };
+type ExtendedStore<S, T> = S & {
+    [P in keyof T]: T[P];
+};
 
 export function* SagaRunner(saga: Effect): SagaIterator {
     const response = yield saga;

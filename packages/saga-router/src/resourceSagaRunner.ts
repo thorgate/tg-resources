@@ -72,7 +72,7 @@ export function* resourceSagaRunner<
         return yield callEffect;
     } catch (err) {
         if (isFunction(onRequestError)) {
-            yield call(onRequestError, err, resource, options);
+            yield call(onRequestError, err as any, resource, options);
         }
 
         throw err;

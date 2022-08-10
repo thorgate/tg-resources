@@ -2,7 +2,6 @@
   "name": "@tg-resources/test-server",
   "version": "3.2.0",
   "private": true,
-  "prettier": "@thorgate/prettier-config",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/test-server.esm.js",

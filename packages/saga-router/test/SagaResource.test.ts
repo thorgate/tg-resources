@@ -156,7 +156,7 @@ describe('createSagaRouter functional', () => {
 
         try {
             await store.runSaga(api.dogs.details.fetch(params)).toPromise();
-        } catch (err) {
+        } catch (err: any) {
             expect(err).toBeInstanceOf(InvalidResponseCode);
             expect(err.statusCode).toEqual(404);
         }
@@ -244,7 +244,7 @@ describe('createSagaRouter functional', () => {
             await store
                 .runSaga(api.dogs.details.fetch(params, null, requestConfig))
                 .toPromise();
-        } catch (err) {
+        } catch (err: any) {
             expect(err).toBeInstanceOf(InvalidResponseCode);
             expect(err.statusCode).toEqual(404);
 
@@ -265,7 +265,7 @@ describe('createSagaRouter functional', () => {
                     )
                 )
                 .toPromise();
-        } catch (err) {
+        } catch (err: any) {
             expect(err).toBeInstanceOf(InvalidResponseCode);
             expect(err.statusCode).toEqual(404);
 
@@ -351,7 +351,7 @@ describe('createSagaRouter functional', () => {
         });
     });
 
-    test('aborting with signal manually raises a wrapped AbortError', async (done: any) => {
+    test('aborting with signal manually raises a wrapped AbortError', async () => {
         const controller = new AbortController();
         const onError = jest.fn((error: any) => {
             expect(`${error}`).toEqual(
@@ -376,7 +376,7 @@ describe('createSagaRouter functional', () => {
 
             await store.sagaMiddleware.run(runner).toPromise();
 
-            done(new Error('Request should be aborted!'));
+            throw new Error('Request should be aborted!');
         } catch (error) {
             // We are expecting the promise to reject with an AbortError
             expect(error).toBeInstanceOf(AbortError);
@@ -387,7 +387,6 @@ describe('createSagaRouter functional', () => {
             });
 
             expect(onError.mock.calls.length).toEqual(1);
-            done();
         }
     });
 
@@ -432,7 +431,7 @@ describe('createSagaRouter functional', () => {
         expect(res).toEqual({ cancelled: true });
     });
 
-    test('should reject immediately if signal has already been aborted', async (done: any) => {
+    test('should reject immediately if signal has already been aborted', async () => {
         const controller = new AbortController();
         const onError = jest.fn((error: any) => {
             expect(`${error}`).toEqual(
@@ -455,7 +454,7 @@ describe('createSagaRouter functional', () => {
                 )
                 .toPromise();
 
-            done(new Error('Request should be aborted!'));
+            throw new Error('Request should be aborted!');
         } catch (error) {
             // We are expecting the promise to reject with an AbortError
             expect(error).toBeInstanceOf(AbortError);
@@ -466,7 +465,6 @@ describe('createSagaRouter functional', () => {
             });
 
             expect(onError.mock.calls.length).toEqual(1);
-            done();
         }
     });
 });

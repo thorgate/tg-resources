@@ -59,10 +59,8 @@ export function bindResources(routes: RouteMap, $this: RouterInterface) {
         Object.assign($this, res, { _childKeys: childKeys });
     } catch (e) {
         if (e instanceof TypeError) {
-            let fieldName:
-                | string
-                | RegExpExecArray
-                | null = /property ([^\s]+) of/gi.exec(`${e}`);
+            let fieldName: string | RegExpExecArray | null =
+                /property ([^\s]+) of/gi.exec(`${e}`);
             if (fieldName) {
                 fieldName = `Route ${fieldName[1]} collides`;
             } else {

@@ -1,7 +1,5 @@
 {
-  "ignore": [
-    "prettier"
-  ],
+  "ignore": ["prettier"],
   "groups": {
     "tg-resources": {
       "packages": [

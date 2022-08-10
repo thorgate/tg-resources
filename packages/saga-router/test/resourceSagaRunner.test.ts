@@ -70,17 +70,15 @@ const expectError = async (
 };
 
 describe('resourceSagaRunner unit :: Resource', () => {
-    test('unknown method', async (done: any) => {
+    test('unknown method', async () => {
         try {
             const resource = createResource(null, null);
             const sagaIter = resourceSagaRunner(resource, 'unknown');
             await store.runSagaInitialized(sagaIter).toPromise();
 
-            done(new Error('Expected to throw for unknown method'));
+            throw new Error('Expected to throw for unknown method');
         } catch (error) {
             expect(`${error}`).toEqual('Error: Unknown resource method used.');
-
-            done();
         }
     });
 
