@@ -35,7 +35,10 @@ export abstract class Resource extends Route implements ResourceInterface {
         const interpolate = /\$?{([\s\S]+?)}/g;
 
         this._apiEndpoint = apiEndpoint;
-        this._routeTemplate = lodashTemplate(apiEndpoint, { interpolate });
+        this._routeTemplate = lodashTemplate(apiEndpoint, {
+            interpolate,
+            variable: 'data',
+        });
     }
 
     private readonly _apiEndpoint: string;
@@ -208,7 +211,7 @@ export abstract class Resource extends Route implements ResourceInterface {
 
         // istanbul ignore next: Tested in package that implement Resource
         if (isObject(urlParams)) {
-            thePath = this._routeTemplate(urlParams);
+            thePath = this._routeTemplate({ data: urlParams });
         }
 
         return `${config.apiRoot}${thePath}`;
