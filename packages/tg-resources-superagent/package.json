@@ -40,7 +40,7 @@
   "dependencies": {
     "@tg-resources/core": "^3.2.0",
     "@tg-resources/is": "^3.2.0",
-    "superagent": "^5.2.1"
+    "superagent": "^8.0.0"
   },
   "devDependencies": {
     "@tg-resources/fetch-runtime": "^3.2.0",

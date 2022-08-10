@@ -40,7 +40,7 @@
   "dependencies": {
     "@tg-resources/core": "^3.2.0",
     "@tg-resources/is": "^3.2.0",
-    "qs": "^6.9.4"
+    "qs": "^6.11.0"
   },
   "devDependencies": {
     "@tg-resources/fetch-runtime": "^3.2.0"
