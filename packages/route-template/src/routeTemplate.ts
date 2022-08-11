@@ -1,4 +1,5 @@
 import lodashTemplate from 'lodash.template';
+import compileURL from './builtin';
 
 import { RouteTemplate, PrepareKwargs } from './types';
 import { cleanRoot, cleanRoute } from './utils';
@@ -6,6 +7,7 @@ import { cleanRoot, cleanRoute } from './utils';
 export function routeTemplate<TKwargs = void>(
     route: string
 ): RouteTemplate<TKwargs>;
+
 export function routeTemplate<PK extends PrepareKwargs<any>>(
     route: string,
     prepareKwargs: PK
@@ -18,17 +20,21 @@ export function routeTemplate(
     // Interpolate defaults to {value} or ${value}
     const interpolate = /\$?{([\s\S]+?)}/g;
 
-    const compiled = lodashTemplate(routePath, { interpolate });
+    let replacer: (params: any) => string;
 
     let currentRoot = '';
-    function configure(apiRoot: string) {
+    function configure(apiRoot: string, lodash: boolean = true) {
         currentRoot = cleanRoot(apiRoot);
+
+        replacer = lodash
+            ? lodashTemplate(routePath, { interpolate })
+            : compileURL(routePath);
     }
 
     function renderTemplate(params?: Record<string, unknown>) {
         const kwargs = prepareKwargs ? prepareKwargs(params) : null;
 
-        const renderedPath = compiled(kwargs);
+        const renderedPath = replacer(kwargs);
 
         return `${currentRoot}/${cleanRoute(renderedPath)}`;
     }

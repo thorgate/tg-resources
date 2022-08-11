@@ -22,6 +22,8 @@ const DEFAULTS: ConfigType = {
     allowAttachments: false,
 
     signal: null,
+
+    useLodashTemplate: true,
 };
 
 export default DEFAULTS;
