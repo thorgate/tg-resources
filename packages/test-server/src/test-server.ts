@@ -1,11 +1,13 @@
-import fs from 'fs';
-
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import multiparty from 'multiparty';
+import morgan from 'morgan';
+import multer from 'multer';
 import uuid from 'uuid';
 
-export const port = 3001;
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+export const port = 3002;
 export const hostUrl = `http://127.0.0.1:${port}`;
 
 // contains UTF-8 bytes of the string 'buffer'
@@ -34,20 +36,15 @@ const allDogs: Dog[] = [
 function configureServer(logger = false) {
     const app = express();
 
+    if (logger) {
+        app.use(morgan('dev'));
+    }
+
     app.use(express.raw()); // support text
     app.use(express.text()); // support text
     app.use(express.json()); // support json encoded bodies
     app.use(express.urlencoded({ extended: true })); // support encoded bodies
     app.use(cookieParser());
-
-    app.use((req, _0, next) => {
-        if (logger) {
-            // eslint-disable-next-line no-console
-            console.log(`${req.method.toUpperCase()}: ${req.originalUrl}`);
-        }
-
-        return next();
-    });
 
     app.get('/', (_0, res) => {
         res.status(200).send('home');
@@ -206,134 +203,122 @@ function configureServer(logger = false) {
         });
     });
 
-    app.post('/attachments', (req, res) => {
-        const form = new multiparty.Form();
+    app.post('/attachments', upload.any(), (req, res) => {
+        console.log('req.headers', req.headers);
+        console.log('req.files', req.files);
+        console.log('req.body', req.body);
 
-        form.parse(req, (err, fields, files) => {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            }
+        const files = req.files as Express.Multer.File[];
+        const fields = req.body;
 
-            if (!fields.name || fields.name[0] !== 'foo') {
-                res.status(400).json({
-                    errors: {
-                        name: 'this field must be foo',
-                    },
-                });
-                return;
-            }
-
-            if (!fields.bool0 || fields.bool0[0] !== 'false') {
-                res.status(400).json({
-                    errors: {
-                        bool0: 'this field must be false',
-                    },
-                });
-                return;
-            }
-
-            if (!fields.bool1 || fields.bool1[0] !== 'true') {
-                res.status(400).json({
-                    errors: {
-                        bool0: 'this field must be false',
-                    },
-                });
-                return;
-            }
-
-            if (
-                fields.ignored0 !== undefined ||
-                fields.ignored1 !== undefined
-            ) {
-                res.status(400).json({
-                    errors: {
-                        ignored0: 'this field must be undefined',
-                        ignored1: 'this field must be undefined',
-                    },
-                });
-                return;
-            }
-
-            const postedArray = fields['array[]'];
-
-            if (!postedArray || !Array.isArray(postedArray)) {
-                res.status(400).json({
-                    errors: {
-                        array: 'this field must be an array',
-                    },
-                });
-                return;
-            }
-
-            if (
-                postedArray.length !== 2 ||
-                postedArray[0] !== 'first!' ||
-                postedArray[1] !== 'first! E: missed it'
-            ) {
-                res.status(400).json({
-                    errors: {
-                        array: 'invalid array contents',
-                    },
-                });
-                return;
-            }
-
-            if (!fields.object || fields.object[0] !== '{"foo":1,"bar":0}') {
-                res.status(400).json({
-                    errors: {
-                        object: 'object must be converted to json',
-                    },
-                });
-                return;
-            }
-
-            if (!files.text || files.text.length !== 1) {
-                res.status(400).json({
-                    errors: {
-                        text: 'this field is required',
-                    },
-                });
-            }
-
-            const fileData = files.text[0];
-
-            if (fileData.originalFilename !== 'dummy.txt') {
-                res.status(400).json({
-                    errors: {
-                        text: 'this file must be named dummy.txt',
-                    },
-                });
-            }
-
-            fs.readFile(fileData.path, (readErr, data) => {
-                if (readErr) {
-                    res.status(500).send(readErr);
-                    return;
-                }
-
-                if (!data.equals(expectedBuffer)) {
-                    res.status(400).json({
-                        errors: {
-                            text: 'invalid contents of file',
-                        },
-                    });
-                    return;
-                }
-
-                res.status(200).json({
-                    ack: req.headers.ack,
-                    name: fields.name[0],
-                    text: {
-                        name: fileData.originalFilename,
-                        size: data.length,
-                    },
-                    bool0: fields.bool0[0],
-                    bool1: fields.bool1[0],
-                    array: postedArray,
-                    object: fields.object[0],
-                });
+        if (!fields.name || fields.name !== 'foo') {
+            res.status(400).json({
+                errors: {
+                    name: 'this field must be foo',
+                },
             });
+            return;
+        }
+
+        if (!fields.bool0 || fields.bool0 !== 'false') {
+            res.status(400).json({
+                errors: {
+                    bool0: 'this field must be false',
+                },
+            });
+            return;
+        }
+
+        if (!fields.bool1 || fields.bool1 !== 'true') {
+            res.status(400).json({
+                errors: {
+                    bool0: 'this field must be false',
+                },
+            });
+            return;
+        }
+
+        if (fields.ignored0 !== undefined || fields.ignored1 !== undefined) {
+            res.status(400).json({
+                errors: {
+                    ignored0: 'this field must be undefined',
+                    ignored1: 'this field must be undefined',
+                },
+            });
+            return;
+        }
+
+        const postedArray = fields.array;
+
+        if (!postedArray || !Array.isArray(postedArray)) {
+            res.status(400).json({
+                errors: {
+                    array: 'this field must be an array',
+                },
+            });
+            return;
+        }
+
+        if (
+            postedArray.length !== 2 ||
+            postedArray[0] !== 'first!' ||
+            postedArray[1] !== 'first! E: missed it'
+        ) {
+            res.status(400).json({
+                errors: {
+                    array: 'invalid array contents',
+                },
+            });
+            return;
+        }
+
+        if (!fields.object || fields.object !== '{"foo":1,"bar":0}') {
+            res.status(400).json({
+                errors: {
+                    object: 'object must be converted to json',
+                },
+            });
+            return;
+        }
+
+        if (!files || files.length !== 1) {
+            res.status(400).json({
+                errors: {
+                    text: 'this field is required',
+                },
+            });
+        }
+
+        const fileData = files[0];
+
+        if (fileData.originalname !== 'dummy.txt') {
+            res.status(400).json({
+                errors: {
+                    text: 'this file must be named dummy.txt',
+                },
+            });
+        }
+
+        if (!fileData.buffer.equals(expectedBuffer)) {
+            res.status(400).json({
+                errors: {
+                    text: 'invalid contents of file',
+                },
+            });
+            return;
+        }
+
+        res.status(200).json({
+            ack: req.headers.ack,
+            name: fields.name,
+            text: {
+                name: fileData.originalname,
+                size: fileData.buffer.length,
+            },
+            bool0: fields.bool0,
+            bool1: fields.bool1,
+            array: postedArray,
+            object: fields.object,
         });
     });
 
