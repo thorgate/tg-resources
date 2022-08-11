@@ -494,7 +494,10 @@ describe('Resource basic requests work', () => {
         const attachments = [
             {
                 field: 'text',
-                file: new Blob([testServer.expectedBuffer]),
+                file:
+                    typeof Blob !== 'undefined'
+                        ? new Blob([testServer.expectedBuffer])
+                        : testServer.expectedBuffer,
                 name: 'dummy.txt',
             },
         ];

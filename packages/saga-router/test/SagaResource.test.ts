@@ -324,7 +324,10 @@ describe('createSagaRouter functional', () => {
         const attachments = [
             {
                 field: 'text',
-                file: new Blob([expectedBuffer]),
+                file:
+                    typeof Blob !== 'undefined'
+                        ? new Blob([expectedBuffer])
+                        : expectedBuffer,
                 name: 'dummy.txt',
             },
         ];
