@@ -9,6 +9,7 @@ jobs:
         runs-on: ubuntu-latest
         if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/master')
         strategy:
+            fail-fast: false
             matrix:
                 node: [14, 16, 18]
         steps:
