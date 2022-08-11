@@ -1,3 +1,4 @@
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 import { isObject } from '@tg-resources/is';
 import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
 import { Server } from 'http';

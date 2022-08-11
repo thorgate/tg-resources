@@ -1,3 +1,5 @@
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
+
 import { DummyResource as Resource } from '@tg-resources/test-resource';
 import { SagaIterator } from 'redux-saga';
 import { put } from 'redux-saga/effects';
