@@ -53,8 +53,8 @@ root scope (e.g. window/self for browsers or global for node).
 Make sure to set `useLodashTemplate` config option to `false` to avoid running into this https://github.com/facebook/hermes/issues/222
 hermes issue. See more details in #117.
 
-We do plan to make the new url parameter renderer the default in the next major version but for we are introducing it
-as opt-in to see how it behaves in the wild.
+We do plan to make the new url parameter renderer the default in the next major version but for now we are
+introducing it as opt-in to see how it behaves in the wild.
 
 #### <a name="signal-rn"></a>Using `signal` with react-native
 
