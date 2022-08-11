@@ -494,7 +494,7 @@ describe('Resource basic requests work', () => {
         const attachments = [
             {
                 field: 'text',
-                file: testServer.expectedBuffer,
+                file: new Blob([testServer.expectedBuffer]),
                 name: 'dummy.txt',
             },
         ];
@@ -570,13 +570,9 @@ describe('Resource basic requests work', () => {
             throw new Error('Request should be aborted!');
         } catch (error: any) {
             // We are expecting the promise to reject with an AbortError
-            expect(error).toBeInstanceOf(Error);
             expect(error).not.toBeInstanceOf(AbortError);
+            // This verifies the abort error matches with our logic inside `wasAborted` method
             expect(error.name).toEqual('AbortError');
-            expect(error).toMatchObject({
-                message: 'The user aborted a request.',
-                type: 'aborted',
-            });
         }
     });
 
