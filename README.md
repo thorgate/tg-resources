@@ -36,6 +36,14 @@ yarn add @tg-resources/fetch
 yarn add @tg-resources/superagent
 ```
 
+### Polyfills for fetch
+
+When you are targeting browsers without native support for fetch or running this on node versions before 17 then you need
+to provide polyfills for the fetch globals. The easiest way to do it is to add [@tg-resources/fetch-runtime](./packages/fetch-runtime#tg-resources-fetch-runtime).
+
+Alternatively you can also just use your own polyfill if you want to. In that case the methods should be available in the
+root scope (e.g. window/self for browsers or global for node).
+
 ### Does it work on react native?
 
 **YES**
