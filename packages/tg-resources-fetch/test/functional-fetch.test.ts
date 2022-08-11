@@ -516,7 +516,7 @@ describe('Resource basic requests work', () => {
             });
         } catch (e) {
             console.log('Failed with error:', e);
-            fail(e);
+            throw e;
         }
     });
 
