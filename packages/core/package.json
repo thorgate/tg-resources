@@ -35,9 +35,6 @@
     "dist",
     "src"
   ],
-  "peerDependencies": {
-    "lodash.template": "*"
-  },
   "dependencies": {
     "@tg-resources/is": "^3.4.0-alpha.0",
     "@tg-resources/route-template": "^3.4.0-alpha.0",

@@ -30,9 +30,6 @@
     "dist",
     "src"
   ],
-  "peerDependencies": {
-    "lodash.template": "*"
-  },
   "dependencies": {
     "@tg-resources/core": "^3.4.0-alpha.0"
   },

@@ -1,7 +1,7 @@
 {
   "name": "@tg-resources/route-template",
   "version": "3.4.0-alpha.0",
-  "private": true,
+  "private": false,
   "publishConfig": {
     "access": "public"
   },
