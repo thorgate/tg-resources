@@ -1,5 +1,5 @@
 import { hasValue, isFunction, isObject, isStatusCode } from '@tg-resources/is';
-import lodashTemplate from 'lodash.template';
+import { routeTemplate } from '@tg-resources/route-template';
 
 import DEFAULTS from './constants';
 import {
@@ -32,15 +32,15 @@ export abstract class Resource extends Route implements ResourceInterface {
      */
     public constructor(apiEndpoint: string, config: RouteConfig = null) {
         super(config);
-        const interpolate = /\$?{([\s\S]+?)}/g;
 
         this._apiEndpoint = apiEndpoint;
-        this._routeTemplate = lodashTemplate(apiEndpoint, { interpolate });
+
+        this._routeTemplate = routeTemplate(apiEndpoint);
     }
 
     private readonly _apiEndpoint: string;
 
-    private readonly _routeTemplate: ReturnType<typeof lodashTemplate>;
+    private readonly _routeTemplate: ReturnType<typeof routeTemplate>;
 
     public get apiEndpoint() {
         return this._apiEndpoint;
@@ -203,15 +203,19 @@ export abstract class Resource extends Route implements ResourceInterface {
         urlParams: Params | null = null,
         requestConfig: RequestConfig = null
     ): string {
-        let thePath = this.apiEndpoint;
         const config = this.config(requestConfig);
 
-        // istanbul ignore next: Tested in package that implement Resource
+        // istanbul ignore next: Tested in package that implements Resource
         if (isObject(urlParams)) {
-            thePath = this._routeTemplate(urlParams);
+            this._routeTemplate.configure(
+                config.apiRoot,
+                config.useLodashTemplate
+            );
+
+            return this._routeTemplate(urlParams);
         }
 
-        return `${config.apiRoot}${thePath}`;
+        return `${config.apiRoot}${this.apiEndpoint}`;
     }
 
     /* Internal API */

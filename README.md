@@ -48,6 +48,14 @@ root scope (e.g. window/self for browsers or global for node).
 
 **YES**
 
+#### Using with hermes engine
+
+Make sure to set `useLodashTemplate` config option to `false` to avoid running into this https://github.com/facebook/hermes/issues/222
+hermes issue. See more details in #117.
+
+We do plan to make the new url parameter renderer the default in the next major version but for now we are
+introducing it as opt-in to see how it behaves in the wild.
+
 #### <a name="signal-rn"></a>Using `signal` with react-native
 
 Use [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill) until https://github.com/facebook/react-native/issues/18115 is resolved in react-native core. The polyfill does not actually close the connection, but instead ensures the fetch rejects the promise with `AbortError`. To use the polyfill add the following to the top of your app entrypoint:
@@ -134,6 +142,7 @@ endpoints. It's still possible to use Resources without a router(see [Resource a
 -   `withCredentials` _(bool)_: Allow request backend to send cookies/authentication headers, useful when using same API for server-side rendering.
 -   `allowAttachments` _(bool)_: Allow POST like methods to send attachments.
 -   `signal`: _(AbortSignal)_: Pass in an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) object to abort the request when desired. **Only supported via request config.** Default: [null]. For react-native a [polyfill](#signal-rn) is needed.
+-   `useLodashTemplate` _(bool)_: Set to false to use our own url parameter replacement logic instead of using `lodash.template` based one. Should be set to false when using react-native hermes engine to work around this [issue in hermes](https://github.com/facebook/hermes/issues/222). Default: `true`.
 
 ## Error handling
 

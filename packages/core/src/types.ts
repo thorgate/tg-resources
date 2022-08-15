@@ -102,6 +102,17 @@ export interface ConfigType {
      */
     signal: Optional<AbortSignal>;
 
+    /**
+     * Should tg-resources use lodash.template or a built-in
+     *  replacement engine for route kwargs. Defaults to true.
+     *
+     * When on react-native with Hermes runtime set it to `false` as it
+     *  doesn't support `with` statement (ref: https://github.com/thorgate/tg-resources/issues/117).
+     *
+     * This may become the default in the next major version however currently it is opt-in.
+     */
+    useLodashTemplate: boolean;
+
     // allow Index Signature
     [key: string]: any;
 }
