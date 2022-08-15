@@ -203,7 +203,6 @@ export abstract class Resource extends Route implements ResourceInterface {
         urlParams: Params | null = null,
         requestConfig: RequestConfig = null
     ): string {
-        let thePath = this.apiEndpoint;
         const config = this.config(requestConfig);
 
         // istanbul ignore next: Tested in package that implements Resource
@@ -213,10 +212,10 @@ export abstract class Resource extends Route implements ResourceInterface {
                 config.useLodashTemplate
             );
 
-            return this._routeTemplate({ data: urlParams });
+            return this._routeTemplate(urlParams);
         }
 
-        return `${config.apiRoot}${thePath}`;
+        return `${config.apiRoot}${this.apiEndpoint}`;
     }
 
     /* Internal API */

@@ -23,7 +23,7 @@ export function routeTemplate(
     let replacer: (params: any) => string;
 
     let currentRoot = '';
-    function configure(apiRoot: string, lodash: boolean = true) {
+    function configure(apiRoot: string, lodash = true) {
         currentRoot = cleanRoot(apiRoot);
 
         replacer = lodash

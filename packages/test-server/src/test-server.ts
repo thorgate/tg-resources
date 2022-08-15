@@ -204,10 +204,6 @@ function configureServer(logger = false) {
     });
 
     app.post('/attachments', upload.any(), (req, res) => {
-        console.log('req.headers', req.headers);
-        console.log('req.files', req.files);
-        console.log('req.body', req.body);
-
         const files = req.files as Express.Multer.File[];
         const fields = req.body;
 
