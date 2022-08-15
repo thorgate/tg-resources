@@ -35,7 +35,7 @@ export abstract class Resource extends Route implements ResourceInterface {
 
         this._apiEndpoint = apiEndpoint;
 
-        this._routeTemplate = routeTemplate(this.apiEndpoint);
+        this._routeTemplate = routeTemplate(apiEndpoint);
     }
 
     private readonly _apiEndpoint: string;
