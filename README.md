@@ -36,6 +36,14 @@ yarn add @tg-resources/fetch
 yarn add @tg-resources/superagent
 ```
 
+### Polyfills for fetch
+
+When you are targeting browsers without native support for fetch or running this on node versions before 17 then you need
+to provide polyfills for the fetch globals. The easiest way to do it is to add [@tg-resources/fetch-runtime](./packages/fetch-runtime#tg-resources-fetch-runtime).
+
+Alternatively you can also just use your own polyfill if you want to. In that case the methods should be available in the
+root scope (e.g. window/self for browsers or global for node).
+
 ### Does it work on react native?
 
 **YES**
@@ -102,30 +110,30 @@ endpoints. It's still possible to use Resources without a router(see [Resource a
 
 ## <a name="configuration"></a>Configuration
 
-- ``apiRoot`` *(String)*: Base for all resource paths
-- ``headers`` *(Object|Function: Object)*: Optional Function or Object which can be used to add any additional headers to requests.
-- ``cookies`` *(Object|Function)*: Optional Function or Object which can be used to add any additional cookies to requests. Please note
-                                   that in modern browsers this is disabled due to security concerns.
-- ``mutateResponse`` *(Function)*: Optional function with signature `(responseData, rawResponse: ResponseWrapper, resource: Resource, requestConfig: Object) => responseData` 
-                                   which can be used to mutate response data before resolving it. E.g. This can be used to provide access to raw 
-                                   response codes and headers to your success handler.
-- ``mutateError`` *(Function)*: Optional function with signature `(error: ResourceErrorInterface, rawResponse: ResponseWrapper, resource: Resource, requestConfig: Object) => error`
-                                which can be used to mutate errors before rejecting them. E.g. This can be used to provide access to raw response codes 
-                                and headers to your error handler.
-- ``statusSuccess`` *(Array[int]|number)*: Array (or a single value) of status codes to treat as a success. Default: [200, 201, 204]
-- ``statusValidationError`` *(Array[int]|number)*: Array (or a single value) of status codes to treat as ValidationError. Default: [400]
-- ``defaultAcceptHeader`` *(String)*: Default accept header that is automatically added to requests (only if `headers.Accept=undefined`). Default:
-                                      `'application/json'`
-- ``parseErrors`` *(Function)*: Function with signature `(errorText, parentConfig) => [nonFieldErrors, errors]` which is used to parse response
-                                errors into a ValidationError object. The default handler is built for Django/DRF errors.
-- ``prepareError`` *(Function)*: Function with signature `(err, parentConfig) => mixed` which is used to normalize a single error. The default
-                                 handler is built for Django/DRF errors.
-- ``mutateRawResponse`` *(Function)*: **Advanced usage:** Optional function with signature `(rawResponse: ResponseWrapper, requestConfig: Object) => rawResponse` which can be
-                                      used to mutate the response before it is resolved to `responseData` or a `ResourceErrorInterface` subclass. Use the 
-                                      source of `ResponseWrapper`, `SuperagentResponse` and `Resource::ensureStatusAndJson` for guidance.
-- ``withCredentials`` *(bool)*: Allow request backend to send cookies/authentication headers, useful when using same API for server-side rendering.
-- ``allowAttachments`` *(bool)*: Allow POST like methods to send attachments.
-- ``signal``: *(AbortSignal)*: Pass in an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) object to abort the request when desired. **Only supported via request config.** Default: [null]. For react-native a [polyfill](#signal-rn) is needed.
+-   `apiRoot` _(String)_: Base for all resource paths
+-   `headers` _(Object|Function: Object)_: Optional Function or Object which can be used to add any additional headers to requests.
+-   `cookies` _(Object|Function)_: Optional Function or Object which can be used to add any additional cookies to requests. Please note
+    that in modern browsers this is disabled due to security concerns.
+-   `mutateResponse` _(Function)_: Optional function with signature `(responseData, rawResponse: ResponseWrapper, resource: Resource, requestConfig: Object) => responseData`
+    which can be used to mutate response data before resolving it. E.g. This can be used to provide access to raw
+    response codes and headers to your success handler.
+-   `mutateError` _(Function)_: Optional function with signature `(error: ResourceErrorInterface, rawResponse: ResponseWrapper, resource: Resource, requestConfig: Object) => error`
+    which can be used to mutate errors before rejecting them. E.g. This can be used to provide access to raw response codes
+    and headers to your error handler.
+-   `statusSuccess` _(Array[int]|number)_: Array (or a single value) of status codes to treat as a success. Default: [200, 201, 204]
+-   `statusValidationError` _(Array[int]|number)_: Array (or a single value) of status codes to treat as ValidationError. Default: [400]
+-   `defaultAcceptHeader` _(String)_: Default accept header that is automatically added to requests (only if `headers.Accept=undefined`). Default:
+    `'application/json'`
+-   `parseErrors` _(Function)_: Function with signature `(errorText, parentConfig) => [nonFieldErrors, errors]` which is used to parse response
+    errors into a ValidationError object. The default handler is built for Django/DRF errors.
+-   `prepareError` _(Function)_: Function with signature `(err, parentConfig) => mixed` which is used to normalize a single error. The default
+    handler is built for Django/DRF errors.
+-   `mutateRawResponse` _(Function)_: **Advanced usage:** Optional function with signature `(rawResponse: ResponseWrapper, requestConfig: Object) => rawResponse` which can be
+    used to mutate the response before it is resolved to `responseData` or a `ResourceErrorInterface` subclass. Use the
+    source of `ResponseWrapper`, `SuperagentResponse` and `Resource::ensureStatusAndJson` for guidance.
+-   `withCredentials` _(bool)_: Allow request backend to send cookies/authentication headers, useful when using same API for server-side rendering.
+-   `allowAttachments` _(bool)_: Allow POST like methods to send attachments.
+-   `signal`: _(AbortSignal)_: Pass in an [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) object to abort the request when desired. **Only supported via request config.** Default: [null]. For react-native a [polyfill](#signal-rn) is needed.
 
 ## Error handling
 
@@ -147,14 +155,12 @@ const errorHandler = (error) => {
             type: 'ABORTED',
             error,
         });
-
     } else if (error.isValidationError) {
         // Validation error occurred (e.g.: wrong credentials)
         console.error({
             type: 'VALIDATION_ERROR',
             error,
         });
-
     } else {
         // As a last resort, also handle invalid response codes
         console.error({
@@ -166,42 +172,43 @@ const errorHandler = (error) => {
 
 const payload = {
     user: 'foo',
-    passwrod: 'bar'
+    passwrod: 'bar',
 };
 
-resource.post(null, payload).then(user =>
-    console.log({
-        type: 'LOGGED_IN',
-        data: {
-            user,
-        },
-    }),
-    errorHandler,
+resource.post(null, payload).then(
+    (user) =>
+        console.log({
+            type: 'LOGGED_IN',
+            data: {
+                user,
+            },
+        }),
+    errorHandler
 );
 ```
 
 ## API
 
-### <a name="createrouter-api"></a>``createRouter``
+### <a name="createrouter-api"></a>`createRouter`
 
-Creates type-safe ``Router`` instance.
+Creates type-safe `Router` instance.
 
 #### Arguments
 
-1. `routes` *(Object)*: Object matching pattern ``{ [key]: string | { [key]: string } }``.
-                        String values are used as endpoints to create resource. For more info see [Resource API](#resource-api)
-                        This can be nested, meaning new router is created for object types found.
-2. `config` *(Object)*: Object containing config for top level router. See [Configuration](#configuration)
-3. `resourceKlass` *Resource*: Resource class that implements backend. This allows any of the backends to be used when creating ``Router``.
+1. `routes` _(Object)_: Object matching pattern `{ [key]: string | { [key]: string } }`.
+   String values are used as endpoints to create resource. For more info see [Resource API](#resource-api)
+   This can be nested, meaning new router is created for object types found.
+2. `config` _(Object)_: Object containing config for top level router. See [Configuration](#configuration)
+3. `resourceKlass` _Resource_: Resource class that implements backend. This allows any of the backends to be used when creating `Router`.
 
-### <a name="resource-api"></a>``Resource``
+### <a name="resource-api"></a>`Resource`
 
 Construct a new resource for loading data from a single (or dynamic) endpoint
 
 #### Arguments
 
-1. `apiEndpoint` *(string)*: Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
-2. `config` *(Object)*: Object containing config for this resource. See [Configuration](#configuration)
+1. `apiEndpoint` _(string)_: Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
+2. `config` _(Object)_: Object containing config for this resource. See [Configuration](#configuration)
 
 #### Tokenized endpoints
 
@@ -211,127 +218,126 @@ can then provide values as an object using the first argument `kwargs`.
 So for example:
 
 ```js
-new Resource('/foo/bar/${pk}').get({pk: 1}).then(x => x);
+new Resource('/foo/bar/${pk}').get({ pk: 1 }).then((x) => x);
 ```
 
 Would result in a GET request to `/foo/bar/1`
 
 #### Returns
 
-*(Resource)*:  Returns instance of `Resource`.
+_(Resource)_: Returns instance of `Resource`.
 
-### ``Resource.fetch``
+### `Resource.fetch`
 
 Do a get request to the resource endpoint with optional kwargs and query parameters.
 
 #### Arguments
 
-1. `kwargs=null` *(Object)*: Object containing the replacement values if the resource uses tokenized urls
-2. `query=null` *(Object|string)*: Query parameters to use when doing the request.
-3. `requestConfig=null` *(Object)*: Configuration overrides, useful when using same API for server-side rendering.
+1. `kwargs=null` _(Object)_: Object containing the replacement values if the resource uses tokenized urls
+2. `query=null` _(Object|string)_: Query parameters to use when doing the request.
+3. `requestConfig=null` _(Object)_: Configuration overrides, useful when using same API for server-side rendering.
 
-### ``Resource.options``
+### `Resource.options`
 
 Alias for `Resource.fetch(kwargs, query, requestConfig)` with `options` method.
 
-### ``Resource.head``
+### `Resource.head`
 
 Alias for `Resource.fetch(kwargs, query, requestConfig)` with `head` method.
 
 #### Returns
 
-*(Promise)*:  Returns a `Promise` that resolves to the remote result or throws if errors occur.
+_(Promise)_: Returns a `Promise` that resolves to the remote result or throws if errors occur.
 
-### ``Resource.post``
+### `Resource.post`
 
 Do a `method` request to the resource endpoint with optional kwargs and query parameters.
 
 #### Arguments
 
-1. `kwargs=null` *(Object)*: Object containing the replacement values if the resource uses tokenized urls
-1. `data=null` *(Object|string)*: Query parameters to use when doing the request.
-1. `query=null` *(Object|string)*: Query parameters to use when doing the request.
-1. `attachments=null` *(Array)*: Attachments, creates multipart request
-1. `requestConfig=null` *(Object)*: Configuration overrides, useful when using same API for server-side rendering.
+1. `kwargs=null` _(Object)_: Object containing the replacement values if the resource uses tokenized urls
+1. `data=null` _(Object|string)_: Query parameters to use when doing the request.
+1. `query=null` _(Object|string)_: Query parameters to use when doing the request.
+1. `attachments=null` _(Array)_: Attachments, creates multipart request
+1. `requestConfig=null` _(Object)_: Configuration overrides, useful when using same API for server-side rendering.
 
 #### Returns
-*(Promise)*:  Returns a `Promise` that resolves to the remote result or throws if errors occur.
 
-### ``Resource.patch``
+_(Promise)_: Returns a `Promise` that resolves to the remote result or throws if errors occur.
+
+### `Resource.patch`
 
 Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `patch` method.
 
-### ``Resource.put``
+### `Resource.put`
 
 Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `put` method.
 
-### ``Resource.del``
+### `Resource.del`
 
 Alias for `Resource.post(kwargs, data, query, attachments, requestConfig)` with `del` method.
 
-### ``ResourceErrorInterface``
+### `ResourceErrorInterface`
 
 Generic base class for all errors that can happen during requests
 
 #### Attributes
 
-- ``isNetworkError`` *(bool)*: Always ``false``
-- ``isInvalidResponseCode`` *(bool)*: Always ``false``
-- ``isValidationError`` *(bool)*: Always ``false``
+-   `isNetworkError` _(bool)_: Always `false`
+-   `isInvalidResponseCode` _(bool)_: Always `false`
+-   `isValidationError` _(bool)_: Always `false`
 
-### ``NetworkError``
+### `NetworkError`
 
 Error class used for all network related errors
 
-#### Extends ``ResourceErrorInterface`` and overwrites:
+#### Extends `ResourceErrorInterface` and overwrites:
 
-- ``isNetworkError`` *(bool)*: Always ``true``
+-   `isNetworkError` _(bool)_: Always `true`
 
 #### Attributes
 
-- ``error`` *(Error)*: Original Error object that occured during network transport
+-   `error` _(Error)_: Original Error object that occured during network transport
 
-### ``AbortError``
+### `AbortError`
 
 Error class used when a request is aborted
 
-#### Extends ``ResourceErrorInterface`` and overwrites:
+#### Extends `ResourceErrorInterface` and overwrites:
 
-- ``isAbortError`` *(bool)*: Always ``true``
+-   `isAbortError` _(bool)_: Always `true`
 
 #### Attributes
 
-- ``error`` *(Error)*: Original Error object that was raised by the request engine
+-   `error` _(Error)_: Original Error object that was raised by the request engine
 
-### ``InvalidResponseCode``
+### `InvalidResponseCode`
 
 Error class used when unexpected response code occurs
 
-#### Extends ``ResourceErrorInterface`` and overwrites:
+#### Extends `ResourceErrorInterface` and overwrites:
 
-- ``isInvalidResponseCode`` *(bool)*: Always ``true``
-
-#### Attributes
-
-- ``statusCode`` *(string)*: Response status code
-- ``responseText`` *(int)*: Response body text
-
-
-### ``RequestValidationError``
-
-Error class used when backend response code is in ``config.statusValidationError``.
-
-#### Extends ``InvalidResponseCode`` and overwrites:
-
-- ``isInvalidResponseCode`` *(bool)*: Always ``false``
-- ``isValidationError`` *(bool)*: Always ``true``
+-   `isInvalidResponseCode` _(bool)_: Always `true`
 
 #### Attributes
 
-- ``errors``: *(ValidationErrorInterface|any)*: The result from `requestConfig.parseError`
+-   `statusCode` _(string)_: Response status code
+-   `responseText` _(int)_: Response body text
 
+### `RequestValidationError`
 
-### ``ValidationErrorInterface``
+Error class used when backend response code is in `config.statusValidationError`.
+
+#### Extends `InvalidResponseCode` and overwrites:
+
+-   `isInvalidResponseCode` _(bool)_: Always `false`
+-   `isValidationError` _(bool)_: Always `true`
+
+#### Attributes
+
+-   `errors`: _(ValidationErrorInterface|any)_: The result from `requestConfig.parseError`
+
+### `ValidationErrorInterface`
 
 Error types returned by the default error parser.
 
@@ -339,53 +345,52 @@ Supports iteration (map/forEach/for .. of/etc)
 
 #### Attributes
 
-- ``errors``: *(any)*: Errors and error messages.
+-   `errors`: _(any)_: Errors and error messages.
 
 #### Types
 
 Since DRF errors can be arbitrarily nested and one field can have multiple
 errors, some specific types of interest:
 
-- ``SingleValidationError``: Errors for a single field
+-   `SingleValidationError`: Errors for a single field
     the `.errors` attribute is a list of strings.
-- ``ValidationError``: Errors for an object, `.errors` is an object with field names as keys.
-- ``ListValidationError``: Errors related to list of objects. `.errors` is a list of ``ValidationErrorInterface``.
-
+-   `ValidationError`: Errors for an object, `.errors` is an object with field names as keys.
+-   `ListValidationError`: Errors related to list of objects. `.errors` is a list of `ValidationErrorInterface`.
 
 #### Methods
 
-(*) Not applicable to SingleValidationError
+(\*) Not applicable to SingleValidationError
 
-##### ``hasError``
+##### `hasError`
 
 ###### Returns
 
-*(bool)*: True if there are any errors.
+_(bool)_: True if there are any errors.
 
-##### ``getError``*
+##### `getError`\*
 
 Get field specific error
 
 ###### Arguments
 
-1. ``fieldName`` *(Array<string>|string)*: Field name or path to child error, e.g ``['parent', 'child']`` or array indexes for ``ListValidationError``
-2. ``[allowNonField=false]`` *(bool)*: If true, also check for nonFieldErrors if the specified field does not have an error
+1. `fieldName` _(Array<string>|string)_: Field name or path to child error, e.g `['parent', 'child']` or array indexes for `ListValidationError`
+2. `[allowNonField=false]` _(bool)_: If true, also check for nonFieldErrors if the specified field does not have an error
 
 ###### Returns
 
-*(any)*:  Returns a normalized error for ``fieldName`` or ``null``
+_(any)_: Returns a normalized error for `fieldName` or `null`
 
-##### ``firstError``*
+##### `firstError`\*
 
 Get first error normalized to a string for this ValidationError
 
 ###### Arguments
 
-1. ``[allowNonField=false]`` *(bool)*: If true, also check for nonFieldErrors
+1. `[allowNonField=false]` _(bool)_: If true, also check for nonFieldErrors
 
 ###### Returns
 
-*(any)*:  First error as a ``string`` or ``null``
+_(any)_: First error as a `string` or `null`
 
 ## License
 
@@ -393,14 +398,10 @@ MIT © [Thorgate](http://github.com/thorgate)
 
 [npm-url]: https://npmjs.org/package/tg-resources
 [npm-image]: https://img.shields.io/npm/v/tg-resources.svg?style=flat-square
-
 [ci-url]: https://github.com/thorgate/tg-resources/actions
 [ci-image]: https://github.com/thorgate/tg-resources/workflows/.github/workflows/run-tests.yml/badge.svg?branch=master
-
 [depstat-url]: https://david-dm.org/thorgate/tg-resources
 [depstat-image]: https://david-dm.org/thorgate/tg-resources.svg?style=flat-square
-
 [coveralls-url]: https://coveralls.io/github/thorgate/tg-resources?branch=master
 [coveralls-image]: https://coveralls.io/repos/github/thorgate/tg-resources/badge.svg?branch=master
-
 [download-badge]: http://img.shields.io/npm/dm/tg-resources.svg?style=flat-square

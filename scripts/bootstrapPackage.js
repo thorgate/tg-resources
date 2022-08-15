@@ -6,18 +6,16 @@ const lernaCfg = require('../lerna.json');
 const args = process.argv.slice(2);
 
 if (args.length !== 2) {
-    console.error('Expecting arguments: <destination directory name> <package name>');
+    console.error(
+        'Expecting arguments: <destination directory name> <package name>',
+    );
     process.exit(1);
 }
 
 const packageName = args[1];
 const destinationDirName = args[0];
-const destDir = resolve(join(
-    __dirname, '..', 'packages', destinationDirName,
-));
-const templateDir = resolve(join(
-    __dirname, '..', '.template',
-));
+const destDir = resolve(join(__dirname, '..', 'packages', destinationDirName));
+const templateDir = resolve(join(__dirname, '..', '.template'));
 
 function createFileFromTemplate(fileName, src, dest, values = null) {
     let data = fs.readFileSync(join(src, fileName), { encoding: 'utf-8' });

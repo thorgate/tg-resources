@@ -1,13 +1,11 @@
-Contributing
-============
+# Contributing
 
 Contributions are welcome, and they are greatly appreciated! Every
 little bit helps, and credit will always be given.
 
 You can contribute in many ways:
 
-Types of Contributions
-----------------------
+## Types of Contributions
 
 ### Report Bugs
 
@@ -49,14 +47,11 @@ If you are proposing a feature:
 -   Remember that this is a volunteer-driven project, and that
     contributions are welcome :)
 
-
 ### Changelog
 
 Changelog is maintained via github releases.
 
-
-Get Started!
-------------
+## Get Started!
 
 Ready to contribute? Here's how to set up tg-resources for local
 development.
@@ -91,8 +86,7 @@ development.
 
 7.  Submit a pull request through the GitHub website.
 
-Pull Request Guidelines
------------------------
+## Pull Request Guidelines
 
 Before you submit a pull request, check that it meets these guidelines:
 

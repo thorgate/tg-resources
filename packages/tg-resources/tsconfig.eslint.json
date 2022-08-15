@@ -4,10 +4,5 @@
     // ensure that nobody can accidentally use this config for a build
     "noEmit": true
   },
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.ts",
-    "typings/**/*.ts",
-    "src/**/*.js"
-  ]
+  "include": ["src/**/*.ts", "test/**/*.ts", "typings/**/*.ts", "src/**/*.js"]
 }

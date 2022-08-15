@@ -232,9 +232,8 @@ export class FetchResource extends Resource {
         let theUrl = url;
         if (query) {
             // eslint-disable-next-line prefer-destructuring
-            const querySerializeOptions:
-                | qs.IStringifyOptions
-                | undefined = this.config(requestConfig).querySerializeOptions;
+            const querySerializeOptions: qs.IStringifyOptions | undefined =
+                this.config(requestConfig).querySerializeOptions;
             theUrl = `${theUrl}?${qs.stringify(query, querySerializeOptions)}`;
         }
 

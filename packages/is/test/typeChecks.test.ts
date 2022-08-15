@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 import {
     hasValue,
     isAbortSignal,

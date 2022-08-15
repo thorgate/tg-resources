@@ -9,7 +9,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
-    "lib": ["es5"],
+    "lib": ["es5", "dom"],
     /* dtslint needs these to operate in this directory */
     "baseUrl": "."
   }

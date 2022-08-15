@@ -6,35 +6,41 @@ import { FetchResource as Resource } from '@tg-resources/fetch';
 
 const server = listen(3005);
 
+const api = new Router(
+    {
+        dogs: new Resource('/dogs'),
+        dog: new Resource('/dogs/${pk}'),
 
-const api = new Router({
-    dogs: new Resource('/dogs'),
-    dog: new Resource('/dogs/${pk}'),
+        // Nested router
+        hello: new Router({
+            world: new Resource('/hello'),
+        }),
+    },
+    {
+        apiRoot: getHostUrl(3005),
+        headers: { 'X-Hello': 'World' },
 
-    // Nested router
-    hello: new Router({
-        world: new Resource('/hello'),
-    }),
-}, {
-    apiRoot: getHostUrl(3005),
-    headers: { 'X-Hello': 'World' },
+        // Add additional cookie to request (ignored by most modern browsers)
+        cookies: { hello: 'world' },
 
-    // Add additional cookie to request (ignored by most modern browsers)
-    cookies: { hello: 'world' },
+        mutateResponse: (
+            responseData,
+            rawResponse,
+            resource,
+            requestConfig,
+        ) => ({ ...responseData, responseMutated: true }),
+        mutateError: (error, rawResponse, resource, requestConfig) => error,
+        mutateRawResponse: (rawResponse, requestConfig) => rawResponse,
 
-    mutateResponse: (responseData, rawResponse, resource, requestConfig) => ({ ...responseData, responseMutated: true }),
-    mutateError: (error, rawResponse, resource, requestConfig) => error,
-    mutateRawResponse: (rawResponse, requestConfig) => rawResponse,
+        statusSuccess: [200, 201, 204],
+        statusValidationError: [400],
+        defaultAcceptHeader: 'application/json',
+        withCredentials: false,
 
-    statusSuccess: [200, 201, 204],
-    statusValidationError: [400],
-    defaultAcceptHeader: 'application/json',
-    withCredentials: false,
-
-    parseErrors,
-    prepareError,
-});
-
+        parseErrors,
+        prepareError,
+    },
+);
 
 const example = async () => {
     const { pk } = await api.dogs.put(null, { name: 'Lassie' });

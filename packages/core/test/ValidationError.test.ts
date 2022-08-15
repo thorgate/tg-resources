@@ -183,8 +183,7 @@ describe('ValidationError helper methods', () => {
             type: null,
         });
         expectParentValidationError(instance.getError('deliveryAddress'), 2, {
-            strVal:
-                'zip: Please enter a valid address; country: This field is required. Please select a valid country.',
+            strVal: 'zip: Please enter a valid address; country: This field is required. Please select a valid country.',
             type: ValidationError,
         });
         expectParentValidationError(instance.getError('deliveryAddress'), 3, {

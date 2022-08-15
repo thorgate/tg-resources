@@ -93,7 +93,7 @@ export async function expectError(
     try {
         await task.toPromise();
         errorHandled = false;
-    } catch (err) {
+    } catch (err: any) {
         try {
             if (exactError) {
                 expect(err).toEqual(exactError);

@@ -1,26 +1,19 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-// Jest config defaults
-const { defaults } = require('jest-config');
-
+/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 const config = {
     verbose: true,
     cache: false,
 
-    collectCoverageFrom: ['src/**/*.{ts,tsx}', '!**/node_modules/**'],
-
-    transform: {
-        '\.tsx?$': 'ts-jest',
-        '\.jsx?$': 'babel-jest',
-    },
-
-    moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx'],
-
-    transformIgnorePatterns: [
-        '[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$',
-        '\\.(js|jsx)$',
-    ],
+    preset: 'ts-jest',
 
     testMatch: ['<rootDir>/test/*.test.ts?(x)'],
+
+    globals: {
+        'ts-jest': {
+            tsconfig: {
+                sourceMap: true,
+            },
+        },
+    },
 };
 
 module.exports = config;
