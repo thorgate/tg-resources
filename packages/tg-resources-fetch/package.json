@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/fetch",
-  "version": "3.3.0",
+  "version": "3.4.0-alpha.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -37,12 +37,12 @@
     "src"
   ],
   "dependencies": {
-    "@tg-resources/core": "^3.2.0",
-    "@tg-resources/is": "^3.2.0",
+    "@tg-resources/core": "^3.4.0-alpha.0",
+    "@tg-resources/is": "^3.4.0-alpha.0",
     "qs": "^6.11.0"
   },
   "devDependencies": {
-    "@tg-resources/fetch-runtime": "^3.2.0"
+    "@tg-resources/fetch-runtime": "^3.4.0-alpha.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",

@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/superagent",
-  "version": "3.2.1",
+  "version": "3.4.0-alpha.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -37,13 +37,13 @@
     "src"
   ],
   "dependencies": {
-    "@tg-resources/core": "^3.2.0",
-    "@tg-resources/is": "^3.2.0",
+    "@tg-resources/core": "^3.4.0-alpha.0",
+    "@tg-resources/is": "^3.4.0-alpha.0",
     "superagent": "^8.0.0"
   },
   "devDependencies": {
-    "@tg-resources/fetch-runtime": "^3.2.0",
-    "@tg-resources/test-server": "^3.2.0"
+    "@tg-resources/fetch-runtime": "^3.4.0-alpha.0",
+    "@tg-resources/test-server": "^3.4.0-alpha.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",

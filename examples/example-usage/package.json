@@ -1,16 +1,16 @@
 {
   "name": "run-examples",
-  "version": "3.3.0",
+  "version": "3.4.0-alpha.0",
   "private": true,
   "description": "",
   "main": "dist/index.js",
   "license": "MIT",
   "dependencies": {
-    "@tg-resources/fetch": "3.3.0",
-    "@tg-resources/fetch-runtime": "^3.2.0",
-    "@tg-resources/superagent": "^3.2.1",
-    "@tg-resources/test-server": "^3.2.0",
-    "tg-resources": "^3.2.0"
+    "@tg-resources/fetch": "^3.4.0-alpha.0",
+    "@tg-resources/fetch-runtime": "^3.4.0-alpha.0",
+    "@tg-resources/superagent": "^3.4.0-alpha.0",
+    "@tg-resources/test-server": "^3.4.0-alpha.0",
+    "tg-resources": "^3.4.0-alpha.0"
   },
   "files": [
     "dist",

@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/route-template",
-  "version": "3.2.0",
+  "version": "3.4.0-alpha.0",
   "private": true,
   "publishConfig": {
     "access": "public"
@@ -28,7 +28,7 @@
     "src"
   ],
   "dependencies": {
-    "@tg-resources/is": "^3.1.4"
+    "@tg-resources/is": "^3.4.0-alpha.0"
   },
   "peerDependencies": {
     "lodash.template": "*"

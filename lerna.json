@@ -1,12 +1,17 @@
 {
   "lerna": "3.20.2",
-  "packages": ["examples/*", "packages/*"],
+  "packages": [
+    "examples/*",
+    "packages/*"
+  ],
   "command": {
     "publish": {
-      "ignoreChanges": ["*.md"]
+      "ignoreChanges": [
+        "*.md"
+      ]
     }
   },
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "version": "3.3.0"
+  "version": "3.4.0-alpha.0"
 }
