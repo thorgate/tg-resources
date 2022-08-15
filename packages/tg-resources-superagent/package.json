@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/superagent",
-  "version": "3.4.0-alpha.0",
+  "version": "3.4.0-alpha.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -37,7 +37,7 @@
     "src"
   ],
   "dependencies": {
-    "@tg-resources/core": "^3.4.0-alpha.0",
+    "@tg-resources/core": "^3.4.0-alpha.1",
     "@tg-resources/is": "^3.4.0-alpha.0",
     "superagent": "^8.0.0"
   },

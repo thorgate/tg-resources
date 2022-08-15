@@ -1,6 +1,6 @@
 {
   "name": "@tg-resources/redux-saga-router",
-  "version": "3.4.0-alpha.0",
+  "version": "3.4.0-alpha.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -40,13 +40,13 @@
     "redux-saga": "^1.1.3"
   },
   "dependencies": {
-    "@tg-resources/core": "^3.4.0-alpha.0",
+    "@tg-resources/core": "^3.4.0-alpha.1",
     "@tg-resources/is": "^3.4.0-alpha.0"
   },
   "devDependencies": {
-    "@tg-resources/fetch": "^3.4.0-alpha.0",
+    "@tg-resources/fetch": "^3.4.0-alpha.1",
     "@tg-resources/fetch-runtime": "^3.4.0-alpha.0",
-    "@tg-resources/test-resource": "^3.4.0-alpha.0",
+    "@tg-resources/test-resource": "^3.4.0-alpha.1",
     "@tg-resources/test-server": "^3.4.0-alpha.0"
   },
   "scripts": {
