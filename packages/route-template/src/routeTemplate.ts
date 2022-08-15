@@ -32,7 +32,7 @@ export function routeTemplate(
     }
 
     function renderTemplate(params?: Record<string, unknown>) {
-        const kwargs = prepareKwargs ? prepareKwargs(params) : null;
+        const kwargs = prepareKwargs ? prepareKwargs(params) : params;
 
         const renderedPath = replacer(kwargs);
 
