@@ -1,12 +1,20 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
+import { ResourceTuple } from '@tg-resources/core';
 import { FetchResource } from '@tg-resources/fetch';
 import { createSagaRouter } from '../src';
 
 const api = createSagaRouter(
     {
-        test: {
-            list: '/test',
-            details: '/test/{id}',
+        auth: [
+            '/headers',
+            { headers: () => ({ auth: 'foo' }), withCredentials: true },
+        ] as ResourceTuple,
+        cats: {
+            apiEndpoint: '/cats',
+        },
+        dogs: {
+            list: '/dogs/',
+            details: '/dogs/${pk}',
         },
     },
     {

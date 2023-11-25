@@ -4,8 +4,8 @@ import { hasValue, isObject } from '@tg-resources/is';
 const needle = /\$?{([\s\S]+?)}/g;
 
 function compileURL(template: string) {
-    const render = (params: Record<string, unknown>) => {
-        return template.replace(needle, (_, key: any) => {
+    const render = (params: Record<string, unknown>) =>
+        template.replace(needle, (_, key: any) => {
             let value: Record<string, unknown> | unknown = params;
             let itemKey = key;
 
@@ -19,7 +19,6 @@ function compileURL(template: string) {
             const finalValue = isObject(value) ? value[itemKey] : '';
             return hasValue(finalValue) ? `${finalValue}` : '';
         });
-    };
 
     return render;
 }

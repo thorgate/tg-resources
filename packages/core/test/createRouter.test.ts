@@ -2,7 +2,7 @@ import 'jest-extended';
 
 import { createRouter } from '../src';
 import DEFAULTS from '../src/constants';
-import { DummyResource } from './DummyResource';
+import { DummyResource } from '../src/DummyResource';
 
 describe('createRouter :: invalid type used', () => {
     test('invalid type :: top level', () => {
@@ -87,6 +87,15 @@ describe('createRouter :: string map', () => {
         requestConfig: null,
     };
 
+    test('get /a/ works', async () => {
+        const res = await api.test.get();
+        expect(res).toEqual({
+            ...defaultResponse,
+            method: 'get',
+            url: '/a/',
+        });
+    });
+
     test('fetch /a/ works', async () => {
         const res = await api.test.fetch();
         expect(res).toEqual({
@@ -130,7 +139,7 @@ describe('createRouter :: string map', () => {
         const res = await api.test.del();
         expect(res).toEqual({
             ...defaultResponse,
-            method: 'del',
+            method: 'delete',
             url: '/a/',
             data: {},
         });

@@ -11,7 +11,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                node: [14, 16, 18]
+                node: [18, 20, 22, 24]
         steps:
             - uses: actions/checkout@v2
             - uses: actions/setup-node@v1
@@ -22,9 +22,7 @@ jobs:
                   path: '**/node_modules'
                   key: ${{ runner.os }}-node-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
             - name: Install deps
-              run: |
-                  yarn
-                  yarn bootstrap
+              run: yarn
             - name: Build package
               run: yarn build
             - name: Run type-check
@@ -34,7 +32,7 @@ jobs:
             - name: Check examples
               run: yarn run-examples
             - name: Coveralls
-              if: matrix.node == '16'
+              if: matrix.node == '18'
               uses: coverallsapp/github-action@master
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}

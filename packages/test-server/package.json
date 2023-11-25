@@ -5,7 +5,7 @@
   "description": "",
   "main": "dist/index.js",
   "module": "dist/test-server.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
@@ -36,7 +36,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint src --ext ts --ext tsx",
-    "build": "tsdx build",
+    "build": "dts build",
     "prebuild": "yarn clean && yarn lint",
     "start": "./bin/start.js"
   }

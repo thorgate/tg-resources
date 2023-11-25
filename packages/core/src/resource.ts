@@ -14,6 +14,7 @@ import {
     AllowedPostMethods,
     Attachments,
     ConfigType,
+    EmptyPayload,
     Kwargs,
     ObjectMap,
     Query,
@@ -25,7 +26,16 @@ import {
 } from './types';
 import { mergeConfig, serializeCookies } from './util';
 
-export abstract class Resource extends Route implements ResourceInterface {
+export abstract class Resource<
+        Params extends Kwargs | null = Kwargs,
+        TFetchResponse = any,
+        TPostPayload extends ObjectMap | string | null = any,
+        TPostResponse = TFetchResponse
+    >
+    extends Route
+    implements
+        ResourceInterface<Params, TFetchResponse, TPostPayload, TPostResponse>
+{
     /**
      * @param apiEndpoint Endpoint used for this resource. Supports ES6 token syntax, e.g: "/foo/bar/${pk}"
      * @param config Customize config for this resource (see `Router.config`)
@@ -97,40 +107,62 @@ export abstract class Resource extends Route implements ResourceInterface {
         };
     }
 
-    public fetch = <R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs: Params | null = null,
+    public get = <TResponse = TFetchResponse, TParams extends Params = Params>(
+        kwargs: TParams | null = null,
         query: Query | null = null,
         requestConfig: RequestConfig | null = null
-    ): Promise<R> | any => this._fetch(kwargs, query, requestConfig, 'get');
+    ): Promise<TResponse> =>
+        this._fetch<TResponse, TParams>(kwargs, query, requestConfig, 'get');
 
-    public head = <R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs: Params | null = null,
+    public fetch = <
+        TResponse = TFetchResponse,
+        TParams extends Params = Params
+    >(
+        kwargs: TParams | null = null,
         query: Query | null = null,
         requestConfig: RequestConfig | null = null
-    ): Promise<R> | any =>
-        // istanbul ignore next: Tested in package that implement Resource
-        this._fetch<R, Params>(kwargs, query, requestConfig, 'head');
+    ): Promise<TResponse> =>
+        this.get<TResponse, TParams>(kwargs, query, requestConfig);
 
-    public options = <R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs: Params | null = null,
+    public head = <
+        TResponse = Record<string, never>,
+        TParams extends Params = Params
+    >(
+        kwargs: TParams | null = null,
         query: Query | null = null,
         requestConfig: RequestConfig | null = null
-    ): Promise<R> | any =>
+    ): Promise<TResponse> =>
         // istanbul ignore next: Tested in package that implement Resource
-        this._fetch<R, Params>(kwargs, query, requestConfig, 'options');
+        this._fetch<TResponse, TParams>(kwargs, query, requestConfig, 'head');
+
+    public options = <
+        TResponse = TFetchResponse,
+        TParams extends Params = Params
+    >(
+        kwargs: TParams | null = null,
+        query: Query | null = null,
+        requestConfig: RequestConfig = null
+    ): Promise<TResponse> =>
+        // istanbul ignore next: Tested in package that implement Resource
+        this._fetch<TResponse, TParams>(
+            kwargs,
+            query,
+            requestConfig,
+            'options'
+        );
 
     public post = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs: Params | null = null,
-        data: D | string | null = null,
+        kwargs: TParams | null = null,
+        data: TPayload | string | null = null,
         query: Query | null = null,
         attachments: Attachments | null = null,
         requestConfig: RequestConfig | null = null
-    ): Promise<R> | any =>
-        this._post<R, D, Params>(
+    ): Promise<TResponse> =>
+        this._post<TResponse, TPayload, TParams>(
             kwargs,
             data,
             query,
@@ -140,17 +172,17 @@ export abstract class Resource extends Route implements ResourceInterface {
         );
 
     public patch = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs: Params | null = null,
-        data: D | string | null = null,
+        kwargs: TParams | null = null,
+        data: TPayload | string | null = null,
         query: Query | null = null,
         attachments: Attachments | null = null,
         requestConfig: RequestConfig | null = null
-    ): Promise<R> | any =>
-        this._post<R, D, Params>(
+    ): Promise<TResponse> =>
+        this._post<TResponse, TPayload, TParams>(
             kwargs,
             data,
             query,
@@ -160,17 +192,17 @@ export abstract class Resource extends Route implements ResourceInterface {
         );
 
     public put = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs: Params | null = null,
-        data: D | string | null = null,
+        kwargs: TParams | null = null,
+        data: TPayload | string | null = null,
         query: Query | null = null,
         attachments: Attachments | null = null,
         requestConfig: RequestConfig | null = null
-    ): Promise<R> | any =>
-        this._post<R, D, Params>(
+    ): Promise<TResponse> =>
+        this._post<TResponse, TPayload, TParams>(
             kwargs,
             data,
             query,
@@ -180,27 +212,46 @@ export abstract class Resource extends Route implements ResourceInterface {
         );
 
     public del = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = EmptyPayload,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs: Params | null = null,
-        data: D | string | null = null,
+        kwargs: TParams | null = null,
+        data: TPayload | string | null = null,
         query: Query | null = null,
         attachments: Attachments | null = null,
         requestConfig: RequestConfig | null = null
-    ): Promise<R> | any =>
-        this._post<R, D, Params>(
+    ): Promise<TResponse> =>
+        this.delete<TResponse, TPayload, TParams>(
+            kwargs,
+            data,
+            query,
+            attachments,
+            requestConfig
+        );
+
+    public delete = <
+        TResponse = Record<string, never>,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
+    >(
+        kwargs: TParams | null = null,
+        data: TPayload | string | null = null,
+        query: Query | null = null,
+        attachments: Attachments | null = null,
+        requestConfig: RequestConfig | null = null
+    ): Promise<TResponse> =>
+        this._post<TResponse, TPayload, TParams>(
             kwargs,
             data,
             query,
             attachments,
             requestConfig,
-            'del'
+            'delete'
         );
 
-    public renderPath<Params extends Kwargs | null = Kwargs>(
-        urlParams: Params | null = null,
+    public renderPath<TParams extends Kwargs | null = Params>(
+        urlParams: TParams | null = null,
         requestConfig: RequestConfig = null
     ): string {
         const config = this.config(requestConfig);
@@ -232,11 +283,13 @@ export abstract class Resource extends Route implements ResourceInterface {
         value: string | null
     ): any;
 
-    protected abstract createRequest<D extends ObjectMap = any>(
+    protected abstract createRequest<
+        TPayload extends ObjectMap | string | null = any
+    >(
         method: string,
         url: string,
         query: Query,
-        data: D | null,
+        data: TPayload | null,
         attachments: Attachments,
         requestConfig: RequestConfig
     ): any;
@@ -246,12 +299,15 @@ export abstract class Resource extends Route implements ResourceInterface {
         resolve: (response: any, error: any) => void
     ): void;
 
-    protected _fetch<R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs: Params | null = null,
+    protected _fetch<
+        TResponse = TFetchResponse,
+        TParams extends Kwargs | null = Params
+    >(
+        kwargs: TParams | null = null,
         query: Query | null = null,
         requestConfig: RequestConfig | null = null,
         method: AllowedFetchMethods = 'get'
-    ): Promise<R> {
+    ): Promise<TResponse> {
         const thePath = this.renderPath(kwargs, requestConfig);
         return this.handleRequest(
             this.createRequest(
@@ -267,17 +323,17 @@ export abstract class Resource extends Route implements ResourceInterface {
     }
 
     protected _post<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends ObjectMap | string | null = TPostPayload,
+        TParams extends Kwargs | null = Params
     >(
-        kwargs: Params | null = null,
-        data: D | string | null = null,
+        kwargs: TParams | null = null,
+        data: TPayload | string | null = null,
         query: Query = null,
         attachments: Attachments = null,
         requestConfig: RequestConfig = null,
         method: AllowedPostMethods = 'post'
-    ): Promise<R> {
+    ): Promise<TResponse> {
         const config = this.config(requestConfig);
 
         // istanbul ignore next: Tested in package that implement Resource
