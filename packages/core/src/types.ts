@@ -1,10 +1,21 @@
+export type Primitive =
+    | string
+    | number
+    | bigint
+    | boolean
+    | undefined
+    | symbol
+    | null;
+
 export type Optional<T> = T | null;
 
 export type OptionalMap<T> = {
     [K in keyof T]?: T[K];
 };
 
-export type Kwargs = Record<string, string | number | undefined>;
+export type Kwargs = Record<string, Primitive>;
+
+export type EmptyPayload = Record<string, never>;
 
 export interface ObjectMap<T = any> {
     [key: string]: T;
@@ -16,18 +27,18 @@ export type ConfigObjectFn =
     | ObjectMap<string | null>
     | ObjectMapFn<string | null>;
 
-export type Query = ObjectMap<string> | null;
+export type Query = ObjectMap<Primitive> | null;
 
 export type MutateResponseFn = <R>(
     responseData: R,
     rawResponse?: ResponseInterface,
-    resource?: ResourceInterface,
+    resource?: ResourceInterface<any, any, any, any>,
     requestConfig?: RequestConfig
 ) => any;
 export type MutateErrorFn = (
     error: ResourceErrorInterface,
     rawResponse?: ResponseInterface,
-    resource?: ResourceInterface,
+    resource?: ResourceInterface<any, any, any, any>,
     requestConfig?: RequestConfig
 ) => any;
 export type MutateRawResponseFn = (
@@ -241,15 +252,15 @@ export interface Attachment {
 
 export type Attachments = null | Attachment[];
 
-export type ResourceFetchMethods = 'fetch' | 'head' | 'options';
+export type ResourceFetchMethods = 'fetch' | 'get' | 'head' | 'options';
 
-export type ResourcePostMethods = 'post' | 'patch' | 'put' | 'del';
+export type ResourcePostMethods = 'post' | 'patch' | 'put' | 'del' | 'delete';
 
 export type ResourceMethods = ResourceFetchMethods | ResourcePostMethods;
 
 export type AllowedFetchMethods = 'get' | 'head' | 'options';
 
-export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del';
+export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'delete';
 
 export type AllowedMethods = AllowedFetchMethods | AllowedPostMethods;
 
@@ -277,92 +288,116 @@ export interface RouterInterface extends RouteInterface {
     [key: string]: ResourceInterface | RouterInterface | any;
 }
 
-export type ResourceFetchMethod<R = any, Params extends Kwargs = Kwargs> = (
+export type ResourceFetchMethod<
+    TResponse = any,
+    Params extends Kwargs | null = Kwargs
+> = (
     kwargs?: Params | null,
     query?: Query | null,
     requestConfig?: RequestConfig | null
-) => Promise<R> | any;
+) => Promise<TResponse>;
 
 export type ResourcePostMethod<
-    R = any,
-    D extends ObjectMap = any,
-    Params extends Kwargs = Kwargs
+    TResponse = any,
+    TPayload extends ObjectMap | string | null = any,
+    Params extends Kwargs | null = Kwargs
 > = (
     kwargs?: Params | null,
-    data?: D | string | null,
+    data?: TPayload | string | null,
     query?: Query | null,
     attachments?: Attachments,
     requestConfig?: RequestConfig | null
-) => Promise<R> | any;
+) => Promise<TResponse>;
 
-export interface ResourceInterface extends RouteInterface {
+export interface ResourceInterface<
+    Params extends Kwargs | null = Kwargs,
+    TFetchResponse = any,
+    TPostPayload extends ObjectMap | string | null = any,
+    TPostResponse = TFetchResponse
+> extends RouteInterface {
     readonly apiEndpoint: string;
 
     config(requestConfig?: RequestConfig): ConfigType;
 
-    fetch<R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs?: Params | null,
+    fetch<TResponse = TFetchResponse, TParams extends Params = Params>(
+        kwargs?: TParams | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
-    head<R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs?: Params | null,
+    ): Promise<TResponse>;
+    get<TResponse = TFetchResponse, TParams extends Params = Params>(
+        kwargs?: TParams | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
-    options<R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs?: Params | null,
+    ): Promise<TResponse>;
+    head<TResponse = Record<string, never>, TParams extends Params = Params>(
+        kwargs?: TParams | null,
         query?: Query | null,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
+    ): Promise<TResponse>;
+    options<TResponse = TFetchResponse, TParams extends Params = Params>(
+        kwargs?: TParams | null,
+        query?: Query | null,
+        requestConfig?: RequestConfig | null
+    ): Promise<TResponse>;
 
     post<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
+    ): Promise<TResponse>;
     patch<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
+    ): Promise<TResponse>;
     put<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
+    ): Promise<TResponse>;
     del<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = EmptyPayload,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
         query?: Query | null,
         attachments?: Attachments,
         requestConfig?: RequestConfig | null
-    ): Promise<R> | any;
+    ): Promise<TResponse>;
+    delete<
+        TResponse = EmptyPayload,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
+        query?: Query | null,
+        attachments?: Attachments,
+        requestConfig?: RequestConfig | null
+    ): Promise<TResponse>;
 
-    renderPath<Params extends Kwargs | null = Kwargs>(
-        urlParams?: Params | null,
+    renderPath<TParams extends Params = Params>(
+        urlParams?: TParams | null,
         requestConfig?: RequestConfig | null
     ): string;
 

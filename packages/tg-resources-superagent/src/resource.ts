@@ -1,6 +1,7 @@
 import {
     AllowedMethods,
     Attachments,
+    Kwargs,
     ObjectMap,
     Optional,
     Query,
@@ -88,7 +89,12 @@ export class SuperagentResponse extends ResponseInterface {
     }
 }
 
-export class SuperAgentResource extends Resource {
+export class SuperAgentResource<
+    Params extends Kwargs | null = Kwargs,
+    TFetchResponse = any,
+    TPostPayload extends ObjectMap | string | null = any,
+    TPostResponse = TFetchResponse
+> extends Resource<Params, TFetchResponse, TPostPayload, TPostResponse> {
     protected wrapResponse(
         response: Response,
         error: ResponseError | Error | null = null
@@ -104,11 +110,11 @@ export class SuperAgentResource extends Resource {
         );
     }
 
-    protected createRequest<D extends ObjectMap = any>(
+    protected createRequest<TPayload extends ObjectMap | string | null = any>(
         method: AllowedMethods,
         url: string,
         query: Query,
-        data: D | null,
+        data: TPayload | null,
         attachments: Attachments,
         requestConfig: RequestConfig
     ) {
@@ -124,7 +130,7 @@ export class SuperAgentResource extends Resource {
 
         if (hasValue(data)) {
             // If attachments are used construct a multipart request
-            if (attachments) {
+            if (attachments && isObject(data)) {
                 attachments.forEach((attachment) => {
                     req = req.attach(
                         attachment.field,

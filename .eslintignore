@@ -2,3 +2,5 @@ lib/
 jest.config.js
 jest.config.base.js
 rollup.config.js
+test-d/
+.eslintrc.js

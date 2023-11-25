@@ -1,7 +1,7 @@
 import lodashTemplate from 'lodash.template';
-import compileURL from './builtin';
 
-import { RouteTemplate, PrepareKwargs } from './types';
+import compileURL from './builtin';
+import { PrepareKwargs, RouteTemplate } from './types';
 import { cleanRoot, cleanRoute } from './utils';
 
 export function routeTemplate<TKwargs = void>(

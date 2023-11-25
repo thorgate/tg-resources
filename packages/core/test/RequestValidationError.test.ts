@@ -27,13 +27,18 @@ beforeEach(() => {
 describe('RequestValidationError api', () => {
     test('constructor works', () => {
         // ResponseText can be empty
-        new RequestValidationError(400, '');
+        let validationError = new RequestValidationError(400, '');
+        expect(validationError.errors).toEqual({
+            _errors: ['#$empty-message$#'],
+        });
 
         // ResponseText can be missing
-        new RequestValidationError(0, {});
+        validationError = new RequestValidationError(0, {});
+        expect(validationError.errors).toBeNull();
 
         // No args also works
-        new RequestValidationError();
+        validationError = new RequestValidationError();
+        expect(validationError.errors).toEqual({ _errors: ['undefined'] });
     });
 
     test('instance.statusCode is correct', () => {

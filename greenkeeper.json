@@ -9,8 +9,8 @@
         "packages/fetch-runtime/package.json",
         "packages/is/package.json",
         "packages/saga-router/package.json",
-        "packages/test-resource/package.json",
         "packages/test-server/package.json",
+        "packages/test-utils/package.json",
         "packages/tg-resource/package.json",
         "packages/tg-resources-fetch/package.json",
         "packages/tg-resources-superagent/package.json"
