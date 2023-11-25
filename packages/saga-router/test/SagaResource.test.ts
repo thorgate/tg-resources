@@ -7,7 +7,12 @@ import {
     RequestValidationError,
 } from '@tg-resources/core';
 import { FetchResource as Resource } from '@tg-resources/fetch';
-import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
+import {
+    expectedBuffer,
+    getHostUrl,
+    listen,
+    stopServer,
+} from '@tg-resources/test-server';
 import { getError } from '@tg-resources/test-utils';
 import 'jest-extended';
 import { SagaIterator } from 'redux-saga';
@@ -32,8 +37,8 @@ beforeEach(() => {
     server = listen(3003);
 });
 
-afterEach(() => {
-    server.close();
+afterEach(async () => {
+    await stopServer(server);
 });
 
 describe('createSagaRouter functional', () => {
