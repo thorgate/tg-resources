@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { ResourceTuple } from '@tg-resources/core';
+import { Kwargs, ResourceTuple } from '@tg-resources/core';
 import { FetchResource } from '@tg-resources/fetch';
-import { createSagaRouter } from '../src';
+import { expectType } from 'tsd';
+import { createSagaRouter, SagaResource } from '../src';
 
-const api = createSagaRouter(
+const apiRouter = createSagaRouter(
     {
         auth: [
             '/headers',
@@ -12,6 +13,8 @@ const api = createSagaRouter(
         cats: {
             apiEndpoint: '/cats',
         },
+        cat: '/cats/${pk}',
+        cat2: new SagaResource('/cats/${pk}', null, FetchResource),
         dogs: {
             list: '/dogs/',
             details: '/dogs/${pk}',
@@ -23,30 +26,28 @@ const api = createSagaRouter(
     FetchResource
 );
 
-export function* testFetchList() {
-    // $ExpectType SagaResource<SagaResource<FetchResource>>
-    api.test.list;
-    // $ExpectType CallEffect<any>
-    api.test.list.fetch();
-    // $ExpectType any
-    yield api.test.list.fetch();
-    // $ExpectType any
-    const result: [{ id: number }] = yield api.test.list.fetch();
+// -------------------------------------------------------------------------------------
 
-    // $ExpectType [{ id: number; }]
-    result;
-}
+expectType<
+    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+>(apiRouter.auth);
 
-export function* testDetailsList() {
-    // $ExpectType SagaResource<SagaResource<FetchResource>>
-    api.test.details;
-    // $ExpectType CallEffect<any>
-    api.test.details.fetch({ id: 1 });
-    // $ExpectType any
-    yield api.test.details.fetch({ id: 1 });
-    // $ExpectType any
-    const result: { id: number } = yield api.test.details.fetch({ id: 1 });
+expectType<
+    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+>(apiRouter.cats);
 
-    // $ExpectType { id: number; }
-    result;
-}
+expectType<
+    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+>(apiRouter.cat);
+
+expectType<
+    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+>(apiRouter.cat2);
+
+expectType<
+    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+>(apiRouter.dogs.list);
+
+expectType<
+    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+>(apiRouter.dogs.details);
