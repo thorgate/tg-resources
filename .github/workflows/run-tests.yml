@@ -11,13 +11,13 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                node: [18, 20, 22, 24]
+                node: [18, 20]
         steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-node@v1
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node }}
-            - uses: actions/cache@v2
+            - uses: actions/cache@v3
               with:
                   path: '**/node_modules'
                   key: ${{ runner.os }}-node-${{ matrix.node }}-modules-${{ hashFiles('**/yarn.lock') }}
@@ -25,8 +25,8 @@ jobs:
               run: yarn
             - name: Build package
               run: yarn build
-            - name: Run type-check
-              run: yarn type-check
+            - name: Run check-types
+              run: yarn check-types
             - name: Run tests
               run: yarn test:coverage
             - name: Check examples

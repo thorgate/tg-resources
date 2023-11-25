@@ -2,7 +2,12 @@ import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 import { Server } from 'http';
 
 import { isObject } from '@tg-resources/is';
-import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
+import {
+    expectedBuffer,
+    getHostUrl,
+    listen,
+    stopServer,
+} from '@tg-resources/test-server';
 import { getError } from '@tg-resources/test-utils';
 import 'jest-extended';
 import {
@@ -111,8 +116,8 @@ beforeEach(() => {
     server = listen(3001);
 });
 
-afterEach(() => {
-    server.close();
+afterEach(async () => {
+    await stopServer(server);
 });
 
 describe('SuperAgentResource basic requests work', () => {

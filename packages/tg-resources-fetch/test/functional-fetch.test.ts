@@ -106,8 +106,8 @@ beforeEach(() => {
     server = testServer.listen(3002);
 });
 
-afterEach(() => {
-    server.close();
+afterEach(async () => {
+    await testServer.stopServer(server);
 });
 
 describe('FetchResource basic requests work', () => {
