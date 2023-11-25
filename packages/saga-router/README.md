@@ -174,10 +174,10 @@ function* someSaga() {
 
 This package adds extra configuration methods for `Router` and `Resource`.
 
--   `mutateRequestConfig` _(Function)_: Optional function with signature `(config?: SagaRequestConfig, resource: Resource, options: ResourceSagaRunnerConfig) => SagaIterator | SagaRequestConfig | undefined`
+-   `mutateSagaRequestConfig` _(Function)_: Optional function with signature `(config?: SagaRequestConfig, resource: Resource, options: ResourceSagaRunnerConfig) => SagaIterator | SagaRequestConfig | undefined`
     which can be used to mutate request config before it is handed to resource backend.
     This is useful for setting authentication token to the api request.
--   `onRequestError` _(Function)_: Optional function with signature `(error: ErrorType, resource: Resource, options: ResourceSagaRunnerConfig) => void | SagaIterator`.
+-   `onSagaRequestError` _(Function)_: Optional function with signature `(error: ErrorType, resource: Resource, options: ResourceSagaRunnerConfig) => void | SagaIterator`.
     This can be used to handle Sentry missing error handling.
 -   `signal` _(AbortSignal|null)_: **Advanced usage:** Manually provide signal to abort request. If it is not provided then AbortController is created internally and triggered when task is cancelled.
 

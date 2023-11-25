@@ -1,22 +1,23 @@
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 
+import { ErrorType, NetworkError, ResourceInterface } from '@tg-resources/core';
+import { FetchResource as Resource } from '@tg-resources/fetch';
+import { getError } from '@tg-resources/test-utils';
 import { SagaIterator } from 'redux-saga';
 import { put } from 'redux-saga/effects';
-import { ErrorType, NetworkError, ResourceInterface } from 'tg-resources';
 
 import {
     OnRequestError,
     resourceSagaRunner,
     ResourceSagaRunnerConfig,
+    SagaRequestConfig,
     SagaResource,
 } from '../src';
-import { DummyResource as Resource } from './DummyResource';
+
 import { configureStore, RunnerWithError, setError } from './reduxStore';
 import { addRequestConfig } from './utils';
 
-let onRequestError: OnRequestError;
-
-onRequestError = function* onError(
+const onSagaRequestError: OnRequestError = function* onError(
     error: ErrorType,
     resource: ResourceInterface,
     options: ResourceSagaRunnerConfig
@@ -24,23 +25,45 @@ onRequestError = function* onError(
     yield put(setError(error, resource.apiEndpoint, options));
 };
 
-const config = {
+const config: SagaRequestConfig = {
     apiRoot: '/api',
-    mutateRequestConfig: addRequestConfig,
-    onRequestError,
+    mutateSagaRequestConfig: addRequestConfig,
+    onSagaRequestError,
 };
 
-const createResource = (data?: any, error?: any) => {
+type DataOrError = { data: any } | { error: any };
+
+const createResource = (dataOrError: DataOrError) => {
     const resource = new Resource('/resource-test', config);
-    resource.Data = data;
-    resource.Error = error;
+
+    const resourceGetMock = jest.spyOn(resource, 'get');
+    const resourcePostMock = jest.spyOn(resource, 'post');
+
+    if ('data' in dataOrError) {
+        resourceGetMock.mockResolvedValue(dataOrError.data);
+        resourcePostMock.mockResolvedValue(dataOrError.data);
+    } else {
+        resourceGetMock.mockRejectedValue(new NetworkError(dataOrError.error));
+        resourcePostMock.mockRejectedValue(new NetworkError(dataOrError.error));
+    }
+
     return resource;
 };
 
-const createSagaResource = (data?: any, error?: any) => {
+const createSagaResource = (dataOrError: DataOrError) => {
     const resource = new SagaResource('/saga-resource-test', config, Resource);
-    resource.resource.Data = data;
-    resource.resource.Error = error;
+
+    const resourceGetMock = jest.spyOn(resource.resource, 'get');
+    const resourcePostMock = jest.spyOn(resource.resource, 'post');
+
+    if ('data' in dataOrError) {
+        resourceGetMock.mockResolvedValue(dataOrError.data);
+        resourcePostMock.mockResolvedValue(dataOrError.data);
+    } else {
+        resourceGetMock.mockRejectedValue(new NetworkError(dataOrError.error));
+        resourcePostMock.mockRejectedValue(new NetworkError(dataOrError.error));
+    }
+
     return resource;
 };
 
@@ -73,42 +96,41 @@ const expectError = async (
 
 describe('resourceSagaRunner unit :: Resource', () => {
     test('unknown method', async () => {
-        try {
-            const resource = createResource(null, null);
-            const sagaIter = resourceSagaRunner(resource, 'unknown');
-            await store.runSagaInitialized(sagaIter).toPromise();
+        const resource = createResource({ data: null });
+        const sagaIter = resourceSagaRunner(resource as any, 'unknown');
 
-            throw new Error('Expected to throw for unknown method');
-        } catch (error) {
-            expect(`${error}`).toEqual('Error: Unknown resource method used.');
-        }
+        const error = await getError(() =>
+            store.runSagaInitialized(sagaIter).toPromise()
+        );
+
+        expect(`${error}`).toEqual('Error: Unknown resource method used.');
     });
 
     test('fetch :: mutateRequestConfig', async () => {
         const data = { testResource: 1 };
-        const resource = createResource(data);
-        const sagaIter = resourceSagaRunner(resource, 'fetch');
+        const resource = createResource({ data });
+        const sagaIter = resourceSagaRunner(resource as any, 'fetch');
         await expectResponse(data, sagaIter);
     });
 
     test('fetch :: onRequestError', async () => {
         const error = new Error('Simulated fail');
-        const resource = createResource(undefined, error);
-        const sagaIter = resourceSagaRunner(resource, 'fetch', {});
+        const resource = createResource({ error });
+        const sagaIter = resourceSagaRunner(resource as any, 'fetch', {});
         await expectError(resource.apiEndpoint, error, sagaIter);
     });
 
     test('post :: mutateRequestConfig', async () => {
         const data = { testResource: 1 };
-        const resource = createResource(data);
-        const sagaIter = resourceSagaRunner(resource, 'post');
+        const resource = createResource({ data });
+        const sagaIter = resourceSagaRunner(resource as any, 'post');
         await expectResponse(data, sagaIter);
     });
 
     test('post :: onRequestError', async () => {
         const error = new Error('Simulated fail');
-        const resource = createResource(undefined, error);
-        const sagaIter = resourceSagaRunner(resource, 'post', {});
+        const resource = createResource({ error });
+        const sagaIter = resourceSagaRunner(resource as any, 'post', {});
         await expectError(resource.apiEndpoint, error, sagaIter);
     });
 });
@@ -116,15 +138,15 @@ describe('resourceSagaRunner unit :: Resource', () => {
 describe('resourceSagaRunner unit :: SagaResource', () => {
     test('fetch :: mutateRequestConfig', async () => {
         const data = { testResource: 1 };
-        const resource = createSagaResource(data);
-        const sagaIter = resource.fetch();
+        const resource = createSagaResource({ data });
+        const sagaIter = resource.fetchEffect();
         await expectResponse(data, sagaIter);
     });
 
     test('fetch :: onRequestError', async () => {
         const error = new Error('Simulated fail');
-        const resource = createSagaResource(undefined, error);
-        const sagaIter = resource.fetch();
+        const resource = createSagaResource({ error });
+        const sagaIter = resource.fetchEffect();
         await expectError(resource.apiEndpoint, error, sagaIter, {
             kwargs: null,
             query: null,
@@ -134,15 +156,15 @@ describe('resourceSagaRunner unit :: SagaResource', () => {
 
     test('post :: mutateRequestConfig', async () => {
         const data = { testResource: 1 };
-        const resource = createSagaResource(data);
-        const sagaIter = resource.post();
+        const resource = createSagaResource({ data });
+        const sagaIter = resource.postEffect();
         await expectResponse(data, sagaIter);
     });
 
     test('post :: onRequestError', async () => {
         const error = new Error('Simulated fail');
-        const resource = createSagaResource(undefined, error);
-        const sagaIter = resource.post();
+        const resource = createSagaResource({ error });
+        const sagaIter = resource.postEffect();
         await expectError(resource.apiEndpoint, error, sagaIter, {
             kwargs: null,
             data: null,

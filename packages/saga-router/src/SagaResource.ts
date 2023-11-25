@@ -7,6 +7,7 @@ import {
     Resource,
     ResourceFetchMethods,
     ResourcePostMethods,
+    RouteConfig,
     RouterInterface,
 } from '@tg-resources/core';
 import { call, CallEffect } from 'redux-saga/effects';
@@ -31,19 +32,22 @@ export function isSagaResource<Klass extends Resource>(
     );
 }
 
-export class SagaResource<Klass extends Resource> extends Resource {
+export class SagaResource<
+    Klass extends Resource<any, any, any, any>,
+    Params extends Kwargs | null = Kwargs,
+    TFetchResponse = any,
+    TPostPayload extends ObjectMap | string | null = any,
+    TPostResponse = TFetchResponse
+> extends Resource<Params, TFetchResponse, TPostPayload, TPostResponse> {
     public constructor(
         apiEndpoint: string,
         config: SagaRouteConfig,
-        ResourceKlass: new (
-            apiEndpoint: string,
-            config?: RequestConfig
-        ) => Klass
+        ResourceKlass: new (endpoint: string, cfg?: RouteConfig) => Klass
     ) {
-        super(apiEndpoint, config as Pick<typeof config, keyof RequestConfig>);
+        super(apiEndpoint, config as Pick<typeof config, keyof RouteConfig>);
         this._resource = new ResourceKlass(
             apiEndpoint,
-            config as Pick<typeof config, keyof RequestConfig>
+            config as Pick<typeof config, keyof RouteConfig>
         );
     }
 
@@ -110,37 +114,127 @@ export class SagaResource<Klass extends Resource> extends Resource {
     }
 
     /* Public API */
-    public fetch = <R = any, Params extends Kwargs | null = Kwargs>(
+    public get = <TResponse = TFetchResponse, TParams extends Params = Params>(
+        kwargs?: TParams | null,
+        query?: Query | null,
+        requestConfig?: RequestConfig | null
+    ): Promise<TResponse> =>
+        this.resource.get<TResponse, TParams>(kwargs, query, requestConfig);
+
+    public getEffect = <
+        TResponse = TFetchResponse,
+        TParams extends Params = Params
+    >(
         kwargs?: Params | null,
         query?: Query | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => this._sagaFetch<R, Params>('fetch', kwargs, query, sagaRequestConfig);
+    ): CallEffect<TResponse> =>
+        this._sagaFetch<TResponse, TParams>(
+            'get',
+            kwargs as TParams,
+            query,
+            sagaRequestConfig
+        );
 
-    public head = <R = any, Params extends Kwargs | null = Kwargs>(
+    public fetch = <
+        TResponse = TFetchResponse,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        query?: Query | null,
+        requestConfig?: RequestConfig | null
+    ): Promise<TResponse> =>
+        this.get<TResponse, TParams>(kwargs, query, requestConfig);
+
+    public fetchEffect = <
+        TResponse = TFetchResponse,
+        TParams extends Params = Params
+    >(
         kwargs?: Params | null,
         query?: Query | null,
         sagaRequestConfig?: SagaRequestConfig | null
-    ) => this._sagaFetch<R, Params>('head', kwargs, query, sagaRequestConfig);
+    ): CallEffect<TResponse> =>
+        this.getEffect<TResponse, TParams>(kwargs, query, sagaRequestConfig);
 
-    public options = <R = any, Params extends Kwargs | null = Kwargs>(
-        kwargs?: Params | null,
+    public head = <
+        TResponse = Record<string, never>,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        query?: Query | null,
+        requestConfig?: RequestConfig | null
+    ) => this.resource.head<TResponse, TParams>(kwargs, query, requestConfig);
+
+    public headEffect = <
+        TResponse = Record<string, never>,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
         query?: Query | null,
         sagaRequestConfig?: SagaRequestConfig | null
     ) =>
-        this._sagaFetch<R, Params>('options', kwargs, query, sagaRequestConfig);
+        this._sagaFetch<TResponse, TParams>(
+            'head',
+            kwargs,
+            query,
+            sagaRequestConfig
+        );
+
+    public options = <
+        TResponse = TFetchResponse,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        query?: Query | null,
+        requestConfig?: RequestConfig | null
+    ) => this.resource.head<TResponse, TParams>(kwargs, query, requestConfig);
+
+    public optionsEffect = <
+        TResponse = TFetchResponse,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        query?: Query | null,
+        sagaRequestConfig?: SagaRequestConfig | null
+    ) =>
+        this._sagaFetch<TResponse, TParams>(
+            'options',
+            kwargs,
+            query,
+            sagaRequestConfig
+        );
 
     public post = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
+        query?: Query | null,
+        attachments?: Attachments | null,
+        requestConfig?: RequestConfig | null
+    ) =>
+        this.resource.post<TResponse, TPayload, TParams>(
+            kwargs,
+            data,
+            query,
+            attachments,
+            requestConfig
+        );
+
+    public postEffect = <
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
     ) =>
-        this._sagaPost<R, D, Params>(
+        this._sagaPost<TResponse, TPayload, TParams>(
             'post',
             kwargs,
             data,
@@ -150,17 +244,36 @@ export class SagaResource<Klass extends Resource> extends Resource {
         );
 
     public patch = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
+        query?: Query | null,
+        attachments?: Attachments | null,
+        requestConfig?: RequestConfig | null
+    ) =>
+        this.resource.patch<TResponse, TPayload, TParams>(
+            kwargs,
+            data,
+            query,
+            attachments,
+            requestConfig
+        );
+
+    public patchEffect = <
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
     ) =>
-        this._sagaPost<R, D, Params>(
+        this._sagaPost<TResponse, TPayload, TParams>(
             'patch',
             kwargs,
             data,
@@ -170,17 +283,36 @@ export class SagaResource<Klass extends Resource> extends Resource {
         );
 
     public put = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
+        query?: Query | null,
+        attachments?: Attachments | null,
+        requestConfig?: RequestConfig | null
+    ) =>
+        this.resource.put<TResponse, TPayload, TParams>(
+            kwargs,
+            data,
+            query,
+            attachments,
+            requestConfig
+        );
+
+    public putEffect = <
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
     ) =>
-        this._sagaPost<R, D, Params>(
+        this._sagaPost<TResponse, TPayload, TParams>(
             'put',
             kwargs,
             data,
@@ -189,19 +321,57 @@ export class SagaResource<Klass extends Resource> extends Resource {
             sagaRequestConfig
         );
 
-    public del = <
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+    public delete = <
+        TResponse = Record<string, never>,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
-        kwargs?: Params | null,
-        data?: D | string | null,
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
+        query?: Query | null,
+        attachments?: Attachments | null,
+        requestConfig?: RequestConfig | null
+    ) =>
+        this.resource.delete<TResponse, TPayload, TParams>(
+            kwargs,
+            data,
+            query,
+            attachments,
+            requestConfig
+        );
+
+    public del = <
+        TResponse = Record<string, never>,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
+        query?: Query | null,
+        attachments?: Attachments | null,
+        requestConfig?: RequestConfig | null
+    ) =>
+        this.delete<TResponse, TPayload, TParams>(
+            kwargs,
+            data,
+            query,
+            attachments,
+            requestConfig
+        );
+
+    public deleteEffect = <
+        TResponse = Record<string, never>,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
         query?: Query | null,
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
     ) =>
-        this._sagaPost<R, D, Params>(
-            'del',
+        this._sagaPost<TResponse, TPayload, TParams>(
+            'delete',
             kwargs,
             data,
             query,
@@ -209,13 +379,35 @@ export class SagaResource<Klass extends Resource> extends Resource {
             sagaRequestConfig
         );
 
-    protected _sagaFetch<R = any, Params extends Kwargs | null = Kwargs>(
+    public delEffect = <
+        TResponse = Record<string, never>,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
+    >(
+        kwargs?: TParams | null,
+        data?: TPayload | string | null,
+        query?: Query | null,
+        attachments?: Attachments | null,
+        sagaRequestConfig?: SagaRequestConfig | null
+    ) =>
+        this.deleteEffect<TResponse, TPayload, TParams>(
+            kwargs,
+            data,
+            query,
+            attachments,
+            sagaRequestConfig
+        );
+
+    protected _sagaFetch<
+        TResponse = TFetchResponse,
+        TParams extends Params = Params
+    >(
         method: ResourceFetchMethods,
-        kwargs: Params | null = null,
+        kwargs: TParams | null = null,
         query: Query | null = null,
         sagaRequestConfig: SagaRequestConfig | null = null
-    ): CallEffect<R> {
-        const runnerOptions: ResourceSagaRunnerConfig<Params> = {
+    ): CallEffect<TResponse> {
+        const runnerOptions: ResourceSagaRunnerConfig<TParams> = {
             kwargs,
             query,
             requestConfig: sagaRequestConfig,
@@ -225,18 +417,18 @@ export class SagaResource<Klass extends Resource> extends Resource {
     }
 
     protected _sagaPost<
-        R = any,
-        D extends ObjectMap = any,
-        Params extends Kwargs | null = Kwargs
+        TResponse = TPostResponse,
+        TPayload extends TPostPayload = TPostPayload,
+        TParams extends Params = Params
     >(
         method: ResourcePostMethods,
-        kwargs: Params | null = null,
-        data: D | string | null = null,
+        kwargs: TParams | null = null,
+        data: TPayload | string | null = null,
         query: Query | null = null,
         attachments: Attachments | null = null,
         sagaRequestConfig: SagaRequestConfig | null = null
-    ): CallEffect<R> {
-        const runnerOptions: ResourceSagaRunnerConfig<Params, D> = {
+    ): CallEffect<TResponse> {
+        const runnerOptions: ResourceSagaRunnerConfig<TParams, TPayload> = {
             kwargs,
             data,
             query,
@@ -248,11 +440,11 @@ export class SagaResource<Klass extends Resource> extends Resource {
     }
 
     /* istanbul ignore next: not in use directly */
-    protected createRequest<D extends ObjectMap = any>(
+    protected createRequest<TPayload extends ObjectMap | string | null = any>(
         _0: string,
         _1: string,
         _2: Query,
-        _3: D | null,
+        _3: TPayload | null,
         _4: Attachments,
         _5: SagaRequestConfig
     ): any {

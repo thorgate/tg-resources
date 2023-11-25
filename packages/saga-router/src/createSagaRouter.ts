@@ -1,6 +1,7 @@
 import {
     CreateResourceFactory,
     createRouter,
+    Kwargs,
     ObjectMap,
     Resource,
     ResourceClassConstructor,
@@ -14,7 +15,10 @@ import { SagaResource } from './SagaResource';
 import { SagaRouteConfig } from './types';
 
 // Was required to copy this here as well - Type matching did not work correctly otherwise
-export type ResourceOrExtendedRouter<T, Klass extends Resource> = {
+export type ResourceOrExtendedRouter<
+    T,
+    Klass extends Resource<Kwargs, any, any, any>
+> = {
     [P in keyof T]: T[P] extends string
         ? SagaResource<Klass> // If string, map as Resource
         : T[P] extends ResourceTuple
@@ -23,7 +27,7 @@ export type ResourceOrExtendedRouter<T, Klass extends Resource> = {
         ? SagaResource<Klass> // If Resource constructor object, map as Resource
         : T[P] extends Router
         ? Router // If Router type, map router info to top level
-        : Router & ResourceOrExtendedRouter<T[P], SagaResource<Klass>>; // Default to recursive mapping
+        : Router & ResourceOrExtendedRouter<T[P], Klass>; // Default to recursive mapping
 };
 
 export const createSagaResource: CreateResourceFactory = <

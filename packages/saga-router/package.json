@@ -8,7 +8,7 @@
   "description": "Redux-Saga `tg-resource` support backend",
   "main": "dist/index.js",
   "module": "dist/redux-saga-router.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "react-native": "dist/redux-saga-router.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
@@ -44,15 +44,25 @@
     "@tg-resources/is": "^3.4.0-alpha.0"
   },
   "devDependencies": {
+    "@tg-resources/core": "^3.4.0-alpha.1",
     "@tg-resources/fetch": "^3.4.0-alpha.1",
     "@tg-resources/fetch-runtime": "^3.4.0-alpha.0",
-    "@tg-resources/test-server": "^3.4.0-alpha.0"
+    "@tg-resources/test-utils": "^3.4.0-alpha.1",
+    "@tg-resources/test-server": "^3.4.0-alpha.0",
+    "abortcontroller-polyfill": "^1.7.5",
+    "jest-extended": "^4.0.2",
+    "redux": "^4.0.4"
   },
+  "tsd": {
+    "compilerOptions": {
+      "composite": false
+    }
+	},
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "type-check": "dtslint --localTs ../../node_modules/typescript/lib --expectOnly type-checks",
-    "build": "tsdx build",
+    "lint": "eslint src test -c ../../.eslintrc.js --ext ts --ext tsx",
+    "check-types": "tsd --show-diff",
+    "build": "dts build",
     "prebuild": "yarn clean && yarn lint"
   }
 }
