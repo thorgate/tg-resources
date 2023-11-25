@@ -264,9 +264,12 @@ export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del';
 
 export type AllowedMethods = AllowedFetchMethods | AllowedPostMethods;
 
-export interface RouteMap {
-    [key: string]: ResourceInterface | RouterInterface;
-}
+export type RouterDefinition<T> = RouterInterface & T;
+
+export type RouteMap = Record<
+    string,
+    ResourceInterface<any, any, any, any> | RouterDefinition<any>
+>;
 
 export interface RouteInterface {
     readonly parent: RouterInterface | null;
