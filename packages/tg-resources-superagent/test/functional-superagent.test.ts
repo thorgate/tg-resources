@@ -1,7 +1,9 @@
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
+import { Server } from 'http';
+
 import { isObject } from '@tg-resources/is';
 import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
-import { Server } from 'http';
+import { getError } from '@tg-resources/test-utils';
 import 'jest-extended';
 import {
     AbortError,
@@ -97,6 +99,7 @@ async function expectError(
     }
 
     if (error) {
+        // eslint-disable-next-line @typescript-eslint/no-throw-literal
         throw error;
     }
 }
@@ -112,7 +115,7 @@ afterEach(() => {
     server.close();
 });
 
-describe('Resource basic requests work', () => {
+describe('SuperAgentResource basic requests work', () => {
     test('Network error is triggered', async () => {
         const res = new Resource('/', {
             apiRoot: getHostUrl(2999),
@@ -178,9 +181,10 @@ describe('Resource basic requests work', () => {
             mutateResponse(data: any, raw?: Response) {
                 return {
                     data,
-                    poweredBy: isObject(raw)
-                        ? raw.headers['x-powered-by']
-                        : null,
+                    poweredBy:
+                        isObject(raw) && raw.headers
+                            ? raw.headers['x-powered-by']
+                            : null,
                 };
             },
         });
@@ -199,14 +203,11 @@ describe('Resource basic requests work', () => {
             mutateError: spyFn,
         });
 
-        try {
-            const response = await res.fetch();
-            expect(response).toBeFalsy();
-        } catch (err: any) {
-            // spyFn does not return anything so we expect value to be empty
-            expect(err).toBeFalsy();
-            expect(spyFn.mock.calls.length).toBe(1);
-        }
+        const error = await getError(res.fetch);
+
+        // spyFn does not return anything so we expect value to be empty
+        expect(error).toBeFalsy();
+        expect(spyFn.mock.calls.length).toBe(1);
     });
 
     test('mutateError functionally works', async () => {
@@ -538,20 +539,15 @@ describe('Resource basic requests work', () => {
             controller.abort();
         }, 100);
 
-        try {
-            const data = await prom;
-            throw new Error(
-                'Request should be aborted!' + JSON.stringify(data)
-            );
-        } catch (error: any) {
-            // We are expecting the promise to reject with an AbortError
-            expect(error).toBeInstanceOf(AbortError);
-            expect(error).toMatchObject({
-                isAbortError: true,
-                type: 'aborted',
-                name: 'AbortError',
-            });
-        }
+        const error = await getError<AbortError | Error>(() => prom);
+
+        // We are expecting the promise to reject with an AbortError
+        expect(error).toBeInstanceOf(AbortError);
+        expect(error).toMatchObject({
+            isAbortError: true,
+            type: 'aborted',
+            name: 'AbortError',
+        });
     });
 
     test('should reject immediately if signal has already been aborted', async () => {
@@ -570,19 +566,14 @@ describe('Resource basic requests work', () => {
             signal: controller.signal,
         });
 
-        try {
-            const data = await prom;
-            throw new Error(
-                'Request should be aborted!' + JSON.stringify(data)
-            );
-        } catch (error: any) {
-            // We are expecting the promise to reject with an AbortError
-            expect(error).toBeInstanceOf(AbortError);
-            expect(error).toMatchObject({
-                isAbortError: true,
-                type: 'aborted',
-                name: 'AbortError',
-            });
-        }
+        const error = await getError<AbortError | Error>(() => prom);
+
+        // We are expecting the promise to reject with an AbortError
+        expect(error).toBeInstanceOf(AbortError);
+        expect(error).toMatchObject({
+            isAbortError: true,
+            type: 'aborted',
+            name: 'AbortError',
+        });
     });
 });
