@@ -8,7 +8,7 @@
   "description": "",
   "main": "dist/index.js",
   "module": "dist/route-template.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "react-native": "dist/route-template.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
@@ -30,11 +30,16 @@
   "dependencies": {
     "@tg-resources/is": "^3.4.0-alpha.0"
   },
+  "tsd": {
+    "compilerOptions": {
+      "composite": false
+    }
+	},
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "type-check": "dtslint --localTs ../../node_modules/typescript/lib --expectOnly type-checks",
-    "build": "tsdx build",
+    "lint": "eslint src test -c ../../.eslintrc.js --ext ts --ext tsx",
+    "check-types": "tsd --show-diff",
+    "build": "dts build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

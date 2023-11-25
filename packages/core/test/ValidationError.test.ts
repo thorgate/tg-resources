@@ -282,9 +282,9 @@ describe('iteration api', () => {
         const err1 = new SingleValidationError(['bar']);
         const err2 = new SingleValidationError(['swag', 'ded']);
 
-        const f = new ListValidationError([err1, err2]);
+        const validationError = new ListValidationError([err1, err2]);
 
-        expect([...f]).toIncludeSameMembers([err1, err2]);
+        expect([...validationError]).toIncludeSameMembers([err1, err2]);
     });
 
     test('ListValidationError - for .. of', () => {
@@ -311,7 +311,8 @@ describe('iteration api', () => {
             );
         }
 
-        // Checks that we can break the for .. of loop
+        // Checks that we can break the for of loop
+        // eslint-disable-next-line no-unreachable-loop
         for (const x of f) {
             expect(x).toEqual(err1);
             break;
@@ -371,6 +372,7 @@ describe('iteration api', () => {
         }
 
         // Checks that we can break the for .. of loop
+        // eslint-disable-next-line no-unreachable-loop
         for (const x of f) {
             expect(x).toEqual(err1);
             break;

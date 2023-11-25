@@ -46,7 +46,6 @@
   "devDependencies": {
     "@tg-resources/fetch": "^3.4.0-alpha.1",
     "@tg-resources/fetch-runtime": "^3.4.0-alpha.0",
-    "@tg-resources/test-resource": "^3.4.0-alpha.1",
     "@tg-resources/test-server": "^3.4.0-alpha.0"
   },
   "scripts": {

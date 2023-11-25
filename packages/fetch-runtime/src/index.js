@@ -2,6 +2,7 @@
 require('cross-fetch/polyfill');
 require('abortcontroller-polyfill/dist/abortcontroller-polyfill-only');
 
+// eslint-disable-next-line func-names
 (function ($self) {
     if (typeof $self.FormData === 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {

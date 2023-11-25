@@ -37,7 +37,7 @@ describe('checkResource methods', () => {
         expect(isPostMethod('del')).toBeTrue();
     });
 
-    test('isFetchMethod :: invalid', () => {
+    test('isPostMethod :: invalid', () => {
         expect(isPostMethod('invalid')).toBeFalse();
     });
 });

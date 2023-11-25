@@ -5,7 +5,7 @@ import multer from 'multer';
 import uuid from 'uuid';
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 export const port = 3002;
 export const hostUrl = `http://127.0.0.1:${port}`;

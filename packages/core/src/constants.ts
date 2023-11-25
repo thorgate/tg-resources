@@ -1,6 +1,5 @@
-import { parseErrors, prepareError } from './ValidationError';
-
 import { ConfigType } from './types';
+import { parseErrors, prepareError } from './ValidationError';
 
 const DEFAULTS: ConfigType = {
     apiRoot: '',

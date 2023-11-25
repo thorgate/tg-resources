@@ -1,6 +1,5 @@
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 
-import { DummyResource as Resource } from '@tg-resources/test-resource';
 import { SagaIterator } from 'redux-saga';
 import { put } from 'redux-saga/effects';
 import { ErrorType, NetworkError, ResourceInterface } from 'tg-resources';
@@ -11,6 +10,7 @@ import {
     ResourceSagaRunnerConfig,
     SagaResource,
 } from '../src';
+import { DummyResource as Resource } from './DummyResource';
 import { configureStore, RunnerWithError, setError } from './reduxStore';
 import { addRequestConfig } from './utils';
 

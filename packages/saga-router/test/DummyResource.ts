@@ -1,12 +1,14 @@
+/* istanbul ignore file */
 import {
     Attachments,
+    Kwargs,
     ObjectMap,
     Optional,
     Query,
     RequestConfig,
     Resource,
     ResponseInterface,
-} from '../src';
+} from '@tg-resources/core';
 
 export class DummyResponse extends ResponseInterface {
     public constructor(
@@ -51,10 +53,15 @@ export class DummyResponse extends ResponseInterface {
 
 class DummyRequest {
     public readonly method: string;
+
     public readonly url: string;
+
     public readonly query: Query;
+
     public readonly data: any;
+
     public readonly attachments: Attachments;
+
     public readonly requestConfig: RequestConfig;
 
     public headers: ObjectMap;
@@ -98,7 +105,16 @@ class DummyRequest {
     }
 }
 
-export class DummyResource extends Resource {
+export class DummyResource<
+    Params extends Kwargs | null,
+    TFetchResponse = any,
+    TPostPayload extends ObjectMap | string | null = any,
+    TPostResponse = TFetchResponse
+> extends Resource<Params, TFetchResponse, TPostPayload, TPostResponse> {
+    public Data: any = null;
+
+    public Error: any = null;
+
     public wrapResponse<Req, Res, Err>(
         res: Res,
         error: Err,
@@ -107,11 +123,11 @@ export class DummyResource extends Resource {
         return new DummyResponse(res, error, req);
     }
 
-    public createRequest<D extends ObjectMap = any>(
+    public createRequest<TData extends ObjectMap | string | null = any>(
         method: string,
         url: string,
         query: Query,
-        data: D | null,
+        data: TData | null,
         attachments: Attachments,
         requestConfig: RequestConfig
     ) {

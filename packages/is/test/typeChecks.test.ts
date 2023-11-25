@@ -27,7 +27,7 @@ describe('typeChecks api', () => {
             }
         });
 
-        expect(mockFn).toBeCalledTimes(1);
+        expect(mockFn).toHaveBeenCalledTimes(1);
 
         expect(isArray(null)).toEqual(false);
         expect(isArray('hello')).toEqual(false);
@@ -54,7 +54,7 @@ describe('typeChecks api', () => {
             }
         });
 
-        expect(mockFn).toBeCalledTimes(3);
+        expect(mockFn).toHaveBeenCalledTimes(3);
 
         expect(hasValue(null)).toEqual(false);
         expect(hasValue(undefined)).toEqual(false);
@@ -78,7 +78,7 @@ describe('typeChecks api', () => {
             }
         });
 
-        expect(mockFn).toBeCalledTimes(2);
+        expect(mockFn).toHaveBeenCalledTimes(2);
 
         expect(isFunction(null)).toEqual(false);
         expect(isFunction(undefined)).toEqual(false);
@@ -90,7 +90,7 @@ describe('typeChecks api', () => {
         expect(isFunction(NaN)).toEqual(false);
         expect(isFunction('my')).toEqual(false);
 
-        expect(isFunction(function f() {})).toEqual(true);
+        expect(isFunction(() => {})).toEqual(true);
         expect(isFunction(() => 1)).toEqual(true);
         expect(isFunction(hasValue)).toEqual(true);
     });
@@ -102,7 +102,7 @@ describe('typeChecks api', () => {
                 mockFn(t);
             }
         });
-        expect(mockFn).toBeCalledTimes(2);
+        expect(mockFn).toHaveBeenCalledTimes(2);
 
         expect(isObject(null)).toEqual(false);
         expect(isObject(undefined)).toEqual(false);
@@ -111,7 +111,7 @@ describe('typeChecks api', () => {
         expect(isObject(1)).toEqual(false);
         expect(isObject([])).toEqual(false);
         expect(isObject(NaN)).toEqual(false);
-        expect(isObject(function f() {})).toEqual(false);
+        expect(isObject(() => {})).toEqual(false);
         expect(isObject(() => 1)).toEqual(false);
         expect(isObject(isFunction)).toEqual(false);
         expect(isObject('name')).toEqual(false);
@@ -128,7 +128,7 @@ describe('typeChecks api', () => {
         expect(isString(1)).toEqual(false);
         expect(isString([])).toEqual(false);
         expect(isString(NaN)).toEqual(false);
-        expect(isString(function f() {})).toEqual(false);
+        expect(isString(() => {})).toEqual(false);
         expect(isString(() => 1)).toEqual(false);
         expect(isString(isFunction)).toEqual(false);
         expect(isString({})).toEqual(false);
@@ -143,7 +143,7 @@ describe('typeChecks api', () => {
         expect(isNumber(false)).toEqual(false);
         expect(isNumber(true)).toEqual(false);
         expect(isNumber([])).toEqual(false);
-        expect(isNumber(function f() {})).toEqual(false);
+        expect(isNumber(() => {})).toEqual(false);
         expect(isNumber(() => 1)).toEqual(false);
         expect(isNumber(isFunction)).toEqual(false);
         expect(isNumber({})).toEqual(false);
@@ -161,7 +161,7 @@ describe('typeChecks api', () => {
         expect(isStatusCode(200, false)).toEqual(false);
         expect(isStatusCode(200, true)).toEqual(false);
         expect(isStatusCode([], 10)).toEqual(false);
-        expect(isStatusCode(200, function f() {})).toEqual(false);
+        expect(isStatusCode(200, () => {})).toEqual(false);
         expect(isStatusCode(200, () => 1)).toEqual(false);
         expect(isStatusCode(200, isFunction)).toEqual(false);
         expect(isStatusCode(200, {})).toEqual(false);
@@ -180,7 +180,7 @@ describe('typeChecks api', () => {
         expect(isStringArray(true)).toEqual(false);
         expect(isStringArray(1)).toEqual(false);
         expect(isStringArray(NaN)).toEqual(false);
-        expect(isStringArray(function f() {})).toEqual(false);
+        expect(isStringArray(() => {})).toEqual(false);
         expect(isStringArray(() => 1)).toEqual(false);
         expect(isStringArray(isFunction)).toEqual(false);
         expect(isStringArray({})).toEqual(false);
@@ -198,7 +198,7 @@ describe('typeChecks api', () => {
         expect(isAbortSignal(true)).toEqual(false);
         expect(isAbortSignal(1)).toEqual(false);
         expect(isAbortSignal(NaN)).toEqual(false);
-        expect(isAbortSignal(function f() {})).toEqual(false);
+        expect(isAbortSignal(() => {})).toEqual(false);
         expect(isAbortSignal(() => 1)).toEqual(false);
         expect(isAbortSignal(isFunction)).toEqual(false);
         expect(isAbortSignal({})).toEqual(false);
