@@ -8,7 +8,7 @@
   "description": "Superagent backend for `tg-resources`",
   "main": "dist/index.js",
   "module": "dist/superagent.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "react-native": "dist/superagent.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
@@ -43,12 +43,16 @@
   },
   "devDependencies": {
     "@tg-resources/fetch-runtime": "^3.4.0-alpha.0",
-    "@tg-resources/test-server": "^3.4.0-alpha.0"
+    "@tg-resources/test-server": "^3.4.0-alpha.0",
+    "@tg-resources/test-utils": "^3.4.0-alpha.1",
+    "abortcontroller-polyfill": "^1.7.5",
+    "jest-extended": "^4.0.2",
+    "tg-resources": "^3.4.0-alpha.1"
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "build": "tsdx build",
+    "lint": "eslint src test -c ../../.eslintrc.js --ext ts --ext tsx",
+    "build": "dts build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

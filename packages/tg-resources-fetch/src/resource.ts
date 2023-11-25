@@ -1,6 +1,7 @@
 import {
     AllowedMethods,
     Attachments,
+    Kwargs,
     ObjectMap,
     Optional,
     Query,
@@ -104,7 +105,7 @@ function parseMethod(method: AllowedMethods) {
         case 'put':
             return 'PUT';
 
-        case 'del':
+        case 'delete':
             return 'DELETE';
 
         default:
@@ -170,12 +171,17 @@ function parseFetchResponse(
     }));
 }
 
-export class FetchResource extends Resource {
-    protected createRequest<D extends ObjectMap = any>(
+export class FetchResource<
+    Params extends Kwargs | null = Kwargs,
+    TFetchResponse = any,
+    TPostPayload extends ObjectMap | string | null = any,
+    TPostResponse = TFetchResponse
+> extends Resource<Params, TFetchResponse, TPostPayload, TPostResponse> {
+    protected createRequest<TPayload extends ObjectMap | string | null = any>(
         method: AllowedMethods,
         url: string,
         query: Query,
-        data: D | string | null,
+        data: TPayload | string | null,
         attachments: Attachments,
         requestConfig: RequestConfig
     ): any {
