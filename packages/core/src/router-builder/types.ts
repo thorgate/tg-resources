@@ -32,7 +32,11 @@ export type CreateResourceFactory<
     options?: ObjectMap
 ) => InstanceKlass;
 
-export interface RouterBuilderInterface {
+export interface RouterBuilderInterface<
+    Klass extends Resource<any, any, any, any>
+> {
+    resourceKlass: ResourceClassConstructor<Klass>;
+
     resource<
         Params extends Kwargs | null = Kwargs,
         TFetchResponse = any,
@@ -43,24 +47,19 @@ export interface RouterBuilderInterface {
     ): ResourceInterface<Params, TFetchResponse, TPostPayload, TPostResponse>;
 
     router<TRouteMap extends RouteMap>(
-        builder: (build: this) => TRouteMap
+        builder: (build: this) => TRouteMap,
+        config?: RouteConfig | null
     ): RouterInterface & TRouteMap;
 }
 
 export interface CreateResourceRouterOptions<
     Klass extends Resource<any, any, any, any>,
-    Definitions extends RouteMap,
-    InstanceKlass extends Resource<any, any, any, any> = Klass
+    Definitions extends RouteMap
 > {
     /**
      * The resource class to use when creating resources
      */
     resource: ResourceClassConstructor<Klass>;
-
-    /**
-     * Helper function used to create resource instances
-     */
-    createResourceFactory?: CreateResourceFactory<InstanceKlass>;
 
     /**
      * Router configuration
@@ -71,5 +70,5 @@ export interface CreateResourceRouterOptions<
      * Build router definition
      * @param build
      */
-    routerBuilder: (build: RouterBuilderInterface) => Definitions;
+    routerBuilder: (build: RouterBuilderInterface<Klass>) => Definitions;
 }
