@@ -6,34 +6,30 @@ import {
     Kwargs,
     ObjectMap,
     ResourceInterface,
+    RouteConfig,
     RouteMap,
     RouterDefinition,
 } from '../types';
 
 import {
-    CreateResourceFactory,
     ResourceClassConstructor,
     ResourceConstructorObject,
     ResourceTuple,
     RouterBuilderInterface,
 } from './types';
-import { isResourceConstructorObject, isResourceTuple } from './utils';
+import {
+    createResource,
+    isResourceConstructorObject,
+    isResourceTuple,
+} from './utils';
 
-export class RouterBuilder<
-    Klass extends Resource<any, any, any, any>,
-    InstanceKlass extends Resource<any, any, any, any> = Klass
-> implements RouterBuilderInterface
+export class RouterBuilder<Klass extends Resource<any, any, any, any>>
+    implements RouterBuilderInterface<Klass>
 {
-    private readonly resourceKlass: ResourceClassConstructor<Klass>;
+    public readonly resourceKlass: ResourceClassConstructor<Klass>;
 
-    private readonly createResourceFactory: CreateResourceFactory<InstanceKlass>;
-
-    constructor(
-        resourceKlass: ResourceClassConstructor<Klass>,
-        createResourceFactory: CreateResourceFactory<InstanceKlass>
-    ) {
+    constructor(resourceKlass: ResourceClassConstructor<Klass>) {
         this.resourceKlass = resourceKlass;
-        this.createResourceFactory = createResourceFactory;
     }
 
     resource<
@@ -45,7 +41,7 @@ export class RouterBuilder<
         endpointConfig: ResourceTuple | ResourceConstructorObject | string
     ): ResourceInterface<Params, TFetchResponse, TPostPayload, TPostResponse> {
         if (isString(endpointConfig)) {
-            return this.createResourceFactory(
+            return createResource(
                 this.resourceKlass,
                 endpointConfig,
                 null
@@ -60,7 +56,7 @@ export class RouterBuilder<
         if (isResourceTuple(endpointConfig)) {
             const [apiEndpoint, resourceConfig] =
                 endpointConfig as ResourceTuple;
-            return this.createResourceFactory(
+            return createResource(
                 this.resourceKlass,
                 apiEndpoint,
                 resourceConfig
@@ -75,7 +71,7 @@ export class RouterBuilder<
         if (isResourceConstructorObject(endpointConfig)) {
             const { apiEndpoint, ...resourceConfig } = endpointConfig;
 
-            return this.createResourceFactory(
+            return createResource(
                 this.resourceKlass,
                 apiEndpoint,
                 resourceConfig
@@ -91,10 +87,11 @@ export class RouterBuilder<
     }
 
     router<TRouteMap extends RouteMap>(
-        builder: (build: this) => TRouteMap
+        builder: (build: this) => TRouteMap,
+        config: RouteConfig | null = null
     ): RouterDefinition<TRouteMap> {
         const definition = builder(this);
 
-        return new Router(definition) as Router & TRouteMap;
+        return new Router(definition, config) as Router & TRouteMap;
     }
 }

@@ -322,6 +322,9 @@ export interface ResourceInterface<
 
     config(requestConfig?: RequestConfig): ConfigType;
 
+    getHeaders(requestConfig?: RequestConfig): Record<string, string | null>;
+    getCookies(requestConfig?: RequestConfig): Record<string, string | null>;
+
     fetch<TResponse = TFetchResponse, TParams extends Params = Params>(
         kwargs?: TParams | null,
         query?: Query | null,
@@ -392,8 +395,6 @@ export interface ResourceInterface<
         urlParams?: TParams | null,
         requestConfig?: RequestConfig | null
     ): string;
-
-    [key: string]: any;
 }
 
 export abstract class ResourceErrorInterface {
