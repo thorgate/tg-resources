@@ -1,9 +1,10 @@
-import { Task } from 'redux-saga';
 import {
     RequestConfig,
     Resource,
     ResourceClassConstructor,
-} from 'tg-resources';
+    ResourceTuple,
+} from '@tg-resources/core';
+import { Task } from 'redux-saga';
 
 import { createSagaRouter, MutatedRequestConfigFn } from '../src';
 
@@ -25,17 +26,28 @@ export function addRequestConfig(requestConfig?: RequestConfig): RequestConfig {
     return newConfig;
 }
 
+// todo: switch from testing with express to unit testing
+// const createResourceSpys = <T extends SagaResource<any>>(resource: T) => ({
+//     get: jest.spyOn(resource.resource, 'get'),
+//     head: jest.spyOn(resource.resource, 'head'),
+//     options: jest.spyOn(resource.resource, 'options'),
+//     post: jest.spyOn(resource.resource, 'post'),
+//     patch: jest.spyOn(resource.resource, 'patch'),
+//     put: jest.spyOn(resource.resource, 'put'),
+//     delete: jest.spyOn(resource.resource, 'delete'),
+// });
+
 export const createApi = <Klass extends Resource>(
     hostUrl: string,
     ResourceKlass: ResourceClassConstructor<Klass>,
     mutate?: MutatedRequestConfigFn
-) =>
-    createSagaRouter(
+) => {
+    const api = createSagaRouter(
         {
             auth: [
                 '/headers',
                 { headers: () => ({ auth: 'foo' }), withCredentials: true },
-            ],
+            ] as ResourceTuple,
             hello: '/hello',
             options: '/options',
             attachments: '/attachments',
@@ -54,6 +66,24 @@ export const createApi = <Klass extends Resource>(
         },
         ResourceKlass
     );
+
+    const apiMocks = {
+        // auth: createResourceSpys(api.auth),
+        // hello: createResourceSpys(api.hello),
+        // options: createResourceSpys(api.options),
+        // attachments: createResourceSpys(api.attachments),
+        // abortingResource: createResourceSpys(api.abortingResource),
+        // dogs: {
+        //     list: createResourceSpys(api.dogs.list),
+        //     details: createResourceSpys(api.dogs.details),
+        // },
+        // error413: createResourceSpys(api.error413),
+        // error400_nonField: createResourceSpys(api.error400_nonField),
+        // urlEncoded: createResourceSpys(api.urlEncoded),
+    };
+
+    return { api, apiMocks };
+};
 
 export async function expectResponse(
     task: Task,
@@ -138,6 +168,7 @@ export async function expectError(
     }
 
     if (error) {
+        // eslint-disable-next-line @typescript-eslint/no-throw-literal
         throw error;
     }
 }

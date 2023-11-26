@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 const createFetchEffect = (options: any = {}) =>
-    call(resourceSagaRunner, resource, 'fetch', options);
+    call(resourceSagaRunner, resource, 'get', options);
 
 const createPostEffect = (options: any = {}) =>
     call(resourceSagaRunner, resource, 'post', options);
@@ -28,8 +28,8 @@ describe('resourceEffectFactory works', () => {
         }).toThrow(/Unknown method used/);
     });
 
-    test('resourceEffectFactory :: SagaResource :: fetch', () => {
-        expect(resourceEffectFactory(sagaResource, 'fetch')).toEqual(
+    test('resourceEffectFactory :: SagaResource :: getEffect', () => {
+        expect(resourceEffectFactory(sagaResource, 'getEffect')).toEqual(
             createFetchEffect({
                 kwargs: null,
                 query: null,
@@ -38,8 +38,8 @@ describe('resourceEffectFactory works', () => {
         );
     });
 
-    test('resourceEffectFactory :: SagaResource :: post', () => {
-        expect(resourceEffectFactory(sagaResource, 'post')).toEqual(
+    test('resourceEffectFactory :: SagaResource :: postEffect', () => {
+        expect(resourceEffectFactory(sagaResource, 'postEffect')).toEqual(
             createPostEffect({
                 kwargs: null,
                 query: null,
@@ -50,8 +50,8 @@ describe('resourceEffectFactory works', () => {
         );
     });
 
-    test('resourceEffectFactory :: Resource :: fetch', () => {
-        expect(resourceEffectFactory(resource, 'fetch')).toEqual(
+    test('resourceEffectFactory :: Resource :: get', () => {
+        expect(resourceEffectFactory(resource, 'get')).toEqual(
             createFetchEffect()
         );
     });

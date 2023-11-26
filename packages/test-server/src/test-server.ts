@@ -5,7 +5,7 @@ import multer from 'multer';
 import uuid from 'uuid';
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 export const port = 3002;
 export const hostUrl = `http://127.0.0.1:${port}`;
@@ -329,7 +329,21 @@ function configureServer(logger = false) {
     return app;
 }
 
+const wait = (ms: number) =>
+    new Promise<void>((done) => {
+        setTimeout(() => {
+            done();
+        }, ms);
+    });
+
 export const listen = (p: number = port, logger = false) =>
     configureServer(logger).listen(p);
+
+export const stopServer = async (server: ReturnType<typeof listen>) => {
+    server.close();
+    // fix for node v20
+    // seems to fail for head and patch requests for some reason
+    await wait(100);
+};
 
 export const getHostUrl = (p: number = port) => `http://127.0.0.1:${p}`;

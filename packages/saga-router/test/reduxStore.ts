@@ -1,5 +1,6 @@
 import { Effect, SagaIterator, Task } from '@redux-saga/types';
-import { applyMiddleware, createStore } from 'redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { applyMiddleware, legacy_createStore as createStore } from 'redux';
 import createSagaMiddleware, { SagaMiddleware } from 'redux-saga';
 import { putResolve } from 'redux-saga/effects';
 
@@ -40,7 +41,7 @@ export const setError = (
 });
 
 function reducer(
-    state: State = initialState,
+    state: State | undefined,
     action: ApiResponseAction | ApiErrorAction
 ) {
     switch (action.type) {
@@ -98,7 +99,11 @@ export function configureStore() {
         return sagaMiddleware.run(SagaInitialized, saga);
     }
 
-    const store = createStore(reducer, applyMiddleware(sagaMiddleware));
+    const store = createStore(
+        reducer,
+        initialState,
+        applyMiddleware(sagaMiddleware)
+    );
 
     (store as any).runSaga = runSaga;
     (store as any).runSagaInitialized = runSagaInitialized;

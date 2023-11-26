@@ -13,11 +13,11 @@ import { ResourceSagaRunnerConfig, SagaConfigType } from './types';
 
 export function* resourceSagaRunner<
     Params extends Kwargs | null = Kwargs,
-    D extends ObjectMap = any
+    TPayload extends ObjectMap | string | null = any
 >(
     resource: ResourceInterface,
     method: string,
-    options: ResourceSagaRunnerConfig<Params, D> = {}
+    options: ResourceSagaRunnerConfig<Params, TPayload> = {}
 ): SagaIterator {
     const {
         kwargs = null,
@@ -29,11 +29,11 @@ export function* resourceSagaRunner<
     let { requestConfig = null } = options;
 
     const config = resource.config(requestConfig) as SagaConfigType;
-    const { mutateRequestConfig, onRequestError } = config;
+    const { mutateSagaRequestConfig, onSagaRequestError } = config;
 
-    if (isFunction(mutateRequestConfig)) {
+    if (isFunction(mutateSagaRequestConfig)) {
         requestConfig = yield call(
-            mutateRequestConfig,
+            mutateSagaRequestConfig,
             requestConfig,
             resource,
             options
@@ -71,8 +71,8 @@ export function* resourceSagaRunner<
     try {
         return yield callEffect;
     } catch (err) {
-        if (isFunction(onRequestError)) {
-            yield call(onRequestError, err as any, resource, options);
+        if (isFunction(onSagaRequestError)) {
+            yield call(onSagaRequestError, err as any, resource, options);
         }
 
         throw err;

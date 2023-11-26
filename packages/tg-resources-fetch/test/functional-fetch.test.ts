@@ -1,6 +1,7 @@
 import '@tg-resources/fetch-runtime';
 import { isObject } from '@tg-resources/is';
 import * as testServer from '@tg-resources/test-server';
+import { getError } from '@tg-resources/test-utils';
 import 'jest-extended';
 import {
     AbortError,
@@ -93,6 +94,7 @@ async function expectError(
     }
 
     if (error) {
+        // eslint-disable-next-line @typescript-eslint/no-throw-literal
         throw error;
     }
 }
@@ -104,11 +106,11 @@ beforeEach(() => {
     server = testServer.listen(3002);
 });
 
-afterEach(() => {
-    server.close();
+afterEach(async () => {
+    await testServer.stopServer(server);
 });
 
-describe('Resource basic requests work', () => {
+describe('FetchResource basic requests work', () => {
     test('Network error is triggered', async () => {
         const res = new Resource('/', {
             apiRoot: testServer.getHostUrl(2999),
@@ -174,9 +176,10 @@ describe('Resource basic requests work', () => {
             mutateResponse(data: any, raw?: Response) {
                 return {
                     data,
-                    poweredBy: isObject(raw)
-                        ? raw.headers['x-powered-by']
-                        : null,
+                    poweredBy:
+                        isObject(raw) && raw.headers
+                            ? raw.headers['x-powered-by']
+                            : null,
                 };
             },
         });
@@ -195,14 +198,9 @@ describe('Resource basic requests work', () => {
             mutateError: spyFn,
         });
 
-        try {
-            const response = await res.fetch();
-            expect(response).toBeFalsy();
-        } catch (err: any) {
-            // spyFn does not return anything so we expect value to be empty
-            expect(err).toBeFalsy();
-            expect(spyFn.mock.calls.length).toBe(1);
-        }
+        const err = await getError(res.fetch);
+        expect(err).toBeFalsy();
+        expect(spyFn.mock.calls.length).toBe(1);
     });
 
     test('mutateError functionally works', async () => {
@@ -518,6 +516,7 @@ describe('Resource basic requests work', () => {
                 object: JSON.stringify(postData.object),
             });
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.log('Failed with error:', e);
             throw e;
         }
@@ -568,15 +567,12 @@ describe('Resource basic requests work', () => {
             controller.abort();
         }, 100);
 
-        try {
-            await prom;
-            throw new Error('Request should be aborted!');
-        } catch (error: any) {
-            // We are expecting the promise to reject with an AbortError
-            expect(error).not.toBeInstanceOf(AbortError);
-            // This verifies the abort error matches with our logic inside `wasAborted` method
-            expect(error.name).toEqual('AbortError');
-        }
+        const error = await getError<AbortError | Error>(() => prom);
+
+        // We are expecting the promise to reject with an AbortError
+        expect(error).not.toBeInstanceOf(AbortError);
+        // This verifies the abort error matches with our logic inside `wasAborted` method
+        expect(error.name).toEqual('AbortError');
     });
 
     test('aborting raises a wrapped AbortError', async () => {
@@ -598,18 +594,15 @@ describe('Resource basic requests work', () => {
             controller.abort();
         }, 100);
 
-        try {
-            await prom;
-            throw new Error('Request should be aborted!');
-        } catch (error: any) {
-            // We are expecting the promise to reject with an AbortError
-            expect(error).toBeInstanceOf(AbortError);
-            expect(error).toMatchObject({
-                isAbortError: true,
-                type: 'aborted',
-                name: 'AbortError',
-            });
-        }
+        const error = await getError<AbortError | Error>(() => prom);
+
+        // We are expecting the promise to reject with an AbortError
+        expect(error).toBeInstanceOf(AbortError);
+        expect(error).toMatchObject({
+            isAbortError: true,
+            type: 'aborted',
+            name: 'AbortError',
+        });
     });
 
     test('should reject immediately if signal has already been aborted', async () => {
@@ -628,17 +621,14 @@ describe('Resource basic requests work', () => {
             signal: controller.signal,
         });
 
-        try {
-            await prom;
-            throw new Error('Request should be aborted!');
-        } catch (error: any) {
-            // We are expecting the promise to reject with an AbortError
-            expect(error).toBeInstanceOf(AbortError);
-            expect(error).toMatchObject({
-                isAbortError: true,
-                type: 'aborted',
-                name: 'AbortError',
-            });
-        }
+        const error = await getError<AbortError | Error>(() => prom);
+
+        // We are expecting the promise to reject with an AbortError
+        expect(error).toBeInstanceOf(AbortError);
+        expect(error).toMatchObject({
+            isAbortError: true,
+            type: 'aborted',
+            name: 'AbortError',
+        });
     });
 });

@@ -1,12 +1,14 @@
+/* istanbul ignore file */
 import {
     Attachments,
+    Kwargs,
     ObjectMap,
     Optional,
     Query,
     RequestConfig,
     Resource,
     ResponseInterface,
-} from 'tg-resources';
+} from '.';
 
 export class DummyResponse extends ResponseInterface {
     public constructor(
@@ -29,7 +31,7 @@ export class DummyResponse extends ResponseInterface {
     }
 
     public get text(): string {
-        return JSON.stringify(this._data);
+        return '';
     }
 
     public get data(): any {
@@ -62,10 +64,6 @@ class DummyRequest {
 
     public readonly requestConfig: RequestConfig;
 
-    public Data: any = null;
-
-    public Error: any = null;
-
     public headers: ObjectMap;
 
     constructor(
@@ -92,15 +90,27 @@ class DummyRequest {
     }
 
     public end(resolve: (response: any, error: any) => void) {
-        resolve(this.Data, this.Error);
+        resolve(
+            {
+                method: this.method,
+                url: this.url,
+                data: this.data,
+                query: this.query,
+                attachments: this.attachments,
+                requestConfig: this.requestConfig,
+                headers: this.headers,
+            },
+            null
+        );
     }
 }
 
-export class DummyResource extends Resource {
-    public Data: any = null;
-
-    public Error: any = null;
-
+export class DummyResource<
+    Params extends Kwargs | null,
+    TFetchResponse = any,
+    TPostPayload extends ObjectMap | string | null = any,
+    TPostResponse = TFetchResponse
+> extends Resource<Params, TFetchResponse, TPostPayload, TPostResponse> {
     public wrapResponse<Req, Res, Err>(
         res: Res,
         error: Err,
@@ -109,15 +119,15 @@ export class DummyResource extends Resource {
         return new DummyResponse(res, error, req);
     }
 
-    public createRequest<D extends ObjectMap = any>(
+    public createRequest<TData extends ObjectMap | string | null = any>(
         method: string,
         url: string,
         query: Query,
-        data: D | null,
+        data: TData | null,
         attachments: Attachments,
         requestConfig: RequestConfig
     ) {
-        const request = new DummyRequest(
+        return new DummyRequest(
             method,
             url,
             query,
@@ -125,11 +135,6 @@ export class DummyResource extends Resource {
             attachments,
             requestConfig
         );
-
-        request.Data = this.Data;
-        request.Error = this.Error;
-
-        return request;
     }
 
     public doRequest<Response, ErrorType>(
