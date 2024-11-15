@@ -1,4 +1,3 @@
-import lodashTemplate from 'lodash.template';
 import compileURL from './builtin';
 
 import { RouteTemplate, PrepareKwargs } from './types';
@@ -17,18 +16,11 @@ export function routeTemplate(
     routePath: string,
     prepareKwargs?: (params: any) => any
 ) {
-    // Interpolate defaults to {value} or ${value}
-    const interpolate = /\$?{([\s\S]+?)}/g;
-
-    let replacer: (params: any) => string;
+    const replacer: (params: any) => string = compileURL(routePath);
 
     let currentRoot = '';
-    function configure(apiRoot: string, lodash = true) {
+    function configure(apiRoot: string, _unused?: boolean) {
         currentRoot = cleanRoot(apiRoot);
-
-        replacer = lodash
-            ? lodashTemplate(routePath, { interpolate })
-            : compileURL(routePath);
     }
 
     function renderTemplate(params?: Record<string, unknown>) {

@@ -9,7 +9,7 @@ export type IfPrepareKwargsProvided<
 > = PK extends (...args: any[]) => any ? True : False;
 
 export interface BaseRouteTemplate {
-    configure: (apiRoot: string, lodash?: boolean) => void;
+    configure: (apiRoot: string, _unused?: boolean) => void;
 
     routePath: string;
 }
