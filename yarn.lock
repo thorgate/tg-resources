@@ -2727,6 +2727,13 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@tg-resources/route-template@^3.4.0-alpha.1":
+  version "3.4.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@tg-resources/route-template/-/route-template-3.4.0-alpha.1.tgz#ef338230932c975923ea6e13104dde6877ab2ad9"
+  integrity sha512-DxI9/Zl30PPqOx0C5/WYWijIBXnbqiAaJp4T1zfQ/J9wz3Gd5D6YMz0CO1FFFdsuYLivhfFbdYvDqNbllhkMLQ==
+  dependencies:
+    "@tg-resources/is" "^3.4.0-alpha.0"
+
 "@thorgate/eslint-config-typescript@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@thorgate/eslint-config-typescript/-/eslint-config-typescript-3.1.0.tgz#4dd0aa452594e6bab5d285729fd5861f88217330"

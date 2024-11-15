@@ -30,9 +30,6 @@
   "dependencies": {
     "@tg-resources/is": "^3.4.0-alpha.0"
   },
-  "peerDependencies": {
-    "lodash.template": "*"
-  },
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
