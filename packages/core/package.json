@@ -37,7 +37,7 @@
   ],
   "dependencies": {
     "@tg-resources/is": "^3.4.0-alpha.0",
-    "@tg-resources/route-template": "^3.4.0-alpha.1",
+    "@tg-resources/route-template": "^4.0.0-alpha.0",
     "cookie": ">=0.3.1"
   },
   "devDependencies": {

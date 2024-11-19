@@ -2888,13 +2888,6 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@tg-resources/route-template@^3.4.0-alpha.1":
-  version "3.4.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@tg-resources/route-template/-/route-template-3.4.0-alpha.1.tgz#ef338230932c975923ea6e13104dde6877ab2ad9"
-  integrity sha512-DxI9/Zl30PPqOx0C5/WYWijIBXnbqiAaJp4T1zfQ/J9wz3Gd5D6YMz0CO1FFFdsuYLivhfFbdYvDqNbllhkMLQ==
-  dependencies:
-    "@tg-resources/is" "^3.4.0-alpha.0"
-
 "@thorgate/prettier-config@1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@thorgate/prettier-config/-/prettier-config-1.1.0.tgz#bef4694426784a78352e28dc49a8e2d4b45dafb3"
@@ -5047,7 +5040,7 @@ dotenv@^16.4.5, dotenv@~16.4.5:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.5.tgz#cdd3b3b604cb327e286b4762e13502f717cb099f"
   integrity sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==
 
-dts-cli@^2.0.3:
+dts-cli@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/dts-cli/-/dts-cli-2.0.5.tgz#bf2c1dfac8f50b9999b597d680fcd0de961c54ff"
   integrity sha512-1pjG5By5qng5mjzoVArptA4fCdT4Ya3yo4d0TMKDHusq3CvqlU21zgqZYn3liFIF8z9BTN7OutaWbADe+VDngw==
