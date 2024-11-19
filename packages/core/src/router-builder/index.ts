@@ -1,4 +1,4 @@
-export * from './createResourceRouter';
+export * from './createTypedRouter';
 
 export * from './types';
 

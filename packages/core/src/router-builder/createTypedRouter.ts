@@ -5,7 +5,7 @@ import { RouteMap, RouterInterface } from '../types';
 import { RouterBuilder } from './builder';
 import { CreateResourceRouterOptions } from './types';
 
-export function createResourceRouter<
+export function createTypedRouter<
     Klass extends Resource<any, any, any, any>,
     Definitions extends RouteMap
 >(

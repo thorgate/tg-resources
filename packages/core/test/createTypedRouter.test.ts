@@ -1,13 +1,13 @@
 import 'jest-extended';
 
-import { createResourceRouter } from '../src';
+import { createTypedRouter } from '../src';
 import DEFAULTS from '../src/constants';
 import { DummyResource } from '../src/DummyResource';
 
 describe('createRouter :: invalid type used', () => {
     test('invalid type :: top level', () => {
         expect(() => {
-            createResourceRouter({
+            createTypedRouter({
                 resource: DummyResource,
                 config: null,
                 routerBuilder: (builder) => ({
@@ -19,7 +19,7 @@ describe('createRouter :: invalid type used', () => {
 
     test('invalid type :: nested', () => {
         expect(() => {
-            createResourceRouter({
+            createTypedRouter({
                 resource: DummyResource,
                 config: null,
                 routerBuilder: (builder) => ({
@@ -33,7 +33,7 @@ describe('createRouter :: invalid type used', () => {
 });
 
 describe('createRouter :: string map', () => {
-    const api = createResourceRouter({
+    const api = createTypedRouter({
         resource: DummyResource,
         config: { root: true },
         routerBuilder: (builder) => ({
@@ -139,7 +139,7 @@ describe('createRouter :: string map', () => {
         const res = await api.test.del();
         expect(res).toEqual({
             ...defaultResponse,
-            method: 'delete',
+            method: 'del',
             url: '/a/',
             data: {},
         });
@@ -166,7 +166,7 @@ describe('createRouter :: string map', () => {
 });
 
 describe('createRouter :: resource tuple', () => {
-    const api = createResourceRouter({
+    const api = createTypedRouter({
         resource: DummyResource,
         config: null,
         routerBuilder: (builder) => ({
@@ -209,7 +209,7 @@ describe('createRouter :: resource tuple', () => {
 });
 
 describe('createRouter :: resource constructor', () => {
-    const api = createResourceRouter({
+    const api = createTypedRouter({
         resource: DummyResource,
         config: { level: 0 },
         routerBuilder: (builder) => ({
@@ -254,7 +254,7 @@ describe('createRouter :: resource constructor', () => {
 });
 
 describe('createRouter :: mixed', () => {
-    const api = createResourceRouter({
+    const api = createTypedRouter({
         resource: DummyResource,
         config: { level: 0, apiRoot: 'https://server1.example.com' },
         routerBuilder: (builder) => ({

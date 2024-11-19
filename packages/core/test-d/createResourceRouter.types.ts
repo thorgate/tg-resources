@@ -1,7 +1,7 @@
 import { expectType } from 'tsd';
 
 import {
-    createResourceRouter,
+    createTypedRouter,
     ResourceInterface,
 } from '../src';
 import { DummyResource } from '../src/DummyResource';
@@ -11,7 +11,7 @@ interface Animal {
     name: string;
 }
 
-const api = createResourceRouter({
+const api = createTypedRouter({
     resource: DummyResource,
     config: {
         apiRoot: '/api/v1', // Set api root
