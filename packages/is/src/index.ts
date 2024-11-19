@@ -3,8 +3,7 @@ export const isArray = Array.isArray; // eslint-disable-line prefer-destructurin
 
 export const hasValue = <T = any>(
     value: T | undefined | null
-): value is Exclude<T, null | undefined> =>
-    typeof value !== 'undefined' && value !== null;
+): value is NonNullable<T> => typeof value !== 'undefined' && value !== null;
 
 type IsFunction<T> = T extends (...args: any[]) => any ? T : never;
 export const isFunction = <
