@@ -105,7 +105,7 @@ function parseMethod(method: AllowedMethods) {
         case 'put':
             return 'PUT';
 
-        case 'delete':
+        case 'del':
             return 'DELETE';
 
         default:

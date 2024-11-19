@@ -222,32 +222,13 @@ export abstract class Resource<
         attachments: Attachments | null = null,
         requestConfig: RequestConfig | null = null
     ): Promise<TResponse> =>
-        this.delete<TResponse, TPayload, TParams>(
-            kwargs,
-            data,
-            query,
-            attachments,
-            requestConfig
-        );
-
-    public delete = <
-        TResponse = Record<string, never>,
-        TPayload extends TPostPayload = TPostPayload,
-        TParams extends Params = Params
-    >(
-        kwargs: TParams | null = null,
-        data: TPayload | string | null = null,
-        query: Query | null = null,
-        attachments: Attachments | null = null,
-        requestConfig: RequestConfig | null = null
-    ): Promise<TResponse> =>
         this._post<TResponse, TPayload, TParams>(
             kwargs,
             data,
             query,
             attachments,
             requestConfig,
-            'delete'
+            'del'
         );
 
     public renderPath<TParams extends Kwargs | null = Params>(

@@ -10,10 +10,4 @@ export const isSagaFetchMethod = (
 export const isSagaPostMethod = (
     method: string
 ): method is SagaResourcePostMethods =>
-    [
-        'postEffect',
-        'patchEffect',
-        'putEffect',
-        'delEffect',
-        'deleteEffect',
-    ].includes(method);
+    ['postEffect', 'patchEffect', 'putEffect', 'delEffect'].includes(method);

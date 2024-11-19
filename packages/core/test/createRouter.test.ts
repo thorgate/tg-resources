@@ -139,7 +139,7 @@ describe('createRouter :: string map', () => {
         const res = await api.test.del();
         expect(res).toEqual({
             ...defaultResponse,
-            method: 'delete',
+            method: 'del',
             url: '/a/',
             data: {},
         });

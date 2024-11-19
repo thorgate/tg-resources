@@ -254,13 +254,13 @@ export type Attachments = null | Attachment[];
 
 export type ResourceFetchMethods = 'fetch' | 'get' | 'head' | 'options';
 
-export type ResourcePostMethods = 'post' | 'patch' | 'put' | 'del' | 'delete';
+export type ResourcePostMethods = 'post' | 'patch' | 'put' | 'del';
 
 export type ResourceMethods = ResourceFetchMethods | ResourcePostMethods;
 
 export type AllowedFetchMethods = 'get' | 'head' | 'options';
 
-export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'delete';
+export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del';
 
 export type AllowedMethods = AllowedFetchMethods | AllowedPostMethods;
 
@@ -374,17 +374,6 @@ export interface ResourceInterface<
         requestConfig?: RequestConfig | null
     ): Promise<TResponse>;
     del<
-        TResponse = EmptyPayload,
-        TPayload extends TPostPayload = TPostPayload,
-        TParams extends Params = Params
-    >(
-        kwargs?: TParams | null,
-        data?: TPayload | string | null,
-        query?: Query | null,
-        attachments?: Attachments,
-        requestConfig?: RequestConfig | null
-    ): Promise<TResponse>;
-    delete<
         TResponse = EmptyPayload,
         TPayload extends TPostPayload = TPostPayload,
         TParams extends Params = Params

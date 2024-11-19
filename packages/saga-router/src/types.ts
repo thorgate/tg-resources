@@ -22,7 +22,6 @@ export type SagaResourcePostMethods =
     | 'postEffect'
     | 'patchEffect'
     | 'putEffect'
-    | 'deleteEffect'
     | 'delEffect';
 
 export interface SagaConfigTypeBase {

@@ -251,7 +251,7 @@ describe('createSagaRouter functional', () => {
 
         await expectResponse(
             store.runSaga(
-                api.dogs.details.deleteEffect(
+                api.dogs.details.delEffect(
                     params,
                     null,
                     null,
@@ -281,7 +281,7 @@ describe('createSagaRouter functional', () => {
         error = await getError<InvalidResponseCode>(() =>
             store
                 .runSaga(
-                    api.dogs.details.deleteEffect(
+                    api.dogs.details.delEffect(
                         params,
                         null,
                         null,

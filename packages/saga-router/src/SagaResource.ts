@@ -321,25 +321,6 @@ export class SagaResource<
             sagaRequestConfig
         );
 
-    public delete = <
-        TResponse = Record<string, never>,
-        TPayload extends TPostPayload = TPostPayload,
-        TParams extends Params = Params
-    >(
-        kwargs?: TParams | null,
-        data?: TPayload | string | null,
-        query?: Query | null,
-        attachments?: Attachments | null,
-        requestConfig?: RequestConfig | null
-    ) =>
-        this.resource.delete<TResponse, TPayload, TParams>(
-            kwargs,
-            data,
-            query,
-            attachments,
-            requestConfig
-        );
-
     public del = <
         TResponse = Record<string, never>,
         TPayload extends TPostPayload = TPostPayload,
@@ -351,32 +332,12 @@ export class SagaResource<
         attachments?: Attachments | null,
         requestConfig?: RequestConfig | null
     ) =>
-        this.delete<TResponse, TPayload, TParams>(
+        this.resource.del<TResponse, TPayload, TParams>(
             kwargs,
             data,
             query,
             attachments,
             requestConfig
-        );
-
-    public deleteEffect = <
-        TResponse = Record<string, never>,
-        TPayload extends TPostPayload = TPostPayload,
-        TParams extends Params = Params
-    >(
-        kwargs?: TParams | null,
-        data?: TPayload | string | null,
-        query?: Query | null,
-        attachments?: Attachments | null,
-        sagaRequestConfig?: SagaRequestConfig | null
-    ) =>
-        this._sagaPost<TResponse, TPayload, TParams>(
-            'delete',
-            kwargs,
-            data,
-            query,
-            attachments,
-            sagaRequestConfig
         );
 
     public delEffect = <
@@ -390,7 +351,8 @@ export class SagaResource<
         attachments?: Attachments | null,
         sagaRequestConfig?: SagaRequestConfig | null
     ) =>
-        this.deleteEffect<TResponse, TPayload, TParams>(
+        this._sagaPost<TResponse, TPayload, TParams>(
+            'del',
             kwargs,
             data,
             query,
