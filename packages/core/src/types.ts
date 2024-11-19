@@ -260,7 +260,7 @@ export type ResourceMethods = ResourceFetchMethods | ResourcePostMethods;
 
 export type AllowedFetchMethods = 'get' | 'head' | 'options';
 
-export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del';
+export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del' | 'delete';
 
 export type AllowedMethods = AllowedFetchMethods | AllowedPostMethods;
 
