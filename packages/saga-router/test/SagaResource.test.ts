@@ -1,16 +1,25 @@
 import '@tg-resources/fetch-runtime';
+import { Server } from 'http';
+
 import {
     AbortError,
     InvalidResponseCode,
     RequestValidationError,
 } from '@tg-resources/core';
 import { FetchResource as Resource } from '@tg-resources/fetch';
-import { expectedBuffer, getHostUrl, listen } from '@tg-resources/test-server';
-import { Server } from 'http';
+import {
+    expectedBuffer,
+    getHostUrl,
+    listen,
+    stopServer,
+} from '@tg-resources/test-server';
+import { getError } from '@tg-resources/test-utils';
 import 'jest-extended';
+import { SagaIterator } from 'redux-saga';
 import { call, delay, race } from 'redux-saga/effects';
 
 import { createSagaRouter, isSagaResource, SagaRequestConfig } from '../src';
+
 import { configureStore } from './reduxStore';
 import {
     addRequestConfig,
@@ -18,7 +27,6 @@ import {
     expectError,
     expectResponse,
 } from './utils';
-import { SagaIterator } from 'redux-saga';
 
 const hostUrl = getHostUrl(3003);
 let server: Server;
@@ -29,8 +37,8 @@ beforeEach(() => {
     server = listen(3003);
 });
 
-afterEach(() => {
-    server.close();
+afterEach(async () => {
+    await stopServer(server);
 });
 
 describe('createSagaRouter functional', () => {
@@ -50,7 +58,7 @@ describe('createSagaRouter functional', () => {
     });
 
     test('isSagaResource works', () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
 
         expect(isSagaResource(api.dogs.details)).toBeTrue();
         expect(isSagaResource(api.dogs.details.resource)).toBeFalse();
@@ -59,84 +67,93 @@ describe('createSagaRouter functional', () => {
     });
 
     test('mutate requestConfig works', async () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
         await expectResponse(
-            store.runSaga(api.auth.fetch()),
+            store.runSaga(api.auth.getEffect()),
             { authenticated: true },
             store
         );
     });
 
-    test('fetch `/hello` works', async () => {
-        const api = createApi(hostUrl, Resource);
+    test('get `/hello` works', async () => {
+        const { api } = createApi(hostUrl, Resource);
         await expectResponse(
-            store.runSaga(api.hello.fetch()),
+            store.runSaga(api.hello.getEffect()),
+            { message: 'world' },
+            store
+        );
+    });
+
+    test('fetch `/hello` works', async () => {
+        const { api } = createApi(hostUrl, Resource);
+        await expectResponse(
+            store.runSaga(api.hello.fetchEffect()),
             { message: 'world' },
             store
         );
     });
 
     test('head `/hello` works :: call', async () => {
-        const api = createApi(hostUrl, Resource);
-        await expectResponse(store.runSaga(api.hello.head()), {}, store);
+        const { api } = createApi(hostUrl, Resource);
+        await expectResponse(store.runSaga(api.hello.headEffect()), {}, store);
     });
 
     test('options `/options` works :: call', async () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
         await expectResponse(
-            store.runSaga(api.options.options()),
+            store.runSaga(api.options.optionsEffect()),
             { message: 'options' },
             store
         );
     });
 
     test('url encoded data works :: call', async () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
         await expectResponse(
-            store.runSaga(api.urlEncoded.post(null, 'test=1')),
+            store.runSaga(api.urlEncoded.postEffect(null, 'test=1')),
             { data: { test: '1' } },
             store
         );
     });
 
     test('patch request works :: call', async () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
         const params = { pk: '26fe9717-e494-43eb-b6d0-0c77422948a2' };
         const data = { name: 'Johnty' };
 
         await expectResponse(
-            store.runSaga(api.dogs.details.patch(params, data)),
+            store.runSaga(api.dogs.details.patchEffect(params, data)),
             params,
             store
         );
         await expectResponse(
-            store.runSaga(api.dogs.details.fetch(params)),
+            store.runSaga(api.dogs.details.getEffect(params)),
             { ...params, ...data },
             store
         );
     });
 
     test('put request works :: call', async () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
         const data = { name: 'Rex' };
 
         await expectResponse(
-            store.runSaga(api.dogs.list.put(null, data)),
+            store.runSaga(api.dogs.list.putEffect(null, data)),
             null,
             store
         );
         expect(store.getState()).toContainKey('pk');
 
-        const pk = store.getState().pk;
+        const { pk } = store.getState();
         await expectResponse(
-            store.runSaga(api.dogs.details.fetch({ pk })),
+            store.runSaga(api.dogs.details.getEffect({ pk })),
             { pk, ...data },
             store
         );
     });
 
     test('del request works :: call', async () => {
-        const api = createApi(hostUrl, Resource, addRequestConfig);
+        const { api } = createApi(hostUrl, Resource, addRequestConfig);
         const params = { pk: 'f2d8f2a6-7b68-4f81-8e47-787e4260b815' };
 
         const onError = jest.fn((err: any) => {
@@ -146,26 +163,26 @@ describe('createSagaRouter functional', () => {
 
         await expectResponse(
             store.runSaga(
-                api.dogs.details.del(params, null, null, null, {
-                    onRequestError: onError,
+                api.dogs.details.delEffect(params, null, null, null, {
+                    onSagaRequestError: onError,
                 })
             ),
             null,
             store
         );
 
-        try {
-            await store.runSaga(api.dogs.details.fetch(params)).toPromise();
-        } catch (err: any) {
-            expect(err).toBeInstanceOf(InvalidResponseCode);
-            expect(err.statusCode).toEqual(404);
-        }
+        const error = await getError<InvalidResponseCode>(() =>
+            store.runSaga(api.dogs.details.getEffect(params)).toPromise()
+        );
+
+        expect(error).toBeInstanceOf(InvalidResponseCode);
+        expect(error.statusCode).toEqual(404);
 
         expect(store.getState()).toEqual(null);
     });
 
     test('statusValidationError is handled properly', async () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
 
         const onError = jest.fn((err: any) => {
             expect(err).toBeInstanceOf(RequestValidationError);
@@ -176,9 +193,9 @@ describe('createSagaRouter functional', () => {
 
         await expectError(
             store.runSaga(
-                api.error413.post(null, { name: '' }, null, null, {
+                api.error413.postEffect(null, { name: '' }, null, null, {
                     statusValidationError: [400, 413],
-                    onRequestError: onError,
+                    onSagaRequestError: onError,
                 })
             ),
             {
@@ -191,7 +208,7 @@ describe('createSagaRouter functional', () => {
     });
 
     test('statusValidationError is handled properly - nonField only', async () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
 
         const onError = jest.fn((err: any) => {
             expect(err).toBeInstanceOf(RequestValidationError);
@@ -202,8 +219,8 @@ describe('createSagaRouter functional', () => {
 
         await expectError(
             store.runSaga(
-                api.error400_nonField.fetch(null, null, {
-                    onRequestError: onError,
+                api.error400_nonField.getEffect(null, null, {
+                    onSagaRequestError: onError,
                 })
             ),
             {
@@ -217,8 +234,8 @@ describe('createSagaRouter functional', () => {
         expect(onError.mock.calls.length).toEqual(1);
     });
 
-    test('del request works :: initialized w/ onRequestError', async () => {
-        const api = createApi(hostUrl, Resource, addRequestConfig);
+    test('del request works :: initialized w/ onSagaRequestError', async () => {
+        const { api } = createApi(hostUrl, Resource, addRequestConfig);
         const params = { pk: 'dd42e1d8-629e-48a1-9e96-42f7b1fdc167' };
 
         const onError = jest.fn((err: any) => {
@@ -229,34 +246,42 @@ describe('createSagaRouter functional', () => {
         });
 
         const requestConfig: SagaRequestConfig = {
-            onRequestError: onError,
+            onSagaRequestError: onError,
         };
 
         await expectResponse(
             store.runSaga(
-                api.dogs.details.del(params, null, null, null, requestConfig)
+                api.dogs.details.delEffect(
+                    params,
+                    null,
+                    null,
+                    null,
+                    requestConfig
+                )
             ),
             null,
             store
         );
 
-        try {
-            await store
-                .runSaga(api.dogs.details.fetch(params, null, requestConfig))
-                .toPromise();
-        } catch (err: any) {
-            expect(err).toBeInstanceOf(InvalidResponseCode);
-            expect(err.statusCode).toEqual(404);
+        let error = await getError<InvalidResponseCode>(() =>
+            store
+                .runSaga(
+                    api.dogs.details.getEffect(params, null, requestConfig)
+                )
+                .toPromise()
+        );
 
-            expect(onError.mock.calls.length).toEqual(1);
-        }
+        expect(error).toBeInstanceOf(InvalidResponseCode);
+        expect(error.statusCode).toEqual(404);
+
+        expect(onError.mock.calls.length).toEqual(1);
 
         expect(store.getState()).toEqual(null);
 
-        try {
-            await store
+        error = await getError<InvalidResponseCode>(() =>
+            store
                 .runSaga(
-                    api.dogs.details.del(
+                    api.dogs.details.delEffect(
                         params,
                         null,
                         null,
@@ -264,17 +289,17 @@ describe('createSagaRouter functional', () => {
                         requestConfig
                     )
                 )
-                .toPromise();
-        } catch (err: any) {
-            expect(err).toBeInstanceOf(InvalidResponseCode);
-            expect(err.statusCode).toEqual(404);
+                .toPromise()
+        );
 
-            expect(onError.mock.calls.length).toEqual(2);
-        }
+        expect(error).toBeInstanceOf(InvalidResponseCode);
+        expect(error.statusCode).toEqual(404);
+
+        expect(onError.mock.calls.length).toEqual(2);
     });
 
     test('attachments require allowAttachments=true', async () => {
-        const api = createApi(hostUrl, Resource, addRequestConfig);
+        const { api } = createApi(hostUrl, Resource, addRequestConfig);
         const onError = jest.fn((err: any, _0: any, _1: any) => {
             expect(`${err}`).toEqual(
                 'Error: Misconfiguration: "allowAttachments=true" is required when sending attachments!'
@@ -289,24 +314,24 @@ describe('createSagaRouter functional', () => {
             },
         ];
 
-        try {
-            await store
+        const error = await getError<InvalidResponseCode>(() =>
+            store
                 .runSaga(
-                    api.attachments.post(null, null, null, attachments, {
-                        onRequestError: onError,
+                    api.attachments.postEffect(null, null, null, attachments, {
+                        onSagaRequestError: onError,
                     })
                 )
-                .toPromise();
-        } catch (err) {
-            expect(onError.mock.calls.length).toEqual(1);
-            expect(`${err}`).toEqual(
-                'Error: Misconfiguration: "allowAttachments=true" is required when sending attachments!'
-            );
-        }
+                .toPromise()
+        );
+
+        expect(onError.mock.calls.length).toEqual(1);
+        expect(`${error}`).toEqual(
+            'Error: Misconfiguration: "allowAttachments=true" is required when sending attachments!'
+        );
     });
 
     test('attachments work', async () => {
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
 
         const postData = {
             name: 'foo',
@@ -334,7 +359,7 @@ describe('createSagaRouter functional', () => {
 
         await store
             .runSaga(
-                api.attachments.post(null, postData, null, attachments, {
+                api.attachments.postEffect(null, postData, null, attachments, {
                     allowAttachments: true,
                 })
             )
@@ -363,34 +388,32 @@ describe('createSagaRouter functional', () => {
             expect(error).toBeInstanceOf(AbortError);
         });
 
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
 
         function* runner() {
-            yield api.abortingResource.fetch(null, null, {
+            yield api.abortingResource.fetchEffect(null, null, {
                 signal: controller.signal,
-                onRequestError: onError,
+                onSagaRequestError: onError,
             });
         }
 
-        try {
-            setTimeout(() => {
-                controller.abort();
-            }, 100);
+        setTimeout(() => {
+            controller.abort();
+        }, 10);
 
-            await store.sagaMiddleware.run(runner).toPromise();
+        const error = await getError<AbortError>(() =>
+            store.sagaMiddleware.run(runner).toPromise()
+        );
 
-            throw new Error('Request should be aborted!');
-        } catch (error) {
-            // We are expecting the promise to reject with an AbortError
-            expect(error).toBeInstanceOf(AbortError);
-            expect(error).toMatchObject({
-                isAbortError: true,
-                type: 'aborted',
-                name: 'AbortError',
-            });
+        // We are expecting the promise to reject with an AbortError
+        expect(error).toBeInstanceOf(AbortError);
+        expect(error).toMatchObject({
+            isAbortError: true,
+            type: 'aborted',
+            name: 'AbortError',
+        });
 
-            expect(onError.mock.calls.length).toEqual(1);
-        }
+        expect(onError.mock.calls.length).toEqual(1);
     });
 
     test('internal AbortController exits early', async () => {
@@ -404,11 +427,11 @@ describe('createSagaRouter functional', () => {
             });
         });
 
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
 
         function* runner() {
-            yield api.abortingResource.fetch(null, null, {
-                onRequestError: onError,
+            yield api.abortingResource.fetchEffect(null, null, {
+                onSagaRequestError: onError,
             });
             return true;
         }
@@ -443,31 +466,27 @@ describe('createSagaRouter functional', () => {
             expect(error).toBeInstanceOf(AbortError);
         });
 
-        const api = createApi(hostUrl, Resource);
+        const { api } = createApi(hostUrl, Resource);
 
-        try {
+        const error = await getError<AbortError>(() => {
             controller.abort();
-
-            await store
+            return store
                 .runSaga(
-                    api.abortingResource.fetch(null, null, {
+                    api.abortingResource.getEffect(null, null, {
                         signal: controller.signal,
-                        onRequestError: onError,
+                        onSagaRequestError: onError,
                     })
                 )
                 .toPromise();
+        });
+        // We are expecting the promise to reject with an AbortError
+        expect(error).toBeInstanceOf(AbortError);
+        expect(error).toMatchObject({
+            isAbortError: true,
+            type: 'aborted',
+            name: 'AbortError',
+        });
 
-            throw new Error('Request should be aborted!');
-        } catch (error) {
-            // We are expecting the promise to reject with an AbortError
-            expect(error).toBeInstanceOf(AbortError);
-            expect(error).toMatchObject({
-                isAbortError: true,
-                type: 'aborted',
-                name: 'AbortError',
-            });
-
-            expect(onError.mock.calls.length).toEqual(1);
-        }
+        expect(onError.mock.calls.length).toEqual(1);
     });
 });

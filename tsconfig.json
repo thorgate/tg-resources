@@ -24,7 +24,7 @@
     "strict": true,
     "strictNullChecks": true,
     "stripInternal": true,
-    "target": "es2017",
+    "target": "ES2020",
     "rootDir": ".",
     "baseUrl": "./packages"
   },

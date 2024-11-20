@@ -8,7 +8,7 @@
   "description": "`tg-resources` internal type validation library",
   "main": "dist/index.js",
   "module": "dist/is.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "react-native": "dist/is.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
@@ -29,12 +29,20 @@
     "dist",
     "src"
   ],
+  "devDependencies": {
+    "abortcontroller-polyfill": "^1.7.5"
+  },
+  "tsd": {
+    "compilerOptions": {
+      "composite": false
+    }
+	},
   "scripts": {
     "clean": "rimraf ./dist",
     "lint-show": "eslint --print-config ../../.eslintrc.js",
-    "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "type-check": "dtslint --localTs ../../node_modules/typescript/lib --expectOnly type-checks",
-    "build": "tsdx build",
+    "lint": "eslint src test -c ../../.eslintrc.js --ext ts --ext tsx",
+    "check-types": "tsd --show-diff",
+    "build": "dts build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

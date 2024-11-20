@@ -1,6 +1,5 @@
 import compileURL from './builtin';
-
-import { RouteTemplate, PrepareKwargs } from './types';
+import { PrepareKwargs, RouteTemplate } from './types';
 import { cleanRoot, cleanRoute } from './utils';
 
 export function routeTemplate<TKwargs = void>(

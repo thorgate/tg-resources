@@ -11,11 +11,12 @@ import { call } from 'redux-saga/effects';
 import { resourceSagaRunner } from './resourceSagaRunner';
 import { isSagaResource, SagaResource } from './SagaResource';
 import { ResourceSagaRunnerConfig, SagaRequestConfig } from './types';
+import { isSagaFetchMethod, isSagaPostMethod } from './utils';
 
 export interface EffectCreatorOptions<
     Params extends Kwargs | null = Kwargs,
-    D extends ObjectMap = any
-> extends ResourceSagaRunnerConfig<Params, D> {
+    TPayload extends ObjectMap | string | null = any
+> extends ResourceSagaRunnerConfig<Params, TPayload> {
     requestConfig?: RequestConfig | SagaRequestConfig | null;
 }
 
@@ -29,24 +30,28 @@ export interface EffectCreatorOptions<
  */
 export const resourceEffectFactory = <
     Klass extends Resource,
-    Params extends Kwargs = Kwargs,
-    D extends ObjectMap = any
+    Params extends Kwargs | null = Kwargs,
+    TPayload extends ObjectMap | string | null = any
 >(
     resource: Klass | SagaResource<Klass>,
     method: string,
-    options: EffectCreatorOptions<Params, D> = {}
+    options: EffectCreatorOptions<Params, TPayload> = {}
 ) => {
     if (isSagaResource(resource)) {
-        if (isFetchMethod(method)) {
-            return resource[method](
+        if (isSagaFetchMethod(method)) {
+            const resourceMethod = resource[method];
+
+            return resourceMethod(
                 options.kwargs,
                 options.query,
                 options.requestConfig
             );
         }
 
-        if (isPostMethod(method)) {
-            return resource[method](
+        if (isSagaPostMethod(method)) {
+            const resourceMethod = resource[method];
+
+            return resourceMethod(
                 options.kwargs,
                 options.data,
                 options.query,

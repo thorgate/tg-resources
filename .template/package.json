@@ -8,7 +8,7 @@
   "description": "",
   "main": "dist/index.js",
   "module": "dist/<%PACKAGE_NAME_SAFE%>.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "react-native": "dist/<%PACKAGE_NAME_SAFE%>.esm.js",
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
@@ -33,7 +33,7 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
-    "build": "tsdx build",
+    "build": "dts build",
     "prebuild": "yarn clean && yarn lint"
   }
 }

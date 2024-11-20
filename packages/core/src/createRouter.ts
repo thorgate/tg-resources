@@ -28,7 +28,10 @@ export const isResourceConstructorObject = (
 ): value is ResourceConstructorObject =>
     isObject(value) && 'apiEndpoint' in value;
 
-export type ResourceOrExtendedRouter<T, Klass extends Resource> = {
+export type ResourceOrExtendedRouter<
+    T,
+    Klass extends Resource<any, any, any, any>
+> = {
     [P in keyof T]: T[P] extends string
         ? Klass // If string, map as Resource
         : T[P] extends ResourceTuple
@@ -45,14 +48,18 @@ export type ResourceClassConstructor<Klass> = new (
     config?: RouteConfig | null
 ) => Klass;
 
-export type CreateResourceFactory = <Klass extends Resource>(
+export type CreateResourceFactory = <
+    Klass extends Resource<any, any, any, any>
+>(
     resourceKlass: ResourceClassConstructor<Klass>,
     apiEndpoint: string,
     config?: RouteConfig,
     options?: ObjectMap
 ) => any;
 
-export const createResource: CreateResourceFactory = <Klass extends Resource>(
+export const createResource: CreateResourceFactory = <
+    Klass extends Resource<any, any, any, any>
+>(
     ResourceKlass: ResourceClassConstructor<Klass>,
     apiEndpoint: string,
     config?: RouteConfig,
@@ -60,7 +67,7 @@ export const createResource: CreateResourceFactory = <Klass extends Resource>(
 ): Klass => new ResourceKlass(apiEndpoint, config);
 
 export function createRouter<
-    Klass extends Resource,
+    Klass extends Resource<any, any, any, any>,
     T extends ObjectMap = Record<string, unknown>
 >(
     routes: T,
@@ -69,7 +76,7 @@ export function createRouter<
     createResourceFactory: CreateResourceFactory = createResource
 ) {
     const routeMap: {
-        [key: string]: Router | Resource;
+        [key: string]: Router | Resource<any, any, any, any>;
     } = {};
 
     Object.keys(routes).forEach((key) => {

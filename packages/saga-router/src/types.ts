@@ -12,10 +12,22 @@ import {
     RouteConfigType,
 } from '@tg-resources/core';
 
-export interface SagaConfigTypeBase {
-    mutateRequestConfig?: MutatedRequestConfigFn<any> | null;
+export type SagaResourceFetchMethods =
+    | 'getEffect'
+    | 'fetchEffect'
+    | 'headEffect'
+    | 'optionsEffect';
 
-    onRequestError?: OnRequestError<any> | null;
+export type SagaResourcePostMethods =
+    | 'postEffect'
+    | 'patchEffect'
+    | 'putEffect'
+    | 'delEffect';
+
+export interface SagaConfigTypeBase {
+    mutateSagaRequestConfig?: MutatedRequestConfigFn<any> | null;
+
+    onSagaRequestError?: OnRequestError<any> | null;
 }
 
 export interface SagaRouteConfigType
@@ -29,29 +41,29 @@ export type SagaRequestConfig = Optional<OptionalMap<SagaConfigType>>;
 
 export interface ResourceSagaRunnerConfig<
     Params extends Kwargs | null = Kwargs,
-    D extends ObjectMap = any
+    TPayload extends ObjectMap | string | null = any
 > {
     kwargs?: Params | null;
     query?: Query | null;
-    data?: D | string | null;
+    data?: TPayload | string | null;
     requestConfig?: SagaRequestConfig | null;
     attachments?: Attachments | null;
 }
 
 export type OnRequestError<
     Params extends Kwargs | null = Kwargs,
-    D extends ObjectMap = any
+    TPayload extends ObjectMap | string | null = any
 > = (
     error: ErrorType,
     resource: ResourceInterface,
-    options: ResourceSagaRunnerConfig<Params, D>
+    options: ResourceSagaRunnerConfig<Params, TPayload>
 ) => void | SagaIterator;
 
 export type MutatedRequestConfigFn<
-    Params extends Kwargs | null = Kwargs,
-    D extends ObjectMap = any
+    Params extends Kwargs = Kwargs,
+    TPayload extends ObjectMap = any
 > = (
     requestConfig: SagaRequestConfig | undefined,
     resource: ResourceInterface,
-    config: ResourceSagaRunnerConfig<Params, D>
+    config: ResourceSagaRunnerConfig<Params, TPayload>
 ) => SagaIterator | SagaRequestConfig | undefined;

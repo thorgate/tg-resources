@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 export const isArray = Array.isArray; // eslint-disable-line prefer-destructuring
 
-export const hasValue = <T = any>(value: T | undefined | null): value is T =>
-    typeof value !== 'undefined' && value !== null;
+export const hasValue = <T = any>(
+    value: T | undefined | null
+): value is NonNullable<T> => typeof value !== 'undefined' && value !== null;
 
 type IsFunction<T> = T extends (...args: any[]) => any ? T : never;
 export const isFunction = <

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any,no-new */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import 'jest-extended';
 
@@ -10,10 +10,9 @@ import {
     Router,
 } from '../src';
 import DEFAULTS from '../src/constants';
-import { DummyResource } from './DummyResource';
+import { DummyResource } from '../src/DummyResource';
 
 // Mocks
-// TODO : Define multiple types for this via interface
 const mockMutateResponse = <R>(responseData: R) => responseData;
 const mockMutateError = (error: ResourceErrorInterface) => error;
 

@@ -1,6 +1,6 @@
 import {
-    ErrorType,
     AbortError,
+    ErrorType,
     InvalidResponseCode,
     NetworkError,
     RequestValidationError,

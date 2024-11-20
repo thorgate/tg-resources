@@ -17,7 +17,7 @@ import {
 } from './types';
 
 export const isFetchMethod = (method: string): method is ResourceFetchMethods =>
-    ['fetch', 'head', 'options'].includes(method);
+    ['get', 'fetch', 'head', 'options'].includes(method);
 
 export const isPostMethod = (method: string): method is ResourcePostMethods =>
     ['post', 'patch', 'put', 'del'].includes(method);

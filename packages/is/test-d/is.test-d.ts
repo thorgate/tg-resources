@@ -1,62 +1,54 @@
+import { expectNever, expectType } from 'tsd';
+
 import * as is from '../src';
 
-let testValue: string | string[] | number | number[] | Array<any> | null;
+let testValue: null | string | string[] | number | number[] | any[];
 
 // hasValue
 
 testValue = 'asd';
 if (is.hasValue(testValue)) {
-    // $ExpectType string
-    testValue;
+    expectType<string>(testValue);
 }
 
-testValue = null;
+testValue = 10;
 if (is.hasValue(testValue)) {
-    // $ExpectType null
-    testValue;
+    expectType<number>(testValue);
 }
 
 // isFunction / isObject
 let fn: { id: number } | (() => void) = { id: 1 };
 if (is.isFunction(fn)) {
-    // $ExpectType never
-    fn;
+    expectNever(fn);
 }
 if (is.isObject(fn)) {
-    // $ExpectType { id: number; }
-    fn;
+    expectType<{ id: number }>(fn);
 }
 
 fn = () => {};
 if (is.isFunction(fn)) {
-    // $ExpectType () => void
-    fn;
+    expectType<() => void>(fn);
 }
 
 // isString / isStringArray
 testValue = 'null';
 if (is.isString(testValue)) {
-    // $ExpectType string
-    testValue;
+    expectType<string>(testValue);
 }
 
-testValue = null;
+testValue = 1;
 if (is.isString(testValue)) {
-    // $ExpectType never
-    testValue;
+    expectNever(testValue);
 }
 
 testValue = ['a', 'b'];
 if (is.isStringArray(testValue)) {
-    // $ExpectType string[]
-    testValue;
+    expectType<string[]>(testValue);
 }
 
 testValue = ['a', 1];
 if (is.isStringArray(testValue)) {
-    // $ExpectType string[]
-    testValue;
+    expectType<string[]>(testValue);
 } else {
-    // $ExpectType any[]
-    testValue;
+    expectType<any[]>(testValue);
 }
