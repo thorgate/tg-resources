@@ -56,7 +56,7 @@ hermes issue. See more details in #117.
 We do plan to make the new url parameter renderer the default in the next major version but for now we are
 introducing it as opt-in to see how it behaves in the wild.
 
-#### <a name="signal-rn"></a>Using `signal` with react-native
+#### Using `signal` with react-native
 
 Use [abortcontroller-polyfill](https://github.com/mo/abortcontroller-polyfill) until https://github.com/facebook/react-native/issues/18115 is resolved in react-native core. The polyfill does not actually close the connection, but instead ensures the fetch rejects the promise with `AbortError`. To use the polyfill add the following to the top of your app entrypoint:
 
@@ -116,7 +116,7 @@ apiRouter.cat.del({pk: 1}, {free: 'yes'}).then(onLoad, onError);
 Please note that the router is useful for providing default configuration and grouping
 endpoints. It's still possible to use Resources without a router(see [Resource api](#resource-api))
 
-## <a name="configuration"></a>Configuration
+## Configuration
 
 -   `apiRoot` _(String)_: Base for all resource paths
 -   `headers` _(Object|Function: Object)_: Optional Function or Object which can be used to add any additional headers to requests.
@@ -198,7 +198,7 @@ resource.post(null, payload).then(
 
 ## API
 
-### <a name="createrouter-api"></a>`createRouter`
+### `createRouter`
 
 Creates type-safe `Router` instance.
 
@@ -210,7 +210,7 @@ Creates type-safe `Router` instance.
 2. `config` _(Object)_: Object containing config for top level router. See [Configuration](#configuration)
 3. `resourceKlass` _Resource_: Resource class that implements backend. This allows any of the backends to be used when creating `Router`.
 
-### <a name="resource-api"></a>`Resource`
+### `Resource`
 
 Construct a new resource for loading data from a single (or dynamic) endpoint
 
