@@ -1,6 +1,6 @@
 {
   "name": "tg-resources",
-  "version": "3.4.0-alpha.1",
+  "version": "4.0.0",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -31,7 +31,7 @@
     "src"
   ],
   "dependencies": {
-    "@tg-resources/core": "^3.4.0-alpha.1"
+    "@tg-resources/core": "^4.0.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",
