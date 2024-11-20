@@ -1,6 +1,7 @@
 # tg-resources
 
 [![NPM version][npm-image]][npm-url]
+[![Documentation][docs-image]][docs-url]
 [![Build Status][ci-image]][ci-url]
 [![Dependency Status][depstat-image]][depstat-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
@@ -407,10 +408,12 @@ MIT © [Thorgate](http://github.com/thorgate)
 
 [npm-url]: https://npmjs.org/package/tg-resources
 [npm-image]: https://img.shields.io/npm/v/tg-resources.svg?style=flat-square
-[ci-url]: https://github.com/thorgate/tg-resources/actions
-[ci-image]: https://github.com/thorgate/tg-resources/workflows/.github/workflows/run-tests.yml/badge.svg?branch=master
-[depstat-url]: https://david-dm.org/thorgate/tg-resources
-[depstat-image]: https://david-dm.org/thorgate/tg-resources.svg?style=flat-square
+[ci-url]: https://github.com/thorgate/tg-resources/actions/workflows/run-tests.yml
+[ci-image]: https://github.com/thorgate/tg-resources/actions/workflows/run-tests.yml/badge.svg
+[depstat-url]: https://libraries.io/npm/tg-resources/
+[depstat-image]: https://img.shields.io/librariesio/github/thorgate/tg-resources
 [coveralls-url]: https://coveralls.io/github/thorgate/tg-resources?branch=master
 [coveralls-image]: https://coveralls.io/repos/github/thorgate/tg-resources/badge.svg?branch=master
 [download-badge]: http://img.shields.io/npm/dm/tg-resources.svg?style=flat-square
+[docs-image]: https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat-square
+[docs-url]: https://thorgate.github.io/tg-resources/
