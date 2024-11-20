@@ -40,3 +40,7 @@ rm ./xx01
 ## hide license from sidebar
 
 sed -i 's|License|License <!-- {docsify-ignore} -->|' ./docs/General.md
+
+## copy route template docs from the package
+
+cp -f ./packages/route-template/README.md ./docs/RouteTemplate.md
