@@ -1,6 +1,6 @@
 ![logo](logo.svg)
 
-> rest api calls made easy
+> rest api calls made simple
 
 - Simple and lightweight
 - Type safe (built in TypeScript)
