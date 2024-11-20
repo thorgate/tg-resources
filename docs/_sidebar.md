@@ -1,3 +1,3 @@
 
 * [General](/)
-<!-- * [Error Handling](ErrorHandling.md) -->
+* [Route templates](RouteTemplate.md)
