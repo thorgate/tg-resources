@@ -239,10 +239,7 @@ export abstract class Resource<
 
         // istanbul ignore next: Tested in package that implements Resource
         if (isObject(urlParams)) {
-            this._routeTemplate.configure(
-                config.apiRoot,
-                config.useLodashTemplate
-            );
+            this._routeTemplate.configure(config.apiRoot, undefined);
 
             return this._routeTemplate(urlParams);
         }

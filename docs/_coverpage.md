@@ -8,4 +8,4 @@
 - Node/browser/react-native and more
 
 [GitHub](https://github.com/thorgate/tg-resources/)
-[Get Started](./)
+[Get Started](./General.md)
