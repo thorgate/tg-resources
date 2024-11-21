@@ -253,9 +253,12 @@ export type AllowedPostMethods = 'post' | 'patch' | 'put' | 'del' | 'delete';
 
 export type AllowedMethods = AllowedFetchMethods | AllowedPostMethods;
 
-export interface RouteMap {
-    [key: string]: ResourceInterface | RouterInterface;
-}
+export type RouterDefinition<T> = RouterInterface & T;
+
+export type RouteMap = Record<
+    string,
+    ResourceInterface<any, any, any, any> | RouterDefinition<any>
+>;
 
 export interface RouteInterface {
     readonly parent: RouterInterface | null;
@@ -307,6 +310,9 @@ export interface ResourceInterface<
     readonly apiEndpoint: string;
 
     config(requestConfig?: RequestConfig): ConfigType;
+
+    getHeaders(requestConfig?: RequestConfig): Record<string, string | null>;
+    getCookies(requestConfig?: RequestConfig): Record<string, string | null>;
 
     fetch<TResponse = TFetchResponse, TParams extends Params = Params>(
         kwargs?: TParams | null,
@@ -378,8 +384,6 @@ export interface ResourceInterface<
         urlParams?: TParams | null,
         requestConfig?: RequestConfig | null
     ): string;
-
-    [key: string]: any;
 }
 
 export abstract class ResourceErrorInterface {
