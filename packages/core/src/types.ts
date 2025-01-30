@@ -27,7 +27,7 @@ export type ConfigObjectFn =
     | ObjectMap<string | null>
     | ObjectMapFn<string | null>;
 
-export type Query = ObjectMap<Primitive> | null;
+export type Query = ObjectMap<Primitive | Primitive[]> | null;
 
 export type MutateResponseFn = <R>(
     responseData: R,
