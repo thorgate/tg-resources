@@ -11,4 +11,6 @@ export * from './types';
 
 export * from './util';
 
+export * from './typeGuards';
+
 export * from './ValidationError';
