@@ -1,8 +1,7 @@
 import { expectType } from 'tsd';
 
-import { createRouter, ResourceTuple } from '../src';
+import { createRouter, Kwargs, ResourceTuple } from '../src';
 import { DummyResource } from '../src/DummyResource';
-import { Kwargs } from '@tg-resources/core';
 
 const apiRouter = createRouter(
     {
@@ -42,6 +41,6 @@ expectType<DummyResource<Kwargs | null, any, any, any>>(apiRouter.dogs.details);
 
 // -------------------------------------------------------------------------------------
 
-expectType<any>(await apiRouter.cats.fetch({ ad: 1 }));
-expectType<any>(await apiRouter.cat.fetch({ ad: 1 }));
-expectType<any>(await apiRouter.cat2.fetch({ ad: 1 }));
+expectType<Promise<any>>(apiRouter.cats.fetch({ ad: 1 }));
+expectType<Promise<any>>(apiRouter.cat.fetch({ ad: 1 }));
+expectType<Promise<any>>(apiRouter.cat2.fetch({ ad: 1 }));

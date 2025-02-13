@@ -1,12 +1,10 @@
 import {
     CreateResourceFactory,
     createRouter,
-    Kwargs,
     ObjectMap,
     Resource,
     ResourceClassConstructor,
-    ResourceConstructorObject,
-    ResourceTuple,
+    ResourceOrExtendedRouter,
     RouteConfig,
     Router,
 } from '@tg-resources/core';
@@ -14,45 +12,34 @@ import {
 import { SagaResource } from './SagaResource';
 import { SagaRouteConfig } from './types';
 
-// Was required to copy this here as well - Type matching did not work correctly otherwise
-export type ResourceOrExtendedRouter<
+type SagaResourceOrExtendedRouter<
     T,
-    Klass extends Resource<Kwargs, any, any, any>
-> = {
-    [P in keyof T]: T[P] extends string
-        ? SagaResource<Klass> // If string, map as Resource
-        : T[P] extends ResourceTuple
-        ? SagaResource<Klass> // If Resource tuple, map as Resource
-        : T[P] extends ResourceConstructorObject
-        ? SagaResource<Klass> // If Resource constructor object, map as Resource
-        : T[P] extends Router
-        ? Router // If Router type, map router info to top level
-        : Router & ResourceOrExtendedRouter<T[P], Klass>; // Default to recursive mapping
-};
+    Klass extends Resource<any, any, any, any>
+> = ResourceOrExtendedRouter<T, SagaResource<Klass, any, any, any, any>>;
 
-export const createSagaResource: CreateResourceFactory = <
-    Klass extends Resource
->(
+export const createSagaResource: CreateResourceFactory<
+    SagaResource<Resource<any, any, any, any>, any, any, any, any>
+> = <Klass extends Resource<any, any, any, any>>(
     resourceKlass: ResourceClassConstructor<Klass>,
     apiEndpoint: string,
     config?: RouteConfig
 ) => new SagaResource<Klass>(apiEndpoint, config || null, resourceKlass);
 
 export function createSagaRouter<
-    Klass extends Resource,
+    Klass extends Resource<any, any, any, any>,
     T extends ObjectMap = Record<string, unknown>
 >(
     routes: T,
     config: SagaRouteConfig | null,
-    resourceKlass: ResourceClassConstructor<Klass>
+    resource: ResourceClassConstructor<Klass>
 ) {
-    const router = createRouter(
-        routes,
-        config,
-        resourceKlass,
-        createSagaResource
-    ) as any;
+    const router = createRouter<
+        Klass,
+        T,
+        SagaResource<Resource<any, any, any, any>, any, any, any, any>
+    >(routes, config, resource, createSagaResource);
 
     // Return correct typing for SagaResource
-    return router as Router & ResourceOrExtendedRouter<T, Klass>;
+    // otherwise it will be typed as Resource which we do not want
+    return router as Router & SagaResourceOrExtendedRouter<T, Klass>;
 }

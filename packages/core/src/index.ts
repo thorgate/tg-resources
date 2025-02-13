@@ -9,6 +9,8 @@ export * from './errors';
 
 export * from './types';
 
+export * from './router-builder';
+
 export * from './util';
 
 export * from './ValidationError';
