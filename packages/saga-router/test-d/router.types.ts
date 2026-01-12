@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Kwargs, ResourceTuple } from '@tg-resources/core';
+import { ResourceTuple } from '@tg-resources/core';
 import { FetchResource } from '@tg-resources/fetch';
 import { expectType } from 'tsd';
 import { createSagaRouter, SagaResource } from '../src';
@@ -29,25 +29,25 @@ const apiRouter = createSagaRouter(
 // -------------------------------------------------------------------------------------
 
 expectType<
-    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+    SagaResource<FetchResource<any, any, any, any>, any, any, any, any>
 >(apiRouter.auth);
 
 expectType<
-    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+    SagaResource<FetchResource<any, any, any, any>, any, any, any, any>
 >(apiRouter.cats);
 
 expectType<
-    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+    SagaResource<FetchResource<any, any, any, any>, any, any, any, any>
 >(apiRouter.cat);
 
 expectType<
-    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+    SagaResource<FetchResource<any, any, any, any>, any, any, any, any>
 >(apiRouter.cat2);
 
 expectType<
-    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+    SagaResource<FetchResource<any, any, any, any>, any, any, any, any>
 >(apiRouter.dogs.list);
 
 expectType<
-    SagaResource<FetchResource<Kwargs, any, any, any>, Kwargs, any, any, any>
+    SagaResource<FetchResource<any, any, any, any>, any, any, any, any>
 >(apiRouter.dogs.details);

@@ -1,32 +1,17 @@
-import { isArray, isObject, isString } from '@tg-resources/is';
+import { isObject, isString } from '@tg-resources/is';
 
 import { Resource } from './resource';
 import { Router } from './router';
 import {
-    ConfigType,
-    ObjectMap,
-    OptionalMap,
-    RouteConfig,
-    RouteConfigType,
-} from './types';
-
-export type ResourceTuple<Config = OptionalMap<ConfigType>> = [string, Config];
-
-export const isResourceTuple = (value: any): value is ResourceTuple =>
-    isArray(value) &&
-    value.length === 2 &&
-    typeof value[0] === 'string' &&
-    isObject(value[1]);
-
-export interface ResourceConstructorObject
-    extends OptionalMap<RouteConfigType> {
-    apiEndpoint: string;
-}
-
-export const isResourceConstructorObject = (
-    value: any
-): value is ResourceConstructorObject =>
-    isObject(value) && 'apiEndpoint' in value;
+    createResource,
+    CreateResourceFactory,
+    isResourceConstructorObject,
+    isResourceTuple,
+    ResourceClassConstructor,
+    ResourceConstructorObject,
+    ResourceTuple,
+} from './router-builder';
+import { ObjectMap, RouteConfig } from './types';
 
 export type ResourceOrExtendedRouter<
     T,
@@ -43,54 +28,34 @@ export type ResourceOrExtendedRouter<
         : Router & ResourceOrExtendedRouter<T[P], Klass>; // Default to recursive mapping
 };
 
-export type ResourceClassConstructor<Klass> = new (
-    apiEndpoint: string,
-    config?: RouteConfig | null
-) => Klass;
-
-export type CreateResourceFactory = <
-    Klass extends Resource<any, any, any, any>
->(
-    resourceKlass: ResourceClassConstructor<Klass>,
-    apiEndpoint: string,
-    config?: RouteConfig,
-    options?: ObjectMap
-) => any;
-
-export const createResource: CreateResourceFactory = <
-    Klass extends Resource<any, any, any, any>
->(
-    ResourceKlass: ResourceClassConstructor<Klass>,
-    apiEndpoint: string,
-    config?: RouteConfig,
-    _0?: ObjectMap
-): Klass => new ResourceKlass(apiEndpoint, config);
-
 export function createRouter<
     Klass extends Resource<any, any, any, any>,
-    T extends ObjectMap = Record<string, unknown>
+    T extends ObjectMap = Record<string, unknown>,
+    InstanceKlass extends Resource<any, any, any, any> = Klass
 >(
     routes: T,
     config: RouteConfig,
     resourceKlass: ResourceClassConstructor<Klass>,
-    createResourceFactory: CreateResourceFactory = createResource
+    createResourceFactory?: CreateResourceFactory<InstanceKlass>
 ) {
     const routeMap: {
         [key: string]: Router | Resource<any, any, any, any>;
     } = {};
 
+    const resourceFactory = createResourceFactory || createResource;
+
     Object.keys(routes).forEach((key) => {
         if (routes[key] instanceof Router) {
             routeMap[key] = routes[key];
         } else if (isString(routes[key])) {
-            routeMap[key] = createResourceFactory(
+            routeMap[key] = resourceFactory(
                 resourceKlass,
                 routes[key] as string,
                 null
             );
         } else if (isResourceTuple(routes[key])) {
             const [apiEndpoint, resourceConfig] = routes[key] as ResourceTuple;
-            routeMap[key] = createResourceFactory(
+            routeMap[key] = resourceFactory(
                 resourceKlass,
                 apiEndpoint,
                 resourceConfig
@@ -99,7 +64,7 @@ export function createRouter<
             const { apiEndpoint, ...resourceConfig } = routes[
                 key
             ] as ResourceConstructorObject;
-            routeMap[key] = createResourceFactory(
+            routeMap[key] = resourceFactory(
                 resourceKlass,
                 apiEndpoint,
                 resourceConfig
@@ -109,7 +74,7 @@ export function createRouter<
                 routes[key],
                 null,
                 resourceKlass,
-                createResourceFactory
+                resourceFactory
             );
         } else {
             const types = [
@@ -125,5 +90,5 @@ export function createRouter<
     });
 
     return new Router(routeMap, config) as Router &
-        ResourceOrExtendedRouter<T, Klass>;
+        ResourceOrExtendedRouter<T, InstanceKlass>;
 }

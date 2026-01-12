@@ -1,6 +1,6 @@
 import 'jest-extended';
 
-import { createRouter } from '../src';
+import { createRouter, ResourceTuple } from '../src';
 import DEFAULTS from '../src/constants';
 import { DummyResource } from '../src/DummyResource';
 
@@ -168,10 +168,10 @@ describe('createRouter :: string map', () => {
 describe('createRouter :: resource tuple', () => {
     const api = createRouter(
         {
-            test: ['/a/', { tuple1: true }],
+            test: ['/a/', { tuple1: true }] as ResourceTuple,
             test2: {
-                test: ['/a/b/', { tuple2: true }],
-                test2: ['/a/c/', { tuple2: true }],
+                test: ['/a/b/', { tuple2: true }] as ResourceTuple,
+                test2: ['/a/c/', { tuple2: true }] as ResourceTuple,
             },
         },
         null,
